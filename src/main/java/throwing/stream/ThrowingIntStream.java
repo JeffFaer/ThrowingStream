@@ -37,15 +37,15 @@ public interface ThrowingIntStream<X extends Throwable> extends ThrowingBaseStre
     public ThrowingIntStream<X> flatMap(
             ThrowingIntFunction<? extends ThrowingIntStream<? extends X>, ? extends X> mapper);
     
-    public ThrowingIntStream<X> distinct() throws X;
+    public ThrowingIntStream<X> distinct();
     
-    public ThrowingIntStream<X> sorted() throws X;
+    public ThrowingIntStream<X> sorted();
     
     public ThrowingIntStream<X> peek(ThrowingIntConsumer<? extends X> action);
     
-    public ThrowingIntStream<X> limit(long maxSize) throws X;
+    public ThrowingIntStream<X> limit(long maxSize);
     
-    public ThrowingIntStream<X> skip(long n) throws X;
+    public ThrowingIntStream<X> skip(long n);
     
     public void forEach(ThrowingIntConsumer<? extends X> action) throws X;
     

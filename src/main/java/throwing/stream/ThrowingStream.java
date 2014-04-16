@@ -21,10 +21,9 @@ import throwing.function.ThrowingToLongFunction;
 /**
  * A mirror of {@link Stream}. A {@link Stream} normally allows for lazy
  * functions to be applied to is. A {@link ThrowingStream} allows for these
- * functions to throw checked exceptions. Any stateful intermediate operation or
- * terminal operation has the possibility of applying one of these lazy
- * functions, so each stateful intermediate operation and terminal operation
- * declares a thrown exception.
+ * functions to throw checked exceptions. Any terminal operation has the
+ * possibility of applying one of these lazy functions, so each stateful
+ * intermediate operation and terminal operation declares a thrown exception.
  * 
  * @author jeffrey
  *
@@ -54,17 +53,17 @@ public interface ThrowingStream<T, X extends Throwable> extends ThrowingBaseStre
     public ThrowingDoubleStream<X> flatMapToDouble(
             ThrowingFunction<? super T, ? extends ThrowingDoubleStream<? extends X>, ? extends X> mapper);
     
-    public ThrowingStream<T, X> distinct() throws X;
+    public ThrowingStream<T, X> distinct();
     
-    public ThrowingStream<T, X> sorted() throws X;
+    public ThrowingStream<T, X> sorted();
     
-    public ThrowingStream<T, X> sorted(ThrowingComparator<? super T, ? extends X> comparator) throws X;
+    public ThrowingStream<T, X> sorted(ThrowingComparator<? super T, ? extends X> comparator);
     
     public ThrowingStream<T, X> peek(ThrowingConsumer<? super T, ? extends X> action);
     
-    public ThrowingStream<T, X> limit(long maxSize) throws X;
+    public ThrowingStream<T, X> limit(long maxSize);
     
-    public ThrowingStream<T, X> skip(long n) throws X;
+    public ThrowingStream<T, X> skip(long n);
     
     public void forEach(ThrowingConsumer<? super T, ? extends X> action) throws X;
     

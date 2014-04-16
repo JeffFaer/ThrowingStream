@@ -37,15 +37,15 @@ public interface ThrowingLongStream<X extends Throwable> extends ThrowingBaseStr
     public ThrowingLongStream<X> flatMap(
             ThrowingLongFunction<? extends ThrowingLongStream<? extends X>, ? extends X> mapper);
     
-    public ThrowingLongStream<X> distinct() throws X;
+    public ThrowingLongStream<X> distinct();
     
-    public ThrowingLongStream<X> sorted() throws X;
+    public ThrowingLongStream<X> sorted();
     
     public ThrowingLongStream<X> peek(ThrowingLongConsumer<? extends X> action);
     
-    public ThrowingLongStream<X> limit(long maxSize) throws X;
+    public ThrowingLongStream<X> limit(long maxSize);
     
-    public ThrowingLongStream<X> skip(long n) throws X;
+    public ThrowingLongStream<X> skip(long n);
     
     public void forEach(ThrowingLongConsumer<? extends X> action) throws X;
     

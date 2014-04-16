@@ -37,15 +37,15 @@ public interface ThrowingDoubleStream<X extends Throwable> extends
     public ThrowingDoubleStream<X> flatMap(
             ThrowingDoubleFunction<? extends ThrowingDoubleStream<? extends X>, ? extends X> mapper);
     
-    public ThrowingDoubleStream<X> distinct() throws X;
+    public ThrowingDoubleStream<X> distinct();
     
-    public ThrowingDoubleStream<X> sorted() throws X;
+    public ThrowingDoubleStream<X> sorted();
     
     public ThrowingDoubleStream<X> peek(ThrowingDoubleConsumer<? extends X> action);
     
-    public ThrowingDoubleStream<X> limit(long maxSize) throws X;
+    public ThrowingDoubleStream<X> limit(long maxSize);
     
-    public ThrowingDoubleStream<X> skip(long n) throws X;
+    public ThrowingDoubleStream<X> skip(long n);
     
     public void forEach(ThrowingDoubleConsumer<? extends X> action) throws X;
     

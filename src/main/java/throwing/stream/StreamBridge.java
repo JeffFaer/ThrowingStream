@@ -95,18 +95,18 @@ class StreamBridge<T, X extends Throwable> extends BaseStreamBridge<T, X, Throwi
     }
     
     @Override
-    public ThrowingStream<T, X> distinct() throws X {
-        return chain(filterBridgeException(getDelegate()::distinct));
+    public ThrowingStream<T, X> distinct() {
+        return chain(getDelegate().distinct());
     }
     
     @Override
-    public ThrowingStream<T, X> sorted() throws X {
-        return chain(filterBridgeException((Supplier<Stream<T>>) getDelegate()::sorted));
+    public ThrowingStream<T, X> sorted() {
+        return chain(getDelegate().sorted());
     }
     
     @Override
-    public ThrowingStream<T, X> sorted(ThrowingComparator<? super T, ? extends X> comparator) throws X {
-        return chain(filterBridgeException(() -> getDelegate().sorted(getBridge().convert(comparator))));
+    public ThrowingStream<T, X> sorted(ThrowingComparator<? super T, ? extends X> comparator) {
+        return chain(getDelegate().sorted(getBridge().convert(comparator)));
     }
     
     @Override
@@ -115,13 +115,13 @@ class StreamBridge<T, X extends Throwable> extends BaseStreamBridge<T, X, Throwi
     }
     
     @Override
-    public ThrowingStream<T, X> limit(long maxSize) throws X {
-        return chain(filterBridgeException(() -> getDelegate().limit(maxSize)));
+    public ThrowingStream<T, X> limit(long maxSize) {
+        return chain(getDelegate().limit(maxSize));
     }
     
     @Override
-    public ThrowingStream<T, X> skip(long n) throws X {
-        return chain(filterBridgeException(() -> getDelegate().skip(n)));
+    public ThrowingStream<T, X> skip(long n) {
+        return chain(getDelegate().skip(n));
     }
     
     @Override
