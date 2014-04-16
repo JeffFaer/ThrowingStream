@@ -66,23 +66,24 @@ public class FunctionBridge<X extends Throwable> {
         }
     }
     
-    public <R> Supplier<R> convert(ThrowingSupplier<R, ? extends X> supplier) {
+    public <R> Supplier<R> convert(ThrowingSupplier<? extends R, ? extends X> supplier) {
         return () -> launder(supplier);
     }
     
-    public <T> Predicate<T> convert(ThrowingPredicate<T, ? extends X> predicate) {
+    public <T> Predicate<T> convert(ThrowingPredicate<? super T, ? extends X> predicate) {
         return t -> launder(() -> predicate.test(t));
     }
     
-    public <T, R> Function<T, R> convert(ThrowingFunction<T, R, ? extends X> function) {
+    public <T, R> Function<T, R> convert(ThrowingFunction<? super T, ? extends R, ? extends X> function) {
         return t -> launder(() -> function.apply(t));
     }
     
-    public <T> Consumer<T> convert(ThrowingConsumer<T, ? extends X> consumer) {
+    public <T> Consumer<T> convert(ThrowingConsumer<? super T, ? extends X> consumer) {
         return t -> launder(() -> consumer.accept(t));
     }
     
-    public <T, U, R> BiFunction<T, U, R> convert(ThrowingBiFunction<T, U, R, ? extends X> function) {
+    public <T, U, R> BiFunction<T, U, R> convert(
+            ThrowingBiFunction<? super T, ? super U, ? extends R, ? extends X> function) {
         return (t, u) -> launder(() -> function.apply(t, u));
     }
     
@@ -90,15 +91,15 @@ public class FunctionBridge<X extends Throwable> {
         return (t1, t2) -> launder(() -> operator.apply(t1, t2));
     }
     
-    public <T> Comparator<T> convert(ThrowingComparator<T, ? extends X> comparator) {
+    public <T> Comparator<T> convert(ThrowingComparator<? super T, ? extends X> comparator) {
         return (t1, t2) -> launder(() -> comparator.compare(t1, t2));
     }
     
-    public <T, U> BiConsumer<T, U> convert(ThrowingBiConsumer<T, U, ? extends X> consumer) {
+    public <T, U> BiConsumer<T, U> convert(ThrowingBiConsumer<? super T, ? super U, ? extends X> consumer) {
         return (t, u) -> launder(() -> consumer.accept(t, u));
     }
     
-    public <T, A, R> Collector<T, A, R> convert(ThrowingCollector<T, A, R, ? extends X> collector) {
+    public <T, A, R> Collector<T, A, R> convert(ThrowingCollector<? super T, A, ? extends R, ? extends X> collector) {
         return new Collector<T, A, R>() {
             @Override
             public Supplier<A> supplier() {
