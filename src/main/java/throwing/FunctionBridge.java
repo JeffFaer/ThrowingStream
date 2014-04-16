@@ -21,14 +21,6 @@ import throwing.function.ThrowingSupplier;
 import throwing.stream.ThrowingCollector;
 
 public class FunctionBridge<X extends Throwable> {
-    public static final class Nothing extends Throwable {
-        private static final long serialVersionUID = -5459023265330371793L;
-        
-        private Nothing() {
-            throw new Error("No instances!");
-        }
-    }
-    
     public static final class BridgeException extends RuntimeException {
         private static final long serialVersionUID = -3986425123148316828L;
         

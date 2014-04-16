@@ -11,7 +11,7 @@ import java.util.stream.Stream;
 
 import org.junit.Test;
 
-import throwing.FunctionBridge.Nothing;
+import throwing.Nothing;
 
 public class ThrowingStreamTest {
     public static final String MESSAGE = "Exceptional flow control";
@@ -41,8 +41,8 @@ public class ThrowingStreamTest {
     }
     
     @Test
-    public void worksCorrectlyWithoutExceptions() throws Nothing {
-        ThrowingStream<Integer, Nothing> s = ThrowingStream.of(numbers, Nothing.class);
+    public void worksCorrectlyWithoutExceptions() {
+        ThrowingStream<Integer, Nothing> s = ThrowingStream.of(numbers);
         long l = s.filter(i -> i < 10).count();
         assertEquals(10, l);
     }
