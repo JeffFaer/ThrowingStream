@@ -4,14 +4,20 @@ import java.util.function.Supplier;
 
 import throwing.FunctionBridge.BridgeException;
 
-public abstract class CheckedExceptionBridge<X extends Throwable> {
+public abstract class CheckedExceptionBridge<D, X extends Throwable> {
+    private final D delegate;
     private final FunctionBridge<X> bridge;
     
-    protected CheckedExceptionBridge(FunctionBridge<X> bridge) {
+    protected CheckedExceptionBridge(D delegate, FunctionBridge<X> bridge) {
+        this.delegate = delegate;
         this.bridge = bridge;
     }
     
-    public FunctionBridge<X> getBridge() {
+    protected D getDelegate() {
+        return delegate;
+    }
+    
+    protected FunctionBridge<X> getBridge() {
         return bridge;
     }
     
