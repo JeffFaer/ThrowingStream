@@ -4,12 +4,6 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.IntFunction;
 import java.util.function.Supplier;
-import java.util.function.ToDoubleFunction;
-import java.util.function.ToIntFunction;
-import java.util.function.ToLongFunction;
-import java.util.stream.DoubleStream;
-import java.util.stream.IntStream;
-import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
 import throwing.CheckedExceptionBridge;
@@ -23,6 +17,9 @@ import throwing.function.ThrowingConsumer;
 import throwing.function.ThrowingFunction;
 import throwing.function.ThrowingPredicate;
 import throwing.function.ThrowingSupplier;
+import throwing.function.ThrowingToDoubleFunction;
+import throwing.function.ThrowingToIntFunction;
+import throwing.function.ThrowingToLongFunction;
 
 class StreamBridge<T, X extends Throwable> extends CheckedExceptionBridge<X> implements ThrowingStream<T, X> {
     private final Stream<T> delegate;
@@ -89,39 +86,47 @@ class StreamBridge<T, X extends Throwable> extends CheckedExceptionBridge<X> imp
     }
     
     @Override
-    public IntStream mapToInt(ToIntFunction<? super T> mapper) {
-        return delegate.mapToInt(mapper);
+    public ThrowingIntStream<X> mapToInt(ThrowingToIntFunction<? super T, ? extends X> mapper) {
+        // TODO Auto-generated method stub
+        return null;
     }
     
     @Override
-    public LongStream mapToLong(ToLongFunction<? super T> mapper) {
-        return delegate.mapToLong(mapper);
+    public ThrowingLongStream<X> mapToLong(ThrowingToLongFunction<? super T, ? extends X> mapper) {
+        // TODO Auto-generated method stub
+        return null;
     }
     
     @Override
-    public DoubleStream mapToDouble(ToDoubleFunction<? super T> mapper) {
-        return delegate.mapToDouble(mapper);
+    public ThrowingDoubleStream<X> mapToDouble(ThrowingToDoubleFunction<? super T, ? extends X> mapper) {
+        // TODO Auto-generated method stub
+        return null;
     }
     
     @Override
     public <R> ThrowingStream<R, X> flatMap(
-            ThrowingFunction<? super T, ? extends Stream<? extends R>, ? extends X> mapper) {
-        return chain(delegate.flatMap(getBridge().convert(mapper)));
+            ThrowingFunction<? super T, ? extends ThrowingStream<? extends R, ? extends X>, ? extends X> mapper) {
+        // TODO Auto-generated method stub
+        return null;
     }
     
     @Override
-    public IntStream flatMapToInt(Function<? super T, ? extends IntStream> mapper) {
-        return delegate.flatMapToInt(mapper);
+    public ThrowingIntStream<X> flatMapToInt(Function<? super T, ? extends ThrowingIntStream<? extends X>> mapper) {
+        // TODO Auto-generated method stub
+        return null;
     }
     
     @Override
-    public LongStream flatMapToLong(Function<? super T, ? extends LongStream> mapper) {
-        return delegate.flatMapToLong(mapper);
+    public ThrowingLongStream<X> flatMapToLong(Function<? super T, ? extends ThrowingLongStream<? extends X>> mapper) {
+        // TODO Auto-generated method stub
+        return null;
     }
     
     @Override
-    public DoubleStream flatMapToDouble(Function<? super T, ? extends DoubleStream> mapper) {
-        return delegate.flatMapToDouble(mapper);
+    public ThrowingDoubleStream<X> flatMapToDouble(
+            Function<? super T, ? extends ThrowingDoubleStream<? extends X>> mapper) {
+        // TODO Auto-generated method stub
+        return null;
     }
     
     @Override

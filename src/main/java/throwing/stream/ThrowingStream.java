@@ -3,12 +3,6 @@ package throwing.stream;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.IntFunction;
-import java.util.function.ToDoubleFunction;
-import java.util.function.ToIntFunction;
-import java.util.function.ToLongFunction;
-import java.util.stream.DoubleStream;
-import java.util.stream.IntStream;
-import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
 import throwing.Nothing;
@@ -20,6 +14,9 @@ import throwing.function.ThrowingConsumer;
 import throwing.function.ThrowingFunction;
 import throwing.function.ThrowingPredicate;
 import throwing.function.ThrowingSupplier;
+import throwing.function.ThrowingToDoubleFunction;
+import throwing.function.ThrowingToIntFunction;
+import throwing.function.ThrowingToLongFunction;
 
 /**
  * A mirror of {@link Stream}. A {@link Stream} normally allows for lazy
@@ -39,20 +36,21 @@ public interface ThrowingStream<T, X extends Throwable> extends ThrowingBaseStre
     
     public <R> ThrowingStream<R, X> map(ThrowingFunction<? super T, ? extends R, ? extends X> mapper);
     
-    public IntStream mapToInt(ToIntFunction<? super T> mapper);
+    public ThrowingIntStream<X> mapToInt(ThrowingToIntFunction<? super T, ? extends X> mapper);
     
-    public LongStream mapToLong(ToLongFunction<? super T> mapper);
+    public ThrowingLongStream<X> mapToLong(ThrowingToLongFunction<? super T, ? extends X> mapper);
     
-    public DoubleStream mapToDouble(ToDoubleFunction<? super T> mapper);
+    public ThrowingDoubleStream<X> mapToDouble(ThrowingToDoubleFunction<? super T, ? extends X> mapper);
     
     public <R> ThrowingStream<R, X> flatMap(
-            ThrowingFunction<? super T, ? extends Stream<? extends R>, ? extends X> mapper);
+            ThrowingFunction<? super T, ? extends ThrowingStream<? extends R, ? extends X>, ? extends X> mapper);
     
-    public IntStream flatMapToInt(Function<? super T, ? extends IntStream> mapper);
+    public ThrowingIntStream<X> flatMapToInt(Function<? super T, ? extends ThrowingIntStream<? extends X>> mapper);
     
-    public LongStream flatMapToLong(Function<? super T, ? extends LongStream> mapper);
+    public ThrowingLongStream<X> flatMapToLong(Function<? super T, ? extends ThrowingLongStream<? extends X>> mapper);
     
-    public DoubleStream flatMapToDouble(Function<? super T, ? extends DoubleStream> mapper);
+    public ThrowingDoubleStream<X> flatMapToDouble(
+            Function<? super T, ? extends ThrowingDoubleStream<? extends X>> mapper);
     
     public ThrowingStream<T, X> distinct() throws X;
     
