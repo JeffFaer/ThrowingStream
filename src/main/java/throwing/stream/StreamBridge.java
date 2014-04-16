@@ -1,7 +1,6 @@
 package throwing.stream;
 
 import java.util.Optional;
-import java.util.function.Function;
 import java.util.function.IntFunction;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -111,20 +110,22 @@ class StreamBridge<T, X extends Throwable> extends CheckedExceptionBridge<X> imp
     }
     
     @Override
-    public ThrowingIntStream<X> flatMapToInt(Function<? super T, ? extends ThrowingIntStream<? extends X>> mapper) {
+    public ThrowingIntStream<X> flatMapToInt(
+            ThrowingFunction<? super T, ? extends ThrowingIntStream<? extends X>, ? extends X> mapper) {
         // TODO Auto-generated method stub
         return null;
     }
     
     @Override
-    public ThrowingLongStream<X> flatMapToLong(Function<? super T, ? extends ThrowingLongStream<? extends X>> mapper) {
+    public ThrowingLongStream<X> flatMapToLong(
+            ThrowingFunction<? super T, ? extends ThrowingLongStream<? extends X>, ? extends X> mapper) {
         // TODO Auto-generated method stub
         return null;
     }
     
     @Override
     public ThrowingDoubleStream<X> flatMapToDouble(
-            Function<? super T, ? extends ThrowingDoubleStream<? extends X>> mapper) {
+            ThrowingFunction<? super T, ? extends ThrowingDoubleStream<? extends X>, ? extends X> mapper) {
         // TODO Auto-generated method stub
         return null;
     }

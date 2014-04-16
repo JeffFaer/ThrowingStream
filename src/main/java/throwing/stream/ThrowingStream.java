@@ -1,7 +1,6 @@
 package throwing.stream;
 
 import java.util.Optional;
-import java.util.function.Function;
 import java.util.function.IntFunction;
 import java.util.stream.Stream;
 
@@ -46,12 +45,14 @@ public interface ThrowingStream<T, X extends Throwable> extends ThrowingBaseStre
     public <R> ThrowingStream<R, X> flatMap(
             ThrowingFunction<? super T, ? extends ThrowingStream<? extends R, ? extends X>, ? extends X> mapper);
     
-    public ThrowingIntStream<X> flatMapToInt(Function<? super T, ? extends ThrowingIntStream<? extends X>> mapper);
+    public ThrowingIntStream<X> flatMapToInt(
+            ThrowingFunction<? super T, ? extends ThrowingIntStream<? extends X>, ? extends X> mapper);
     
-    public ThrowingLongStream<X> flatMapToLong(Function<? super T, ? extends ThrowingLongStream<? extends X>> mapper);
+    public ThrowingLongStream<X> flatMapToLong(
+            ThrowingFunction<? super T, ? extends ThrowingLongStream<? extends X>, ? extends X> mapper);
     
     public ThrowingDoubleStream<X> flatMapToDouble(
-            Function<? super T, ? extends ThrowingDoubleStream<? extends X>> mapper);
+            ThrowingFunction<? super T, ? extends ThrowingDoubleStream<? extends X>, ? extends X> mapper);
     
     public ThrowingStream<T, X> distinct() throws X;
     
