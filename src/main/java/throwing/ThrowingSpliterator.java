@@ -34,7 +34,7 @@ public interface ThrowingSpliterator<T, X extends Throwable> {
     
     public int characteristics();
     
-    public static <T, X extends Throwable> ThrowingSpliterator<T, X> of(Spliterator<T> bridged, Class<X> x) {
-        return new SpliteratorBridge<>(bridged, x);
+    public static <T, X extends Throwable> ThrowingSpliterator<T, X> of(Spliterator<T> bridged, FunctionBridge<X> bridge) {
+        return new SpliteratorBridge<>(bridged, bridge);
     }
 }

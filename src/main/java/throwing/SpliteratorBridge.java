@@ -8,8 +8,8 @@ import throwing.function.ThrowingConsumer;
 class SpliteratorBridge<T, X extends Throwable> extends CheckedExceptionBridge<X> implements ThrowingSpliterator<T, X> {
     private final Spliterator<T> delegate;
     
-    SpliteratorBridge(Spliterator<T> delegate, Class<X> x) {
-        super(x);
+    SpliteratorBridge(Spliterator<T> delegate, FunctionBridge<X> bridge) {
+        super(bridge);
         this.delegate = delegate;
     }
     
@@ -25,7 +25,7 @@ class SpliteratorBridge<T, X extends Throwable> extends CheckedExceptionBridge<X
     
     @Override
     public ThrowingSpliterator<T, X> trySplit() {
-        return new SpliteratorBridge<>(delegate.trySplit(), getBridge().getExceptionClass());
+        return new SpliteratorBridge<>(delegate.trySplit(), getBridge());
     }
     
     @Override

@@ -5,8 +5,8 @@ import java.util.Iterator;
 class IteratorBridge<E, X extends Throwable> extends CheckedExceptionBridge<X> implements ThrowingIterator<E, X> {
     private final Iterator<E> delegate;
     
-    IteratorBridge(Iterator<E> delegate, Class<X> x) {
-        super(x);
+    IteratorBridge(Iterator<E> delegate, FunctionBridge<X> bridge) {
+        super(bridge);
         this.delegate = delegate;
     }
     

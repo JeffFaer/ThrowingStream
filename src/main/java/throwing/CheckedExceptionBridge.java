@@ -7,8 +7,8 @@ import throwing.FunctionBridge.BridgeException;
 public abstract class CheckedExceptionBridge<X extends Throwable> {
     private final FunctionBridge<X> bridge;
     
-    protected CheckedExceptionBridge(Class<X> x) {
-        this.bridge = new FunctionBridge<>(x);
+    protected CheckedExceptionBridge(FunctionBridge<X> bridge) {
+        this.bridge = bridge;
     }
     
     public FunctionBridge<X> getBridge() {

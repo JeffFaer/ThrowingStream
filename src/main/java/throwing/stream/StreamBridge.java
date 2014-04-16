@@ -7,6 +7,7 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import throwing.CheckedExceptionBridge;
+import throwing.FunctionBridge;
 import throwing.ThrowingComparator;
 import throwing.ThrowingIterator;
 import throwing.ThrowingSpliterator;
@@ -24,25 +25,24 @@ import throwing.function.ThrowingToLongFunction;
 class StreamBridge<T, X extends Throwable> extends CheckedExceptionBridge<X> implements ThrowingStream<T, X> {
     private final Stream<T> delegate;
     
-    StreamBridge(Stream<T> delegate, Class<X> x) {
-        super(x);
+    StreamBridge(Stream<T> delegate, FunctionBridge<X> bridge) {
+        super(bridge);
         this.delegate = delegate;
     }
     
     @SuppressWarnings("unchecked")
     private <R> StreamBridge<R, X> chain(Stream<R> newStream) {
-        return newStream == delegate ? (StreamBridge<R, X>) this : new StreamBridge<>(newStream,
-                getBridge().getExceptionClass());
+        return newStream == delegate ? (StreamBridge<R, X>) this : new StreamBridge<>(newStream, getBridge());
     }
     
     @Override
     public ThrowingIterator<T, X> iterator() {
-        return ThrowingIterator.of(delegate.iterator(), getBridge().getExceptionClass());
+        return ThrowingIterator.of(delegate.iterator(), getBridge());
     }
     
     @Override
     public ThrowingSpliterator<T, X> spliterator() {
-        return ThrowingSpliterator.of(delegate.spliterator(), getBridge().getExceptionClass());
+        return ThrowingSpliterator.of(delegate.spliterator(), getBridge());
     }
     
     @Override
