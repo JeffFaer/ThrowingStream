@@ -43,7 +43,7 @@ public class FunctionBridge<X extends Throwable> {
         this.x = x;
     }
     
-    private <R> void launder(ThrowingRunnable<? extends X> r) {
+    private void launder(ThrowingRunnable<? extends X> r) {
         launder(() -> {
             r.run();
             return null;
