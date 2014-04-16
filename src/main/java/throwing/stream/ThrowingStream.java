@@ -20,6 +20,19 @@ import throwing.function.ThrowingFunction;
 import throwing.function.ThrowingPredicate;
 import throwing.function.ThrowingSupplier;
 
+/**
+ * A mirror of {@link Stream}. A {@link Stream} normally allows for lazy
+ * functions to be applied to is. A {@link ThrowingStream} allows for these
+ * functions to throw checked exceptions. Any stateful intermediate operation or
+ * terminal operation has the possibility of applying one of these lazy
+ * functions, so each stateful intermediate operation and terminal operation
+ * declares a thrown exception.
+ * 
+ * @author jeffrey
+ *
+ * @param <T> The type of the stream elements
+ * @param <X> The type of the exception that might be thrown
+ */
 public interface ThrowingStream<T, X extends Throwable> extends ThrowingBaseStream<T, X, ThrowingStream<T, X>> {
     public ThrowingStream<T, X> filter(ThrowingPredicate<? super T, ? extends X> predicate);
     
