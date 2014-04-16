@@ -34,17 +34,18 @@ class StreamBridge<T, X extends Throwable> extends CheckedExceptionBridge<X> imp
     
     @SuppressWarnings("unchecked")
     private <R> StreamBridge<R, X> chain(Stream<R> newStream) {
-        return newStream == delegate ? (StreamBridge<R, X>) this : new StreamBridge<>(newStream, x);
+        return newStream == delegate ? (StreamBridge<R, X>) this : new StreamBridge<>(newStream,
+                getBridge().getExceptionClass());
     }
     
     @Override
     public ThrowingIterator<T, X> iterator() {
-        return ThrowingIterator.of(delegate.iterator(), x);
+        return ThrowingIterator.of(delegate.iterator(), getBridge().getExceptionClass());
     }
     
     @Override
     public ThrowingSpliterator<T, X> spliterator() {
-        return ThrowingSpliterator.of(delegate.spliterator(), x);
+        return ThrowingSpliterator.of(delegate.spliterator(), getBridge().getExceptionClass());
     }
     
     @Override
@@ -79,12 +80,12 @@ class StreamBridge<T, X extends Throwable> extends CheckedExceptionBridge<X> imp
     
     @Override
     public ThrowingStream<T, X> filter(ThrowingPredicate<? super T, ? extends X> predicate) {
-        return chain(delegate.filter(bridge.convert(predicate)));
+        return chain(delegate.filter(getBridge().convert(predicate)));
     }
     
     @Override
     public <R> ThrowingStream<R, X> map(ThrowingFunction<? super T, ? extends R, ? extends X> mapper) {
-        return chain(delegate.map(bridge.convert(mapper)));
+        return chain(delegate.map(getBridge().convert(mapper)));
     }
     
     @Override
@@ -105,7 +106,7 @@ class StreamBridge<T, X extends Throwable> extends CheckedExceptionBridge<X> imp
     @Override
     public <R> ThrowingStream<R, X> flatMap(
             ThrowingFunction<? super T, ? extends Stream<? extends R>, ? extends X> mapper) {
-        return chain(delegate.flatMap(bridge.convert(mapper)));
+        return chain(delegate.flatMap(getBridge().convert(mapper)));
     }
     
     @Override
@@ -135,12 +136,12 @@ class StreamBridge<T, X extends Throwable> extends CheckedExceptionBridge<X> imp
     
     @Override
     public ThrowingStream<T, X> sorted(ThrowingComparator<? super T, ? extends X> comparator) throws X {
-        return chain(filterBridgeException(() -> delegate.sorted(bridge.convert(comparator))));
+        return chain(filterBridgeException(() -> delegate.sorted(getBridge().convert(comparator))));
     }
     
     @Override
     public ThrowingStream<T, X> peek(ThrowingConsumer<? super T, ? extends X> action) {
-        return chain(delegate.peek(bridge.convert(action)));
+        return chain(delegate.peek(getBridge().convert(action)));
     }
     
     @Override
@@ -155,12 +156,12 @@ class StreamBridge<T, X extends Throwable> extends CheckedExceptionBridge<X> imp
     
     @Override
     public void forEach(ThrowingConsumer<? super T, ? extends X> action) throws X {
-        filterBridgeException(() -> delegate.forEach(bridge.convert(action)));
+        filterBridgeException(() -> delegate.forEach(getBridge().convert(action)));
     }
     
     @Override
     public void forEachOrdered(ThrowingConsumer<? super T, ? extends X> action) throws X {
-        filterBridgeException(() -> delegate.forEachOrdered(bridge.convert(action)));
+        filterBridgeException(() -> delegate.forEachOrdered(getBridge().convert(action)));
     }
     
     @Override
@@ -175,42 +176,42 @@ class StreamBridge<T, X extends Throwable> extends CheckedExceptionBridge<X> imp
     
     @Override
     public T reduce(T identity, ThrowingBinaryOperator<T, ? extends X> accumulator) throws X {
-        return filterBridgeException(() -> delegate.reduce(identity, bridge.convert(accumulator)));
+        return filterBridgeException(() -> delegate.reduce(identity, getBridge().convert(accumulator)));
     }
     
     @Override
     public Optional<T> reduce(ThrowingBinaryOperator<T, ? extends X> accumulator) throws X {
-        return filterBridgeException(() -> delegate.reduce(bridge.convert(accumulator)));
+        return filterBridgeException(() -> delegate.reduce(getBridge().convert(accumulator)));
     }
     
     @Override
     public <U> U reduce(U identity, ThrowingBiFunction<U, ? super T, U, ? extends X> accumulator,
             ThrowingBinaryOperator<U, ? extends X> combiner) throws X {
-        return filterBridgeException(() -> delegate.reduce(identity, bridge.convert(accumulator),
-                bridge.convert(combiner)));
+        return filterBridgeException(() -> delegate.reduce(identity, getBridge().convert(accumulator),
+                getBridge().convert(combiner)));
     }
     
     @Override
     public <R> R collect(ThrowingSupplier<R, ? extends X> supplier,
             ThrowingBiConsumer<R, ? super T, ? extends X> accumulator, ThrowingBiConsumer<R, R, ? extends X> combiner)
         throws X {
-        return filterBridgeException(() -> delegate.collect(bridge.convert(supplier), bridge.convert(accumulator),
-                bridge.convert(combiner)));
+        return filterBridgeException(() -> delegate.collect(getBridge().convert(supplier),
+                getBridge().convert(accumulator), getBridge().convert(combiner)));
     }
     
     @Override
     public <R, A> R collect(ThrowingCollector<? super T, A, R, ? extends X> collector) throws X {
-        return filterBridgeException(() -> delegate.collect(bridge.convert(collector)));
+        return filterBridgeException(() -> delegate.collect(getBridge().convert(collector)));
     }
     
     @Override
     public Optional<T> min(ThrowingComparator<? super T, ? extends X> comparator) throws X {
-        return filterBridgeException(() -> delegate.min(bridge.convert(comparator)));
+        return filterBridgeException(() -> delegate.min(getBridge().convert(comparator)));
     }
     
     @Override
     public Optional<T> max(ThrowingComparator<? super T, ? extends X> comparator) throws X {
-        return filterBridgeException(() -> delegate.max(bridge.convert(comparator)));
+        return filterBridgeException(() -> delegate.max(getBridge().convert(comparator)));
     }
     
     @Override
@@ -220,17 +221,17 @@ class StreamBridge<T, X extends Throwable> extends CheckedExceptionBridge<X> imp
     
     @Override
     public boolean anyMatch(ThrowingPredicate<? super T, ? extends X> predicate) throws X {
-        return filterBridgeException(() -> delegate.anyMatch(bridge.convert(predicate)));
+        return filterBridgeException(() -> delegate.anyMatch(getBridge().convert(predicate)));
     }
     
     @Override
     public boolean allMatch(ThrowingPredicate<? super T, ? extends X> predicate) throws X {
-        return filterBridgeException(() -> delegate.allMatch(bridge.convert(predicate)));
+        return filterBridgeException(() -> delegate.allMatch(getBridge().convert(predicate)));
     }
     
     @Override
     public boolean noneMatch(ThrowingPredicate<? super T, ? extends X> predicate) throws X {
-        return filterBridgeException(() -> delegate.noneMatch(bridge.convert(predicate)));
+        return filterBridgeException(() -> delegate.noneMatch(getBridge().convert(predicate)));
     }
     
     @Override

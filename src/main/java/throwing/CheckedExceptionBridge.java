@@ -5,12 +5,14 @@ import java.util.function.Supplier;
 import throwing.FunctionBridge.BridgeException;
 
 public abstract class CheckedExceptionBridge<X extends Throwable> {
-    protected final FunctionBridge<X> bridge;
-    protected final Class<X> x;
+    private final FunctionBridge<X> bridge;
     
     protected CheckedExceptionBridge(Class<X> x) {
         this.bridge = new FunctionBridge<>(x);
-        this.x = x;
+    }
+    
+    public FunctionBridge<X> getBridge() {
+        return bridge;
     }
     
     protected void filterBridgeException(Runnable runnable) throws X {
@@ -25,9 +27,9 @@ public abstract class CheckedExceptionBridge<X extends Throwable> {
             return supplier.get();
         } catch (Throwable t) {
             if (t instanceof BridgeException) {
-                throw x.cast(t.getCause());
-            } else if (x.isInstance(t)) {
-                throw x.cast(t);
+                throw bridge.getExceptionClass().cast(t.getCause());
+            } else if (bridge.getExceptionClass().isInstance(t)) {
+                throw bridge.getExceptionClass().cast(t);
             } else if (t instanceof RuntimeException) {
                 throw (RuntimeException) t;
             } else if (t instanceof Error) {

@@ -35,6 +35,10 @@ public class FunctionBridge<X extends Throwable> {
         this.x = x;
     }
     
+    public Class<X> getExceptionClass() {
+        return x;
+    }
+
     private void launder(ThrowingRunnable<? extends X> r) {
         launder(() -> {
             r.run();

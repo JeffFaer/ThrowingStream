@@ -15,7 +15,7 @@ class SpliteratorBridge<T, X extends Throwable> extends CheckedExceptionBridge<X
     
     @Override
     public boolean tryAdvance(ThrowingConsumer<? super T, ? extends X> action) throws X {
-        return filterBridgeException(() -> delegate.tryAdvance(bridge.convert(action)));
+        return filterBridgeException(() -> delegate.tryAdvance(getBridge().convert(action)));
     }
     
     @Override
@@ -25,7 +25,7 @@ class SpliteratorBridge<T, X extends Throwable> extends CheckedExceptionBridge<X
     
     @Override
     public ThrowingSpliterator<T, X> trySplit() {
-        return new SpliteratorBridge<>(delegate.trySplit(), x);
+        return new SpliteratorBridge<>(delegate.trySplit(), getBridge().getExceptionClass());
     }
     
     @Override
