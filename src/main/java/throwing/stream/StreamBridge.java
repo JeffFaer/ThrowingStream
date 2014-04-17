@@ -50,8 +50,7 @@ class StreamBridge<T, X extends Throwable> extends BaseStreamBridge<T, X, Throwi
     
     @Override
     public ThrowingIntStream<X> mapToInt(ThrowingToIntFunction<? super T, ? extends X> mapper) {
-        // TODO Auto-generated method stub
-        return null;
+        return ThrowingIntStream.of(getDelegate().mapToInt(getBridge().convert(mapper)), getBridge());
     }
     
     @Override

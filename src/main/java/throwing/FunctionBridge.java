@@ -7,8 +7,15 @@ import java.util.function.BiFunction;
 import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.IntBinaryOperator;
+import java.util.function.IntConsumer;
+import java.util.function.IntFunction;
+import java.util.function.IntPredicate;
+import java.util.function.IntUnaryOperator;
+import java.util.function.ObjIntConsumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.function.ToIntFunction;
 import java.util.stream.Collector;
 
 import throwing.function.ThrowingBiConsumer;
@@ -16,8 +23,15 @@ import throwing.function.ThrowingBiFunction;
 import throwing.function.ThrowingBinaryOperator;
 import throwing.function.ThrowingConsumer;
 import throwing.function.ThrowingFunction;
+import throwing.function.ThrowingIntBinaryOperator;
+import throwing.function.ThrowingIntConsumer;
+import throwing.function.ThrowingIntFunction;
+import throwing.function.ThrowingIntPredicate;
+import throwing.function.ThrowingIntUnaryOperator;
+import throwing.function.ThrowingObjIntConsumer;
 import throwing.function.ThrowingPredicate;
 import throwing.function.ThrowingSupplier;
+import throwing.function.ThrowingToIntFunction;
 import throwing.stream.ThrowingCollector;
 
 public class FunctionBridge<X extends Throwable> {
@@ -38,7 +52,7 @@ public class FunctionBridge<X extends Throwable> {
     public Class<X> getExceptionClass() {
         return x;
     }
-
+    
     private void launder(ThrowingRunnable<? extends X> r) {
         launder(() -> {
             r.run();
@@ -122,5 +136,33 @@ public class FunctionBridge<X extends Throwable> {
                 return collector.characteristics();
             }
         };
+    }
+    
+    public IntConsumer convert(ThrowingIntConsumer<? extends X> consumer) {
+        return i -> launder(() -> consumer.accept(i));
+    }
+    
+    public IntPredicate convert(ThrowingIntPredicate<? extends X> predicate) {
+        return i -> launder(() -> predicate.test(i));
+    }
+    
+    public IntBinaryOperator convert(ThrowingIntBinaryOperator<? extends X> operator) {
+        return (i1, i2) -> launder(() -> operator.applyAsInt(i1, i2));
+    }
+    
+    public <T> ObjIntConsumer<T> convert(ThrowingObjIntConsumer<T, ? extends X> consumer) {
+        return (t, i) -> launder(() -> consumer.accept(t, i));
+    }
+    
+    public IntUnaryOperator convert(ThrowingIntUnaryOperator<? extends X> operator) {
+        return i -> launder(() -> operator.applyAsInt(i));
+    }
+    
+    public <R> IntFunction<R> convert(ThrowingIntFunction<R, ? extends X> function) {
+        return i -> launder(() -> function.apply(i));
+    }
+    
+    public <T> ToIntFunction<T> convert(ThrowingToIntFunction<T, ? extends X> function) {
+        return t -> launder(() -> function.applyAsInt(t));
     }
 }

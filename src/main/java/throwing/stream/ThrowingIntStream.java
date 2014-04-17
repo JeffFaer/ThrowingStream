@@ -3,7 +3,10 @@ package throwing.stream;
 import java.util.IntSummaryStatistics;
 import java.util.OptionalDouble;
 import java.util.OptionalInt;
+import java.util.stream.IntStream;
 
+import throwing.FunctionBridge;
+import throwing.Nothing;
 import throwing.ThrowingIterator;
 import throwing.ThrowingSpliterator;
 import throwing.function.ThrowingBiConsumer;
@@ -87,4 +90,16 @@ public interface ThrowingIntStream<X extends Throwable> extends ThrowingBaseStre
     public ThrowingDoubleStream<X> asDoubleStream();
     
     public ThrowingStream<Integer, X> boxed();
+    
+    public static ThrowingIntStream<Nothing> of(IntStream stream) {
+        return of(stream, Nothing.class);
+    }
+    
+    public static <X extends Throwable> ThrowingIntStream<X> of(IntStream stream, Class<X> x) {
+        return of(stream, new FunctionBridge<>(x));
+    }
+    
+    public static <X extends Throwable> ThrowingIntStream<X> of(IntStream stream, FunctionBridge<X> bridge) {
+        return new IntStreamBridge<>(stream, bridge);
+    }
 }
