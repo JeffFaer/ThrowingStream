@@ -61,4 +61,20 @@ public final class ThrowingBridge {
     static <T, X extends Throwable> ThrowingSpliterator<T, X> of(Spliterator<T> itr, FunctionBridge<X> x) {
         return new CheckedSpliterator<>(itr, x);
     }
+    
+    public static <T> Spliterator<T> of(ThrowingSpliterator<T, Nothing> itr) {
+        return unchecked(itr);
+    }
+    
+    static <T> Spliterator<T> unchecked(ThrowingSpliterator<T, ?> itr) {
+        return new UncheckedSpliterator<>(itr);
+    }
+    
+    public static <T> Iterator<T> of(ThrowingIterator<T, Nothing> itr) {
+        return unchecked(itr);
+    }
+    
+    static <T> Iterator<T> unchecked(ThrowingIterator<T, ?> itr) {
+        return new UncheckedIterator<>(itr);
+    }
 }

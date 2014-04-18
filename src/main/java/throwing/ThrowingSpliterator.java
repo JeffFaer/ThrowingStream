@@ -1,7 +1,5 @@
 package throwing;
 
-import java.util.function.Consumer;
-
 import throwing.function.ThrowingConsumer;
 import throwing.function.ThrowingDoubleConsumer;
 import throwing.function.ThrowingIntConsumer;
@@ -24,8 +22,6 @@ public interface ThrowingSpliterator<T, X extends Throwable> {
             OfPrimitive<Double, ThrowingDoubleConsumer<X>, OfDouble<X>, X> {}
     
     public boolean tryAdvance(ThrowingConsumer<? super T, ? extends X> action) throws X;
-    
-    public boolean tryAdvance(Consumer<? super T> action);
     
     public ThrowingSpliterator<T, X> trySplit();
     

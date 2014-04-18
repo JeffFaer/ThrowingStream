@@ -1,7 +1,6 @@
 package throwing.bridge;
 
 import java.util.Spliterator;
-import java.util.function.Consumer;
 
 import throwing.ThrowingSpliterator;
 import throwing.function.ThrowingConsumer;
@@ -15,11 +14,6 @@ class CheckedSpliterator<T, X extends Throwable> extends CheckedBridge<Spliterat
     @Override
     public boolean tryAdvance(ThrowingConsumer<? super T, ? extends X> action) throws X {
         return filterBridgeException(() -> getDelegate().tryAdvance(getBridge().convert(action)));
-    }
-    
-    @Override
-    public boolean tryAdvance(Consumer<? super T> action) {
-        return getDelegate().tryAdvance(action);
     }
     
     @Override
