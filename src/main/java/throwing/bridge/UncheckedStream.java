@@ -1,9 +1,8 @@
 package throwing.bridge;
 
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.Optional;
-import java.util.Spliterator;
+import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.BinaryOperator;
@@ -16,76 +15,47 @@ import java.util.function.ToDoubleFunction;
 import java.util.function.ToIntFunction;
 import java.util.function.ToLongFunction;
 import java.util.stream.Collector;
+import java.util.stream.Collector.Characteristics;
 import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
+import throwing.function.ThrowingBiConsumer;
+import throwing.function.ThrowingBinaryOperator;
+import throwing.function.ThrowingFunction;
+import throwing.function.ThrowingSupplier;
+import throwing.stream.ThrowingCollector;
 import throwing.stream.ThrowingStream;
 
-class UncheckedStream<T, X extends Throwable> extends UncheckedBridge<ThrowingStream<T, X>, X> implements Stream<T> {
+class UncheckedStream<T, X extends Throwable> extends UncheckedBaseStream<T, X, Stream<T>, ThrowingStream<T,  X>>
+        implements Stream<T> {
     UncheckedStream(ThrowingStream<T, X> delegate, Class<X> x) {
         super(delegate, x);
     }
     
     @Override
-    public Iterator<T> iterator() {
-        // TODO Auto-generated method stub
-        return null;
+    public Stream<T> getSelf() {
+        return this;
     }
     
     @Override
-    public Spliterator<T> spliterator() {
-        // TODO Auto-generated method stub
-        return null;
+    public Stream<T> createNewStream(ThrowingStream<T, X> delegate) {
+        return newStream(delegate);
     }
     
-    @Override
-    public boolean isParallel() {
-        // TODO Auto-generated method stub
-        return false;
-    }
-    
-    @Override
-    public Stream<T> sequential() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-    
-    @Override
-    public Stream<T> parallel() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-    
-    @Override
-    public Stream<T> unordered() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-    
-    @Override
-    public Stream<T> onClose(Runnable closeHandler) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-    
-    @Override
-    public void close() {
-        // TODO Auto-generated method stub
-        
+    private <R> Stream<R> newStream(ThrowingStream<R, X> delegate) {
+        return new UncheckedStream<>(delegate, getExceptionClass());
     }
     
     @Override
     public Stream<T> filter(Predicate<? super T> predicate) {
-        // TODO Auto-generated method stub
-        return null;
+        return chain(getDelegate().filter(predicate::test));
     }
     
     @Override
     public <R> Stream<R> map(Function<? super T, ? extends R> mapper) {
-        // TODO Auto-generated method stub
-        return null;
+        return newStream(getDelegate().map(mapper::apply));
     }
     
     @Override
@@ -108,8 +78,12 @@ class UncheckedStream<T, X extends Throwable> extends UncheckedBridge<ThrowingSt
     
     @Override
     public <R> Stream<R> flatMap(Function<? super T, ? extends Stream<? extends R>> mapper) {
-        // TODO Auto-generated method stub
-        return null;
+        return newStream(getDelegate().flatMap(toThrowingStream(mapper, getExceptionClass())::apply));
+    }
+    
+    private static <T, R, X extends Throwable> Function<? super T, ? extends ThrowingStream<? extends R, X>> toThrowingStream(
+            Function<? super T, ? extends Stream<? extends R>> mapper, Class<X> x) {
+        return mapper.andThen(s -> ThrowingBridge.of((Stream<? extends R>) s, x));
     }
     
     @Override
@@ -132,139 +106,145 @@ class UncheckedStream<T, X extends Throwable> extends UncheckedBridge<ThrowingSt
     
     @Override
     public Stream<T> distinct() {
-        // TODO Auto-generated method stub
-        return null;
+        return chain(getDelegate().distinct());
     }
     
     @Override
     public Stream<T> sorted() {
-        // TODO Auto-generated method stub
-        return null;
+        return chain(getDelegate().sorted());
     }
     
     @Override
     public Stream<T> sorted(Comparator<? super T> comparator) {
-        // TODO Auto-generated method stub
-        return null;
+        return chain(getDelegate().sorted(comparator::compare));
     }
     
     @Override
     public Stream<T> peek(Consumer<? super T> action) {
-        // TODO Auto-generated method stub
-        return null;
+        return chain(getDelegate().peek(action::accept));
     }
     
     @Override
     public Stream<T> limit(long maxSize) {
-        // TODO Auto-generated method stub
-        return null;
+        return chain(getDelegate().limit(maxSize));
     }
     
     @Override
     public Stream<T> skip(long n) {
-        // TODO Auto-generated method stub
-        return null;
+        return chain(getDelegate().limit(n));
     }
     
     @Override
     public void forEach(Consumer<? super T> action) {
-        // TODO Auto-generated method stub
-        
+        launder(() -> getDelegate().forEach(action::accept));
     }
     
     @Override
     public void forEachOrdered(Consumer<? super T> action) {
-        // TODO Auto-generated method stub
-        
+        launder(() -> getDelegate().forEachOrdered(action::accept));
     }
     
     @Override
     public Object[] toArray() {
-        // TODO Auto-generated method stub
-        return null;
+        return launder((ThrowingSupplier<Object[], X>) getDelegate()::toArray);
     }
     
     @Override
     public <A> A[] toArray(IntFunction<A[]> generator) {
-        // TODO Auto-generated method stub
-        return null;
+        return launder(() -> getDelegate().toArray(generator));
     }
     
     @Override
     public T reduce(T identity, BinaryOperator<T> accumulator) {
-        // TODO Auto-generated method stub
-        return null;
+        return launder(() -> getDelegate().reduce(identity, accumulator::apply));
     }
     
     @Override
     public Optional<T> reduce(BinaryOperator<T> accumulator) {
-        // TODO Auto-generated method stub
-        return null;
+        return launder(() -> getDelegate().reduce(accumulator::apply));
     }
     
     @Override
     public <U> U reduce(U identity, BiFunction<U, ? super T, U> accumulator, BinaryOperator<U> combiner) {
-        // TODO Auto-generated method stub
-        return null;
+        return launder(() -> getDelegate().reduce(identity, accumulator::apply, combiner::apply));
     }
     
     @Override
     public <R> R collect(Supplier<R> supplier, BiConsumer<R, ? super T> accumulator, BiConsumer<R, R> combiner) {
-        // TODO Auto-generated method stub
-        return null;
+        return launder(() -> getDelegate().collect(supplier::get, accumulator::accept, combiner::accept));
     }
     
     @Override
     public <R, A> R collect(Collector<? super T, A, R> collector) {
-        // TODO Auto-generated method stub
-        return null;
+        return launder(() -> getDelegate().collect(create(collector)));
+    }
+    
+    private static <T, A, R, X extends Throwable> ThrowingCollector<T, A, R, X> create(Collector<T, A, R> collector) {
+        return new ThrowingCollector<T, A, R, X>() {
+            @Override
+            public ThrowingSupplier<A, X> supplier() {
+                return collector.supplier()::get;
+            }
+            
+            @Override
+            public ThrowingBiConsumer<A, T, X> accumulator() {
+                return collector.accumulator()::accept;
+            }
+            
+            @Override
+            public ThrowingBinaryOperator<A, X> combiner() {
+                return collector.combiner()::apply;
+            }
+            
+            @Override
+            public ThrowingFunction<A, R, X> finisher() {
+                return collector.finisher()::apply;
+            }
+            
+            @Override
+            public Set<Characteristics> characteristics() {
+                return collector.characteristics();
+            }
+        };
     }
     
     @Override
     public Optional<T> min(Comparator<? super T> comparator) {
-        // TODO Auto-generated method stub
-        return null;
+        return launder(() -> getDelegate().min(comparator::compare));
     }
     
     @Override
     public Optional<T> max(Comparator<? super T> comparator) {
-        // TODO Auto-generated method stub
-        return null;
+        return launder(() -> getDelegate().max(comparator::compare));
     }
     
     @Override
     public long count() {
-        // TODO Auto-generated method stub
-        return 0;
+        return launder(getDelegate()::count);
     }
     
     @Override
     public boolean anyMatch(Predicate<? super T> predicate) {
-        // TODO Auto-generated method stub
-        return false;
+        return launder(() -> getDelegate().anyMatch(predicate::test));
     }
     
     @Override
     public boolean allMatch(Predicate<? super T> predicate) {
-        // TODO Auto-generated method stub
-        return false;
+        return launder(() -> getDelegate().allMatch(predicate::test));
     }
     
     @Override
     public boolean noneMatch(Predicate<? super T> predicate) {
-        // TODO Auto-generated method stub
-        return false;
+        return launder(() -> getDelegate().noneMatch(predicate::test));
     }
     
     @Override
     public Optional<T> findFirst() {
-        // TODO Auto-generated method stub
-        return null;
+        return launder(getDelegate()::findFirst);
     }
     
     @Override
     public Optional<T> findAny() {
-        // TODO Auto-generated method stub
-        return null;
+        return launder(getDelegate()::findAny);
     }
 }

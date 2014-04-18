@@ -1,6 +1,7 @@
 package throwing.bridge;
 
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.function.IntFunction;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -72,8 +73,10 @@ class CheckedStream<T, X extends Throwable> extends CheckedBaseStream<T, X, Thro
     @Override
     public <R> ThrowingStream<R, X> flatMap(
             ThrowingFunction<? super T, ? extends ThrowingStream<? extends R, ? extends X>, ? extends X> mapper) {
-        // TODO Auto-generated method stub
-        return null;
+        @SuppressWarnings("unchecked") Function<? super ThrowingStream<? extends R, ? extends X>, ? extends Stream<? extends R>> c = s -> ThrowingBridge.of(
+                (ThrowingStream<? extends R, X>) s, getBridge().getExceptionClass());
+        ThrowingFunction<? super T, ? extends Stream<? extends R>, ? extends X> newMapper = mapper.andThen(c::apply);
+        return newStream(getDelegate().flatMap(getBridge().convert(newMapper)));
     }
     
     @Override

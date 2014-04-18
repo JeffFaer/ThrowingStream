@@ -1,6 +1,7 @@
 package throwing.bridge;
 
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.Spliterator;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -19,10 +20,12 @@ public final class ThrowingBridge {
     }
     
     public static <T, X extends Throwable> ThrowingStream<T, X> of(Stream<T> stream, Class<X> x) {
+        Objects.requireNonNull(x, "x");
         return of(stream, new FunctionBridge<>(x));
     }
     
     static <T, X extends Throwable> ThrowingStream<T, X> of(Stream<T> stream, FunctionBridge<X> x) {
+        Objects.requireNonNull(stream, "stream");
         return new CheckedStream<>(stream, x);
     }
     
@@ -31,10 +34,12 @@ public final class ThrowingBridge {
     }
     
     public static <X extends Throwable> ThrowingIntStream<X> of(IntStream stream, Class<X> x) {
+        Objects.requireNonNull(x, "x");
         return of(stream, new FunctionBridge<>(x));
     }
     
-    public static <X extends Throwable> ThrowingIntStream<X> of(IntStream stream, FunctionBridge<X> x) {
+    static <X extends Throwable> ThrowingIntStream<X> of(IntStream stream, FunctionBridge<X> x) {
+        Objects.requireNonNull(stream, "stream");
         return new CheckedIntStream<>(stream, x);
     }
     
@@ -43,10 +48,12 @@ public final class ThrowingBridge {
     }
     
     public static <T, X extends Throwable> ThrowingIterator<T, X> of(Iterator<T> itr, Class<X> x) {
+        Objects.requireNonNull(x, "x");
         return of(itr, new FunctionBridge<>(x));
     }
     
     static <T, X extends Throwable> ThrowingIterator<T, X> of(Iterator<T> itr, FunctionBridge<X> x) {
+        Objects.requireNonNull(itr, "itr");
         return new CheckedIterator<>(itr, x);
     }
     
@@ -55,11 +62,23 @@ public final class ThrowingBridge {
     }
     
     public static <T, X extends Throwable> ThrowingSpliterator<T, X> of(Spliterator<T> itr, Class<X> x) {
+        Objects.requireNonNull(x, "x");
         return of(itr, new FunctionBridge<>(x));
     }
     
     static <T, X extends Throwable> ThrowingSpliterator<T, X> of(Spliterator<T> itr, FunctionBridge<X> x) {
+        Objects.requireNonNull(itr, "itr");
         return new CheckedSpliterator<>(itr, x);
+    }
+    
+    public static <T> Stream<T> of(ThrowingStream<T, Nothing> stream) {
+        return of(stream, Nothing.class);
+    }
+    
+    public static <T, X extends Throwable> Stream<T> of(ThrowingStream<T, X> stream, Class<X> x) {
+        Objects.requireNonNull(stream, "stream");
+        Objects.requireNonNull(x, "x");
+        return new UncheckedStream<>(stream, x);
     }
     
     public static <T> Spliterator<T> of(ThrowingSpliterator<T, Nothing> itr) {
@@ -67,6 +86,7 @@ public final class ThrowingBridge {
     }
     
     static <T> Spliterator<T> unchecked(ThrowingSpliterator<T, ?> itr) {
+        Objects.requireNonNull(itr, "itr");
         return new UncheckedSpliterator<>(itr);
     }
     
@@ -75,6 +95,7 @@ public final class ThrowingBridge {
     }
     
     static <T> Iterator<T> unchecked(ThrowingIterator<T, ?> itr) {
+        Objects.requireNonNull(itr, "itr");
         return new UncheckedIterator<>(itr);
     }
 }

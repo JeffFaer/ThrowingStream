@@ -6,10 +6,10 @@ import java.util.stream.BaseStream;
 
 import throwing.stream.ThrowingBaseStream;
 
-abstract class UncheckedBaseStream<T, S extends BaseStream<T, S>, D extends ThrowingBaseStream<T, ?, D>> extends
-        UncheckedBridge<D, Throwable> implements BaseStream<T, S>, BaseStreamBridge<S, D> {
-    UncheckedBaseStream(D delegate) {
-        super(delegate, Throwable.class);
+abstract class UncheckedBaseStream<T, X extends Throwable, S extends BaseStream<T, S>, D extends ThrowingBaseStream<T, X, D>>
+        extends UncheckedBridge<D, X> implements BaseStream<T, S>, BaseStreamBridge<S, D> {
+    UncheckedBaseStream(D delegate, Class<X> x) {
+        super(delegate, x);
     }
     
     @Override
