@@ -81,6 +81,16 @@ public final class ThrowingBridge {
         return new UncheckedStream<>(stream, x);
     }
     
+    public static IntStream of(ThrowingIntStream<Nothing> stream) {
+        return of(stream, Nothing.class);
+    }
+    
+    public static <X extends Throwable> IntStream of(ThrowingIntStream<X> stream, Class<X> x) {
+        Objects.requireNonNull(stream, "stream");
+        Objects.requireNonNull(x, "x");
+        return new UncheckedIntStream<>(stream, x);
+    }
+    
     public static <T> Spliterator<T> of(ThrowingSpliterator<T, Nothing> itr) {
         return unchecked(itr);
     }

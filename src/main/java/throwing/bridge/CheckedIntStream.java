@@ -3,6 +3,7 @@ package throwing.bridge;
 import java.util.IntSummaryStatistics;
 import java.util.OptionalDouble;
 import java.util.OptionalInt;
+import java.util.function.Function;
 import java.util.stream.IntStream;
 
 import throwing.ThrowingIterator.OfInt;
@@ -80,8 +81,9 @@ class CheckedIntStream<X extends Throwable> extends CheckedBaseStream<Integer, X
     @Override
     public ThrowingIntStream<X> flatMap(
             ThrowingIntFunction<? extends ThrowingIntStream<? extends X>, ? extends X> mapper) {
-        // TODO Auto-generated method stub
-        return null;
+        @SuppressWarnings("unchecked") Function<? super ThrowingIntStream<? extends X>, ? extends IntStream> c = s -> ThrowingBridge.of(
+                (ThrowingIntStream<X>) s, getBridge().getExceptionClass());
+        return chain(getDelegate().flatMap(getBridge().convert(mapper.andThen(c::apply))));
     }
     
     @Override

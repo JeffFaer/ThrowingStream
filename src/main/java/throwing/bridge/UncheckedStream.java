@@ -26,9 +26,10 @@ import throwing.function.ThrowingBinaryOperator;
 import throwing.function.ThrowingFunction;
 import throwing.function.ThrowingSupplier;
 import throwing.stream.ThrowingCollector;
+import throwing.stream.ThrowingIntStream;
 import throwing.stream.ThrowingStream;
 
-class UncheckedStream<T, X extends Throwable> extends UncheckedBaseStream<T, X, Stream<T>, ThrowingStream<T,  X>>
+class UncheckedStream<T, X extends Throwable> extends UncheckedBaseStream<T, X, Stream<T>, ThrowingStream<T, X>>
         implements Stream<T> {
     UncheckedStream(ThrowingStream<T, X> delegate, Class<X> x) {
         super(delegate, x);
@@ -60,8 +61,7 @@ class UncheckedStream<T, X extends Throwable> extends UncheckedBaseStream<T, X, 
     
     @Override
     public IntStream mapToInt(ToIntFunction<? super T> mapper) {
-        // TODO Auto-generated method stub
-        return null;
+        return ThrowingBridge.of(getDelegate().mapToInt(mapper::applyAsInt), getExceptionClass());
     }
     
     @Override
@@ -78,18 +78,16 @@ class UncheckedStream<T, X extends Throwable> extends UncheckedBaseStream<T, X, 
     
     @Override
     public <R> Stream<R> flatMap(Function<? super T, ? extends Stream<? extends R>> mapper) {
-        return newStream(getDelegate().flatMap(toThrowingStream(mapper, getExceptionClass())::apply));
-    }
-    
-    private static <T, R, X extends Throwable> Function<? super T, ? extends ThrowingStream<? extends R, X>> toThrowingStream(
-            Function<? super T, ? extends Stream<? extends R>> mapper, Class<X> x) {
-        return mapper.andThen(s -> ThrowingBridge.of((Stream<? extends R>) s, x));
+        Function<? super T, ? extends ThrowingStream<? extends R, ? extends X>> f = mapper.andThen(s -> ThrowingBridge.of(
+                (Stream<? extends R>) s, getExceptionClass()));
+        return newStream(getDelegate().flatMap(f::apply));
     }
     
     @Override
     public IntStream flatMapToInt(Function<? super T, ? extends IntStream> mapper) {
-        // TODO Auto-generated method stub
-        return null;
+        Function<? super T, ? extends ThrowingIntStream<? extends X>> f = mapper.andThen(s -> ThrowingBridge.of(s,
+                getExceptionClass()));
+        return ThrowingBridge.of(getDelegate().flatMapToInt(f::apply), getExceptionClass());
     }
     
     @Override
