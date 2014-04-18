@@ -1,4 +1,4 @@
-package throwing;
+package throwing.bridge;
 
 import java.util.Comparator;
 import java.util.Set;
@@ -18,6 +18,7 @@ import java.util.function.Supplier;
 import java.util.function.ToIntFunction;
 import java.util.stream.Collector;
 
+import throwing.ThrowingComparator;
 import throwing.function.ThrowingBiConsumer;
 import throwing.function.ThrowingBiFunction;
 import throwing.function.ThrowingBinaryOperator;
@@ -34,46 +35,9 @@ import throwing.function.ThrowingSupplier;
 import throwing.function.ThrowingToIntFunction;
 import throwing.stream.ThrowingCollector;
 
-public class FunctionBridge<X extends Throwable> {
-    public static final class BridgeException extends RuntimeException {
-        private static final long serialVersionUID = -3986425123148316828L;
-        
-        BridgeException(Throwable cause) {
-            super(cause);
-        }
-    }
-    
-    private final Class<X> x;
-    
-    public FunctionBridge(Class<X> x) {
-        this.x = x;
-    }
-    
-    public Class<X> getExceptionClass() {
-        return x;
-    }
-    
-    private void launder(ThrowingRunnable<? extends X> r) {
-        launder(() -> {
-            r.run();
-            return null;
-        });
-    }
-    
-    private <R> R launder(ThrowingSupplier<R, ? extends X> supplier) {
-        try {
-            return supplier.get();
-        } catch (Throwable e) {
-            if (x.isInstance(e)) {
-                throw new BridgeException(e);
-            } else if (e instanceof RuntimeException) {
-                throw (RuntimeException) e;
-            } else if (e instanceof Error) {
-                throw (Error) e;
-            } else {
-                throw new AssertionError(e);
-            }
-        }
+class FunctionBridge<X extends Throwable> extends UncheckedBridge<Void, X> {
+    FunctionBridge(Class<X> x) {
+        super(null, x);
     }
     
     public <R> Supplier<R> convert(ThrowingSupplier<? extends R, ? extends X> supplier) {
@@ -111,6 +75,7 @@ public class FunctionBridge<X extends Throwable> {
     
     public <T, A, R> Collector<T, A, R> convert(ThrowingCollector<? super T, A, ? extends R, ? extends X> collector) {
         return new Collector<T, A, R>() {
+            
             @Override
             public Supplier<A> supplier() {
                 return convert(collector.supplier());

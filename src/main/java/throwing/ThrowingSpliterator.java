@@ -1,6 +1,5 @@
 package throwing;
 
-import java.util.Spliterator;
 import java.util.function.Consumer;
 
 import throwing.function.ThrowingConsumer;
@@ -33,8 +32,4 @@ public interface ThrowingSpliterator<T, X extends Throwable> {
     public long estimateSize();
     
     public int characteristics();
-    
-    public static <T, X extends Throwable> ThrowingSpliterator<T, X> of(Spliterator<T> bridged, FunctionBridge<X> bridge) {
-        return new SpliteratorBridge<>(bridged, bridge);
-    }
 }

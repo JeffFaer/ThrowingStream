@@ -12,14 +12,15 @@ import java.util.stream.Stream;
 import org.junit.Test;
 
 import throwing.Nothing;
+import throwing.bridge.ThrowingBridge;
 
 public class ThrowingStreamTest {
     public static final String MESSAGE = "Exceptional flow control";
-    public Stream<Integer> numbers = IntStream.range(0, 20).mapToObj(Integer::valueOf);
+    public Stream<Integer> numbers = IntStream.range(0, 20).boxed();
     
     @Test
     public void worksCorrectlyWithExceptions() {
-        ThrowingStream<Integer, Exception> s = ThrowingStream.of(numbers, Exception.class);
+        ThrowingStream<Integer, Exception> s = ThrowingBridge.of(numbers, Exception.class);
         
         List<Integer> collected = new ArrayList<>();
         Exception e = new Exception(MESSAGE);
@@ -42,7 +43,7 @@ public class ThrowingStreamTest {
     
     @Test
     public void worksCorrectlyWithoutExceptions() {
-        ThrowingStream<Integer, Nothing> s = ThrowingStream.of(numbers);
+        ThrowingStream<Integer, Nothing> s = ThrowingBridge.of(numbers);
         long l = s.filter(i -> i < 10).count();
         assertEquals(10, l);
     }

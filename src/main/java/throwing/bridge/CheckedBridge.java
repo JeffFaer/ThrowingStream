@@ -1,20 +1,13 @@
-package throwing;
+package throwing.bridge;
 
 import java.util.function.Supplier;
 
-import throwing.FunctionBridge.BridgeException;
-
-public abstract class CheckedExceptionBridge<D, X extends Throwable> {
-    private final D delegate;
+abstract class CheckedBridge<D, X extends Throwable> extends Bridge<D> {
     private final FunctionBridge<X> bridge;
     
-    protected CheckedExceptionBridge(D delegate, FunctionBridge<X> bridge) {
-        this.delegate = delegate;
+    CheckedBridge(D delegate, FunctionBridge<X> bridge) {
+        super(delegate);
         this.bridge = bridge;
-    }
-    
-    protected D getDelegate() {
-        return delegate;
     }
     
     protected FunctionBridge<X> getBridge() {
@@ -33,9 +26,12 @@ public abstract class CheckedExceptionBridge<D, X extends Throwable> {
             return supplier.get();
         } catch (Throwable t) {
             if (t instanceof BridgeException) {
-                throw bridge.getExceptionClass().cast(t.getCause());
-            } else if (bridge.getExceptionClass().isInstance(t)) {
-                throw bridge.getExceptionClass().cast(t);
+                Throwable cause = t.getCause();
+                if (getBridge().getExceptionClass().isInstance(cause)) {
+                    throw getBridge().getExceptionClass().cast(cause);
+                } else {
+                    throw t;
+                }
             } else if (t instanceof RuntimeException) {
                 throw (RuntimeException) t;
             } else if (t instanceof Error) {

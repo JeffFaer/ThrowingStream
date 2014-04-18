@@ -1,15 +1,14 @@
-package throwing.stream;
+package throwing.bridge;
 
 import java.util.stream.BaseStream;
 
-import throwing.CheckedExceptionBridge;
-import throwing.FunctionBridge;
 import throwing.ThrowingIterator;
 import throwing.ThrowingSpliterator;
+import throwing.stream.ThrowingBaseStream;
 
-abstract class BaseStreamBridge<T, X extends Throwable, S extends ThrowingBaseStream<T, X, S>, D extends BaseStream<T, D>>
-        extends CheckedExceptionBridge<D, X> implements ThrowingBaseStream<T, X, S> {
-    BaseStreamBridge(D delegate, FunctionBridge<X> bridge) {
+abstract class CheckedBaseStream<T, X extends Throwable, S extends ThrowingBaseStream<T, X, S>, D extends BaseStream<T, D>>
+        extends CheckedBridge<D, X> implements ThrowingBaseStream<T, X, S> {
+    CheckedBaseStream(D delegate, FunctionBridge<X> bridge) {
         super(delegate, bridge);
     }
     
@@ -27,12 +26,12 @@ abstract class BaseStreamBridge<T, X extends Throwable, S extends ThrowingBaseSt
     
     @Override
     public ThrowingIterator<T, X> iterator() {
-        return ThrowingIterator.of(getDelegate().iterator(), getBridge());
+        return ThrowingBridge.of(getDelegate().iterator(), getBridge());
     }
     
     @Override
     public ThrowingSpliterator<T, X> spliterator() {
-        return ThrowingSpliterator.of(getDelegate().spliterator(), getBridge());
+        return ThrowingBridge.of(getDelegate().spliterator(), getBridge());
     }
     
     @Override

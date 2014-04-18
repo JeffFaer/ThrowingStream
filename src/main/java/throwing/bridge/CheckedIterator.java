@@ -1,10 +1,12 @@
-package throwing;
+package throwing.bridge;
 
 import java.util.Iterator;
 
-class IteratorBridge<E, X extends Throwable> extends CheckedExceptionBridge<Iterator<E>, X> implements
+import throwing.ThrowingIterator;
+
+class CheckedIterator<E, X extends Throwable> extends CheckedBridge<Iterator<E>, X> implements
         ThrowingIterator<E, X> {
-    IteratorBridge(Iterator<E> delegate, FunctionBridge<X> bridge) {
+    CheckedIterator(Iterator<E> delegate, FunctionBridge<X> bridge) {
         super(delegate, bridge);
     }
     

@@ -4,8 +4,6 @@ import java.util.Optional;
 import java.util.function.IntFunction;
 import java.util.stream.Stream;
 
-import throwing.FunctionBridge;
-import throwing.Nothing;
 import throwing.ThrowingComparator;
 import throwing.function.ThrowingBiConsumer;
 import throwing.function.ThrowingBiFunction;
@@ -101,16 +99,4 @@ public interface ThrowingStream<T, X extends Throwable> extends ThrowingBaseStre
     public Optional<T> findFirst() throws X;
     
     public Optional<T> findAny() throws X;
-    
-    public static <T> ThrowingStream<T, Nothing> of(Stream<T> stream) {
-        return of(stream, Nothing.class);
-    }
-    
-    public static <T, X extends Throwable> ThrowingStream<T, X> of(Stream<T> stream, Class<X> x) {
-        return of(stream, new FunctionBridge<>(x));
-    }
-    
-    public static <T, X extends Throwable> ThrowingStream<T, X> of(Stream<T> stream, FunctionBridge<X> bridge) {
-        return new StreamBridge<>(stream, bridge);
-    }
 }

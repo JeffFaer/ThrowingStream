@@ -1,13 +1,14 @@
-package throwing;
+package throwing.bridge;
 
 import java.util.Spliterator;
 import java.util.function.Consumer;
 
+import throwing.ThrowingSpliterator;
 import throwing.function.ThrowingConsumer;
 
-class SpliteratorBridge<T, X extends Throwable> extends CheckedExceptionBridge<Spliterator<T>, X> implements
+class CheckedSpliterator<T, X extends Throwable> extends CheckedBridge<Spliterator<T>, X> implements
         ThrowingSpliterator<T, X> {
-    SpliteratorBridge(Spliterator<T> delegate, FunctionBridge<X> bridge) {
+    CheckedSpliterator(Spliterator<T> delegate, FunctionBridge<X> bridge) {
         super(delegate, bridge);
     }
     
@@ -23,7 +24,7 @@ class SpliteratorBridge<T, X extends Throwable> extends CheckedExceptionBridge<S
     
     @Override
     public ThrowingSpliterator<T, X> trySplit() {
-        return new SpliteratorBridge<>(getDelegate().trySplit(), getBridge());
+        return new CheckedSpliterator<>(getDelegate().trySplit(), getBridge());
     }
     
     @Override

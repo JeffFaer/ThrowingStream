@@ -1,11 +1,10 @@
-package throwing.stream;
+package throwing.bridge;
 
 import java.util.IntSummaryStatistics;
 import java.util.OptionalDouble;
 import java.util.OptionalInt;
 import java.util.stream.IntStream;
 
-import throwing.FunctionBridge;
 import throwing.ThrowingIterator.OfInt;
 import throwing.ThrowingSpliterator;
 import throwing.function.ThrowingBiConsumer;
@@ -18,10 +17,14 @@ import throwing.function.ThrowingIntToLongFunction;
 import throwing.function.ThrowingIntUnaryOperator;
 import throwing.function.ThrowingObjIntConsumer;
 import throwing.function.ThrowingSupplier;
+import throwing.stream.ThrowingDoubleStream;
+import throwing.stream.ThrowingIntStream;
+import throwing.stream.ThrowingLongStream;
+import throwing.stream.ThrowingStream;
 
-class IntStreamBridge<X extends Throwable> extends BaseStreamBridge<Integer, X, ThrowingIntStream<X>, IntStream>
+class CheckedIntStream<X extends Throwable> extends CheckedBaseStream<Integer, X, ThrowingIntStream<X>, IntStream>
         implements ThrowingIntStream<X> {
-    IntStreamBridge(IntStream delegate, FunctionBridge<X> bridge) {
+    CheckedIntStream(IntStream delegate, FunctionBridge<X> bridge) {
         super(delegate, bridge);
     }
     
@@ -32,7 +35,7 @@ class IntStreamBridge<X extends Throwable> extends BaseStreamBridge<Integer, X, 
     
     @Override
     protected ThrowingIntStream<X> updateStream(IntStream delegate) {
-        return new IntStreamBridge<>(delegate, getBridge());
+        return new CheckedIntStream<>(delegate, getBridge());
     }
     
     @Override
@@ -59,7 +62,7 @@ class IntStreamBridge<X extends Throwable> extends BaseStreamBridge<Integer, X, 
     
     @Override
     public <U> ThrowingStream<U, X> mapToObj(ThrowingIntFunction<? extends U, ? extends X> mapper) {
-        return ThrowingStream.of(getDelegate().mapToObj(getBridge().convert(mapper)), getBridge());
+        return ThrowingBridge.of(getDelegate().mapToObj(getBridge().convert(mapper)), getBridge());
     }
     
     @Override
@@ -207,6 +210,6 @@ class IntStreamBridge<X extends Throwable> extends BaseStreamBridge<Integer, X, 
     
     @Override
     public ThrowingStream<Integer, X> boxed() {
-        return ThrowingStream.of(getDelegate().boxed(), getBridge());
+        return ThrowingBridge.of(getDelegate().boxed(), getBridge());
     }
 }

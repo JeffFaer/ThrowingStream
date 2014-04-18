@@ -1,11 +1,10 @@
-package throwing.stream;
+package throwing.bridge;
 
 import java.util.Optional;
 import java.util.function.IntFunction;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-import throwing.FunctionBridge;
 import throwing.ThrowingComparator;
 import throwing.function.ThrowingBiConsumer;
 import throwing.function.ThrowingBiFunction;
@@ -17,10 +16,15 @@ import throwing.function.ThrowingSupplier;
 import throwing.function.ThrowingToDoubleFunction;
 import throwing.function.ThrowingToIntFunction;
 import throwing.function.ThrowingToLongFunction;
+import throwing.stream.ThrowingCollector;
+import throwing.stream.ThrowingDoubleStream;
+import throwing.stream.ThrowingIntStream;
+import throwing.stream.ThrowingLongStream;
+import throwing.stream.ThrowingStream;
 
-class StreamBridge<T, X extends Throwable> extends BaseStreamBridge<T, X, ThrowingStream<T, X>, Stream<T>> implements
+class CheckedStream<T, X extends Throwable> extends CheckedBaseStream<T, X, ThrowingStream<T, X>, Stream<T>> implements
         ThrowingStream<T, X> {
-    StreamBridge(Stream<T> delegate, FunctionBridge<X> bridge) {
+    CheckedStream(Stream<T> delegate, FunctionBridge<X> bridge) {
         super(delegate, bridge);
     }
     
@@ -35,7 +39,7 @@ class StreamBridge<T, X extends Throwable> extends BaseStreamBridge<T, X, Throwi
     }
     
     private <R> ThrowingStream<R, X> newStream(Stream<R> delegate) {
-        return new StreamBridge<>(delegate, getBridge());
+        return new CheckedStream<>(delegate, getBridge());
     }
     
     @Override
@@ -50,7 +54,7 @@ class StreamBridge<T, X extends Throwable> extends BaseStreamBridge<T, X, Throwi
     
     @Override
     public ThrowingIntStream<X> mapToInt(ThrowingToIntFunction<? super T, ? extends X> mapper) {
-        return ThrowingIntStream.of(getDelegate().mapToInt(getBridge().convert(mapper)), getBridge());
+        return ThrowingBridge.of(getDelegate().mapToInt(getBridge().convert(mapper)), getBridge());
     }
     
     @Override
