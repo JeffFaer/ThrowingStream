@@ -7,22 +7,10 @@ import throwing.ThrowingSpliterator;
 import throwing.stream.ThrowingBaseStream;
 
 abstract class CheckedBaseStream<T, X extends Throwable, S extends ThrowingBaseStream<T, X, S>, D extends BaseStream<T, D>>
-        extends CheckedBridge<D, X> implements ThrowingBaseStream<T, X, S> {
+        extends CheckedBridge<D, X> implements ThrowingBaseStream<T, X, S>, BaseStreamBridge<S, D> {
     CheckedBaseStream(D delegate, FunctionBridge<X> bridge) {
         super(delegate, bridge);
     }
-    
-    protected S chain(D newDelegate) {
-        if (newDelegate == getDelegate()) {
-            return getStream();
-        } else {
-            return updateStream(newDelegate);
-        }
-    }
-    
-    protected abstract S getStream();
-    
-    protected abstract S updateStream(D delegate);
     
     @Override
     public ThrowingIterator<T, X> iterator() {

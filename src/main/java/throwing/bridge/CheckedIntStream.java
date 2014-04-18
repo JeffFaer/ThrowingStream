@@ -29,12 +29,12 @@ class CheckedIntStream<X extends Throwable> extends CheckedBaseStream<Integer, X
     }
     
     @Override
-    protected ThrowingIntStream<X> getStream() {
+    public ThrowingIntStream<X> getSelf() {
         return this;
     }
     
     @Override
-    protected ThrowingIntStream<X> updateStream(IntStream delegate) {
+    public ThrowingIntStream<X> createNewStream(IntStream delegate) {
         return new CheckedIntStream<>(delegate, getBridge());
     }
     

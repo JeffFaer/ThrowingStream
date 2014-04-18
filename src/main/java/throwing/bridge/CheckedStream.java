@@ -29,12 +29,12 @@ class CheckedStream<T, X extends Throwable> extends CheckedBaseStream<T, X, Thro
     }
     
     @Override
-    protected ThrowingStream<T, X> getStream() {
+    public ThrowingStream<T, X> getSelf() {
         return this;
     }
     
     @Override
-    protected ThrowingStream<T, X> updateStream(Stream<T> delegate) {
+    public ThrowingStream<T, X> createNewStream(Stream<T> delegate) {
         return newStream(delegate);
     }
     

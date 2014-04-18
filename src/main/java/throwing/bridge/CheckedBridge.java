@@ -2,7 +2,7 @@ package throwing.bridge;
 
 import java.util.function.Supplier;
 
-abstract class CheckedBridge<D, X extends Throwable> extends Bridge<D> {
+abstract class CheckedBridge<D, X extends Throwable> extends AbstractBridge<D> {
     private final FunctionBridge<X> bridge;
     
     CheckedBridge(D delegate, FunctionBridge<X> bridge) {

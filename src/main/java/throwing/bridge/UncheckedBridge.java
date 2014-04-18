@@ -3,7 +3,7 @@ package throwing.bridge;
 import throwing.ThrowingRunnable;
 import throwing.function.ThrowingSupplier;
 
-class UncheckedBridge<D, X extends Throwable> extends Bridge<D> {
+class UncheckedBridge<D, X extends Throwable> extends AbstractBridge<D> {
     private final Class<X> x;
     
     UncheckedBridge(D delegate, Class<X> x) {
