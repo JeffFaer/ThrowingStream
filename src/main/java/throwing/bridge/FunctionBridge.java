@@ -11,11 +11,20 @@ import java.util.function.IntBinaryOperator;
 import java.util.function.IntConsumer;
 import java.util.function.IntFunction;
 import java.util.function.IntPredicate;
+import java.util.function.IntToLongFunction;
 import java.util.function.IntUnaryOperator;
+import java.util.function.LongBinaryOperator;
+import java.util.function.LongConsumer;
+import java.util.function.LongFunction;
+import java.util.function.LongPredicate;
+import java.util.function.LongToIntFunction;
+import java.util.function.LongUnaryOperator;
 import java.util.function.ObjIntConsumer;
+import java.util.function.ObjLongConsumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.function.ToIntFunction;
+import java.util.function.ToLongFunction;
 import java.util.stream.Collector;
 
 import throwing.ThrowingComparator;
@@ -28,11 +37,20 @@ import throwing.function.ThrowingIntBinaryOperator;
 import throwing.function.ThrowingIntConsumer;
 import throwing.function.ThrowingIntFunction;
 import throwing.function.ThrowingIntPredicate;
+import throwing.function.ThrowingIntToLongFunction;
 import throwing.function.ThrowingIntUnaryOperator;
+import throwing.function.ThrowingLongBinaryOperator;
+import throwing.function.ThrowingLongConsumer;
+import throwing.function.ThrowingLongFunction;
+import throwing.function.ThrowingLongPredicate;
+import throwing.function.ThrowingLongToIntFunction;
+import throwing.function.ThrowingLongUnaryOperator;
 import throwing.function.ThrowingObjIntConsumer;
+import throwing.function.ThrowingObjLongConsumer;
 import throwing.function.ThrowingPredicate;
 import throwing.function.ThrowingSupplier;
 import throwing.function.ThrowingToIntFunction;
+import throwing.function.ThrowingToLongFunction;
 import throwing.stream.ThrowingCollector;
 
 class FunctionBridge<X extends Throwable> extends UncheckedBridge<Void, X> {
@@ -103,6 +121,8 @@ class FunctionBridge<X extends Throwable> extends UncheckedBridge<Void, X> {
         };
     }
     
+    // int
+    
     public IntConsumer convert(ThrowingIntConsumer<? extends X> consumer) {
         return i -> launder(() -> consumer.accept(i));
     }
@@ -129,5 +149,43 @@ class FunctionBridge<X extends Throwable> extends UncheckedBridge<Void, X> {
     
     public <T> ToIntFunction<T> convert(ThrowingToIntFunction<T, ? extends X> function) {
         return t -> launder(() -> function.applyAsInt(t));
+    }
+    
+    public IntToLongFunction convert(ThrowingIntToLongFunction<? extends X> function) {
+        return i -> launder(() -> function.applyAsLong(i));
+    }
+    
+    // long
+    
+    public LongConsumer convert(ThrowingLongConsumer<? extends X> consumer) {
+        return i -> launder(() -> consumer.accept(i));
+    }
+    
+    public LongPredicate convert(ThrowingLongPredicate<? extends X> predicate) {
+        return i -> launder(() -> predicate.test(i));
+    }
+    
+    public LongBinaryOperator convert(ThrowingLongBinaryOperator<? extends X> operator) {
+        return (i1, i2) -> launder(() -> operator.applyAsLong(i1, i2));
+    }
+    
+    public <T> ObjLongConsumer<T> convert(ThrowingObjLongConsumer<T, ? extends X> consumer) {
+        return (t, i) -> launder(() -> consumer.accept(t, i));
+    }
+    
+    public LongUnaryOperator convert(ThrowingLongUnaryOperator<? extends X> operator) {
+        return i -> launder(() -> operator.applyAsLong(i));
+    }
+    
+    public <R> LongFunction<R> convert(ThrowingLongFunction<R, ? extends X> function) {
+        return i -> launder(() -> function.apply(i));
+    }
+    
+    public <T> ToLongFunction<T> convert(ThrowingToLongFunction<T, ? extends X> function) {
+        return t -> launder(() -> function.applyAsLong(t));
+    }
+    
+    public LongToIntFunction convert(ThrowingLongToIntFunction<? extends X> function) {
+        return l -> launder(() -> function.applyAsInt(l));
     }
 }

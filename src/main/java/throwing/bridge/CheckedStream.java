@@ -5,6 +5,7 @@ import java.util.function.Function;
 import java.util.function.IntFunction;
 import java.util.function.Supplier;
 import java.util.stream.IntStream;
+import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
 import throwing.ThrowingComparator;
@@ -61,8 +62,7 @@ class CheckedStream<T, X extends Throwable> extends CheckedBaseStream<T, X, Thro
     
     @Override
     public ThrowingLongStream<X> mapToLong(ThrowingToLongFunction<? super T, ? extends X> mapper) {
-        // TODO Auto-generated method stub
-        return null;
+        return ThrowingBridge.of(getDelegate().mapToLong(getBridge().convert(mapper)), getBridge());
     }
     
     @Override
@@ -90,8 +90,10 @@ class CheckedStream<T, X extends Throwable> extends CheckedBaseStream<T, X, Thro
     @Override
     public ThrowingLongStream<X> flatMapToLong(
             ThrowingFunction<? super T, ? extends ThrowingLongStream<? extends X>, ? extends X> mapper) {
-        // TODO Auto-generated method stub
-        return null;
+        @SuppressWarnings("unchecked") Function<? super ThrowingLongStream<? extends X>, ? extends LongStream> c = s -> ThrowingBridge.of(
+                (ThrowingLongStream<X>) s, getBridge().getExceptionClass());
+        return ThrowingBridge.of(getDelegate().flatMapToLong(getBridge().convert(mapper.andThen(c::apply))),
+                getBridge());
     }
     
     @Override

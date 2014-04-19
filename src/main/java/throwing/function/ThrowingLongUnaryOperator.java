@@ -2,5 +2,5 @@ package throwing.function;
 
 @FunctionalInterface
 public interface ThrowingLongUnaryOperator<X extends Throwable> {
-    public long applyAsDouble(long operand) throws X;
+    public long applyAsLong(long operand) throws X;
 }

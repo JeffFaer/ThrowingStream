@@ -27,6 +27,7 @@ import throwing.function.ThrowingFunction;
 import throwing.function.ThrowingSupplier;
 import throwing.stream.ThrowingCollector;
 import throwing.stream.ThrowingIntStream;
+import throwing.stream.ThrowingLongStream;
 import throwing.stream.ThrowingStream;
 
 class UncheckedStream<T, X extends Throwable> extends UncheckedBaseStream<T, X, Stream<T>, ThrowingStream<T, X>>
@@ -66,8 +67,7 @@ class UncheckedStream<T, X extends Throwable> extends UncheckedBaseStream<T, X, 
     
     @Override
     public LongStream mapToLong(ToLongFunction<? super T> mapper) {
-        // TODO Auto-generated method stub
-        return null;
+        return ThrowingBridge.of(getDelegate().mapToLong(mapper::applyAsLong), getExceptionClass());
     }
     
     @Override
@@ -92,8 +92,9 @@ class UncheckedStream<T, X extends Throwable> extends UncheckedBaseStream<T, X, 
     
     @Override
     public LongStream flatMapToLong(Function<? super T, ? extends LongStream> mapper) {
-        // TODO Auto-generated method stub
-        return null;
+        Function<? super T, ? extends ThrowingLongStream<? extends X>> f = mapper.andThen(s -> ThrowingBridge.of(s,
+                getExceptionClass()));
+        return ThrowingBridge.of(getDelegate().flatMapToLong(f::apply), getExceptionClass());
     }
     
     @Override
