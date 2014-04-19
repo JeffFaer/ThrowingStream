@@ -7,35 +7,34 @@ import static org.junit.Assert.fail;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 import org.junit.Test;
 
 import throwing.Nothing;
 import throwing.bridge.ThrowingBridge;
+import throwing.function.ThrowingIntPredicate;
 
 public class ThrowingStreamTest {
-    public static final String MESSAGE = "Exceptional flow control";
-    public Stream<Integer> numbers = IntStream.range(0, 20).boxed();
+    public IntStream numbers = IntStream.range(0, 20);
     
     @Test
     public void worksCorrectlyWithExceptions() {
-        ThrowingStream<Integer, Exception> s = ThrowingBridge.of(numbers, Exception.class);
+        ThrowingIntStream<Exception> s = ThrowingBridge.of(numbers, Exception.class);
         
         List<Integer> collected = new ArrayList<>();
-        Exception e = new Exception(MESSAGE);
+        Exception e = new Exception();
+        ThrowingIntPredicate<Exception> p = i -> {
+            if (i >= 10) {
+                throw e;
+            } else {
+                return true;
+            }
+        };
         try {
-            s.filter(i -> {
-                if (i >= 10) {
-                    throw e;
-                } else {
-                    return true;
-                }
-            }).forEach(collected::add);
+            s.filter(p).forEach(collected::add);
             fail();
         } catch (Exception e2) {
             assertSame(e, e2);
-            assertEquals(MESSAGE, e.getMessage());
         }
         
         assertEquals(10, collected.size());
@@ -43,8 +42,29 @@ public class ThrowingStreamTest {
     
     @Test
     public void worksCorrectlyWithoutExceptions() {
-        ThrowingStream<Integer, Nothing> s = ThrowingBridge.of(numbers);
+        ThrowingIntStream<Nothing> s = ThrowingBridge.of(numbers);
         long l = s.filter(i -> i < 10).count();
         assertEquals(10, l);
+    }
+    
+    @Test
+    public void flatMapExceptionsAreHandledCorrectly() {
+        ThrowingIntStream<Exception> s = ThrowingBridge.of(numbers, Exception.class);
+        
+        List<Integer> collected = new ArrayList<>();
+        Exception e = new Exception();
+        try {
+            s.flatMap(i -> {
+                if (i >= 10) {
+                    throw e;
+                }
+                return ThrowingBridge.of(IntStream.of(i), Exception.class);
+            }).forEach(collected::add);
+            fail();
+        } catch (Exception e2) {
+            assertSame(e, e2);
+        }
+        
+        assertEquals(10, collected.size());
     }
 }
