@@ -3,7 +3,10 @@ package throwing.bridge;
 import java.util.Iterator;
 import java.util.Objects;
 import java.util.PrimitiveIterator;
+import java.util.Set;
 import java.util.Spliterator;
+import java.util.stream.Collector;
+import java.util.stream.Collector.Characteristics;
 import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
@@ -12,6 +15,11 @@ import java.util.stream.Stream;
 import throwing.Nothing;
 import throwing.ThrowingIterator;
 import throwing.ThrowingSpliterator;
+import throwing.function.ThrowingBiConsumer;
+import throwing.function.ThrowingBinaryOperator;
+import throwing.function.ThrowingFunction;
+import throwing.function.ThrowingSupplier;
+import throwing.stream.ThrowingCollector;
 import throwing.stream.ThrowingDoubleStream;
 import throwing.stream.ThrowingIntStream;
 import throwing.stream.ThrowingLongStream;
@@ -214,6 +222,35 @@ public final class ThrowingBridge {
     static <X extends Throwable> ThrowingSpliterator.OfDouble<X> of(Spliterator.OfDouble itr, FunctionBridge<X> x) {
         Objects.requireNonNull(itr, "itr");
         return new CheckedSpliterator.OfDouble<>(itr, x);
+    }
+    
+    public static <T, A, R, X extends Throwable> ThrowingCollector<T, A, R, X> of(Collector<T, A, R> collector) {
+        return new ThrowingCollector<T, A, R, X>() {
+            @Override
+            public ThrowingSupplier<A, X> supplier() {
+                return collector.supplier()::get;
+            }
+            
+            @Override
+            public ThrowingBiConsumer<A, T, X> accumulator() {
+                return collector.accumulator()::accept;
+            }
+            
+            @Override
+            public ThrowingBinaryOperator<A, X> combiner() {
+                return collector.combiner()::apply;
+            }
+            
+            @Override
+            public ThrowingFunction<A, R, X> finisher() {
+                return collector.finisher()::apply;
+            }
+            
+            @Override
+            public Set<Characteristics> characteristics() {
+                return collector.characteristics();
+            }
+        };
     }
     
     // unchecked

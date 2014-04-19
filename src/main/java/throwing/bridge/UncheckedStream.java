@@ -2,7 +2,6 @@ package throwing.bridge;
 
 import java.util.Comparator;
 import java.util.Optional;
-import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.BinaryOperator;
@@ -15,17 +14,12 @@ import java.util.function.ToDoubleFunction;
 import java.util.function.ToIntFunction;
 import java.util.function.ToLongFunction;
 import java.util.stream.Collector;
-import java.util.stream.Collector.Characteristics;
 import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
-import throwing.function.ThrowingBiConsumer;
-import throwing.function.ThrowingBinaryOperator;
-import throwing.function.ThrowingFunction;
 import throwing.function.ThrowingSupplier;
-import throwing.stream.ThrowingCollector;
 import throwing.stream.ThrowingDoubleStream;
 import throwing.stream.ThrowingIntStream;
 import throwing.stream.ThrowingLongStream;
@@ -176,36 +170,7 @@ class UncheckedStream<T, X extends Throwable> extends UncheckedBaseStream<T, X, 
     
     @Override
     public <R, A> R collect(Collector<? super T, A, R> collector) {
-        return launder(() -> getDelegate().collect(create(collector)));
-    }
-    
-    private static <T, A, R, X extends Throwable> ThrowingCollector<T, A, R, X> create(Collector<T, A, R> collector) {
-        return new ThrowingCollector<T, A, R, X>() {
-            @Override
-            public ThrowingSupplier<A, X> supplier() {
-                return collector.supplier()::get;
-            }
-            
-            @Override
-            public ThrowingBiConsumer<A, T, X> accumulator() {
-                return collector.accumulator()::accept;
-            }
-            
-            @Override
-            public ThrowingBinaryOperator<A, X> combiner() {
-                return collector.combiner()::apply;
-            }
-            
-            @Override
-            public ThrowingFunction<A, R, X> finisher() {
-                return collector.finisher()::apply;
-            }
-            
-            @Override
-            public Set<Characteristics> characteristics() {
-                return collector.characteristics();
-            }
-        };
+        return launder(() -> getDelegate().collect(ThrowingBridge.of(collector)));
     }
     
     @Override

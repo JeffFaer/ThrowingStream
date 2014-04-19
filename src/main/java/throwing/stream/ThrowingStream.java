@@ -2,9 +2,11 @@ package throwing.stream;
 
 import java.util.Optional;
 import java.util.function.IntFunction;
+import java.util.stream.Collector;
 import java.util.stream.Stream;
 
 import throwing.ThrowingComparator;
+import throwing.bridge.ThrowingBridge;
 import throwing.function.ThrowingBiConsumer;
 import throwing.function.ThrowingBiFunction;
 import throwing.function.ThrowingBinaryOperator;
@@ -83,6 +85,10 @@ public interface ThrowingStream<T, X extends Throwable> extends ThrowingBaseStre
         throws X;
     
     public <R, A> R collect(ThrowingCollector<? super T, A, R, ? extends X> collector) throws X;
+    
+    default public <R, A> R collect(Collector<? super T, A, R> collector) throws X {
+        return collect(ThrowingBridge.of(collector));
+    }
     
     public Optional<T> min(ThrowingComparator<? super T, ? extends X> comparator) throws X;
     
