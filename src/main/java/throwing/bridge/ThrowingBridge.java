@@ -5,6 +5,10 @@ import java.util.Objects;
 import java.util.PrimitiveIterator;
 import java.util.Set;
 import java.util.Spliterator;
+import java.util.function.BiConsumer;
+import java.util.function.BinaryOperator;
+import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Collector.Characteristics;
 import java.util.stream.DoubleStream;
@@ -225,6 +229,7 @@ public final class ThrowingBridge {
     }
     
     public static <T, A, R, X extends Throwable> ThrowingCollector<T, A, R, X> of(Collector<T, A, R> collector) {
+        Objects.requireNonNull(collector);
         return new ThrowingCollector<T, A, R, X>() {
             @Override
             public ThrowingSupplier<A, X> supplier() {
@@ -391,5 +396,42 @@ public final class ThrowingBridge {
     static <X extends Throwable> PrimitiveIterator.OfDouble of(ThrowingIterator.OfDouble<X> itr, Class<X> x) {
         Objects.requireNonNull(itr, "itr");
         return new UncheckedIterator.OfDouble<>(itr, x);
+    }
+    
+    public static <T, A, R, X extends Throwable> Collector<T, A, R> of(ThrowingCollector<T, A, R, X> collector,
+            Class<X> x) {
+        Objects.requireNonNull(x, "x");
+        return of(collector, new FunctionBridge<>(x));
+    }
+    
+    static <T, A, R, X extends Throwable> Collector<T, A, R> of(ThrowingCollector<T, A, R, ? extends X> collector,
+            FunctionBridge<X> x) {
+        Objects.requireNonNull(collector);
+        return new Collector<T, A, R>() {
+            @Override
+            public Supplier<A> supplier() {
+                return x.convert(collector.supplier());
+            }
+            
+            @Override
+            public BiConsumer<A, T> accumulator() {
+                return x.convert(collector.accumulator());
+            }
+            
+            @Override
+            public BinaryOperator<A> combiner() {
+                return x.convert(collector.combiner());
+            }
+            
+            @Override
+            public Function<A, R> finisher() {
+                return x.convert(collector.finisher());
+            }
+            
+            @Override
+            public Set<Collector.Characteristics> characteristics() {
+                return collector.characteristics();
+            }
+        };
     }
 }

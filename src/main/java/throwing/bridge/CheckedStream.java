@@ -182,7 +182,7 @@ class CheckedStream<T, X extends Throwable> extends CheckedBaseStream<T, X, Thro
     
     @Override
     public <R, A> R collect(ThrowingCollector<? super T, A, R, ? extends X> collector) throws X {
-        return filterBridgeException(() -> getDelegate().collect(getBridge().convert(collector)));
+        return filterBridgeException(() -> getDelegate().collect(ThrowingBridge.of(collector, getBridge())));
     }
     
     @Override

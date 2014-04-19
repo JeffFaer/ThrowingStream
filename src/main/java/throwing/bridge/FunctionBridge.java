@@ -1,7 +1,6 @@
 package throwing.bridge;
 
 import java.util.Comparator;
-import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.BinaryOperator;
@@ -36,7 +35,6 @@ import java.util.function.Supplier;
 import java.util.function.ToDoubleFunction;
 import java.util.function.ToIntFunction;
 import java.util.function.ToLongFunction;
-import java.util.stream.Collector;
 
 import throwing.ThrowingComparator;
 import throwing.function.ThrowingBiConsumer;
@@ -73,7 +71,6 @@ import throwing.function.ThrowingSupplier;
 import throwing.function.ThrowingToDoubleFunction;
 import throwing.function.ThrowingToIntFunction;
 import throwing.function.ThrowingToLongFunction;
-import throwing.stream.ThrowingCollector;
 
 class FunctionBridge<X extends Throwable> extends UncheckedBridge<Void, X> {
     FunctionBridge(Class<X> x) {
@@ -111,36 +108,6 @@ class FunctionBridge<X extends Throwable> extends UncheckedBridge<Void, X> {
     
     public <T, U> BiConsumer<T, U> convert(ThrowingBiConsumer<? super T, ? super U, ? extends X> consumer) {
         return (t, u) -> launder(() -> consumer.accept(t, u));
-    }
-    
-    public <T, A, R> Collector<T, A, R> convert(ThrowingCollector<? super T, A, ? extends R, ? extends X> collector) {
-        return new Collector<T, A, R>() {
-            
-            @Override
-            public Supplier<A> supplier() {
-                return convert(collector.supplier());
-            }
-            
-            @Override
-            public BiConsumer<A, T> accumulator() {
-                return convert(collector.accumulator());
-            }
-            
-            @Override
-            public BinaryOperator<A> combiner() {
-                return convert(collector.combiner());
-            }
-            
-            @Override
-            public Function<A, R> finisher() {
-                return convert(collector.finisher());
-            }
-            
-            @Override
-            public Set<Collector.Characteristics> characteristics() {
-                return collector.characteristics();
-            }
-        };
     }
     
     // int
