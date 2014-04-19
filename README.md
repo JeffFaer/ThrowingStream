@@ -7,7 +7,7 @@ Example usage:
 
 ````
 Stream<String> names = Stream.of("java.lang.Object", "java.util.stream.Stream");
-ThrowingStream<String, ClassNotFoundException> s = ThrowingStream.of(names, ClassNotFoundException.class);
+ThrowingStream<String, ClassNotFoundException> s = ThrowingBridge.of(names, ClassNotFoundException.class);
 s.map(ClassLoader.getSystemClassLoader()::loadClass).forEach(System.out::println);
 ````
 
