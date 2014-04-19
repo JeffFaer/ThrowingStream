@@ -72,8 +72,7 @@ class UncheckedIntStream<X extends Throwable> extends UncheckedBaseStream<Intege
     
     @Override
     public DoubleStream mapToDouble(IntToDoubleFunction mapper) {
-        // TODO Auto-generated method stub
-        return null;
+        return ThrowingBridge.of(getDelegate().mapToDouble(mapper::applyAsDouble), getExceptionClass());
     }
     
     @Override
@@ -200,8 +199,7 @@ class UncheckedIntStream<X extends Throwable> extends UncheckedBaseStream<Intege
     
     @Override
     public DoubleStream asDoubleStream() {
-        // TODO Auto-generated method stub
-        return null;
+        return ThrowingBridge.of(getDelegate().asDoubleStream(), getExceptionClass());
     }
     
     @Override

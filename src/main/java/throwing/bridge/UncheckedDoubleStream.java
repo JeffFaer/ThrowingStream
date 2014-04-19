@@ -1,154 +1,153 @@
 package throwing.bridge;
 
-import java.util.LongSummaryStatistics;
+import java.util.DoubleSummaryStatistics;
 import java.util.OptionalDouble;
-import java.util.OptionalLong;
-import java.util.PrimitiveIterator.OfLong;
+import java.util.PrimitiveIterator.OfDouble;
 import java.util.Spliterator;
 import java.util.function.BiConsumer;
-import java.util.function.LongBinaryOperator;
-import java.util.function.LongConsumer;
-import java.util.function.LongFunction;
-import java.util.function.LongPredicate;
-import java.util.function.LongToDoubleFunction;
-import java.util.function.LongToIntFunction;
-import java.util.function.LongUnaryOperator;
-import java.util.function.ObjLongConsumer;
+import java.util.function.DoubleBinaryOperator;
+import java.util.function.DoubleConsumer;
+import java.util.function.DoubleFunction;
+import java.util.function.DoublePredicate;
+import java.util.function.DoubleToIntFunction;
+import java.util.function.DoubleToLongFunction;
+import java.util.function.DoubleUnaryOperator;
+import java.util.function.ObjDoubleConsumer;
 import java.util.function.Supplier;
 import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
-import throwing.stream.ThrowingLongStream;
+import throwing.stream.ThrowingDoubleStream;
 
-class UncheckedLongStream<X extends Throwable> extends UncheckedBaseStream<Long, X, LongStream, ThrowingLongStream<X>>
-        implements LongStream {
-    UncheckedLongStream(ThrowingLongStream<X> delegate, Class<X> x) {
+public class UncheckedDoubleStream<X extends Throwable> extends
+        UncheckedBaseStream<Double, X, DoubleStream, ThrowingDoubleStream<X>> implements DoubleStream {
+    UncheckedDoubleStream(ThrowingDoubleStream<X> delegate, Class<X> x) {
         super(delegate, x);
     }
     
     @Override
-    public LongStream getSelf() {
+    public DoubleStream getSelf() {
         return this;
     }
     
     @Override
-    public LongStream createNewStream(ThrowingLongStream<X> delegate) {
-        return new UncheckedLongStream<>(delegate, getExceptionClass());
+    public DoubleStream createNewStream(ThrowingDoubleStream<X> delegate) {
+        return new UncheckedDoubleStream<>(delegate, getExceptionClass());
     }
     
     @Override
-    public OfLong iterator() {
+    public OfDouble iterator() {
         // TODO Auto-generated method stub
         return null;
     }
     
     @Override
-    public Spliterator.OfLong spliterator() {
+    public Spliterator.OfDouble spliterator() {
         // TODO Auto-generated method stub
         return null;
     }
     
     @Override
-    public LongStream filter(LongPredicate predicate) {
+    public DoubleStream filter(DoublePredicate predicate) {
         return chain(getDelegate().filter(predicate::test));
     }
     
     @Override
-    public LongStream map(LongUnaryOperator mapper) {
-        return chain(getDelegate().map(mapper::applyAsLong));
+    public DoubleStream map(DoubleUnaryOperator mapper) {
+        return chain(getDelegate().map(mapper::applyAsDouble));
     }
     
     @Override
-    public <U> Stream<U> mapToObj(LongFunction<? extends U> mapper) {
+    public <U> Stream<U> mapToObj(DoubleFunction<? extends U> mapper) {
         return ThrowingBridge.of(getDelegate().mapToObj(mapper::apply), getExceptionClass());
     }
     
     @Override
-    public IntStream mapToInt(LongToIntFunction mapper) {
+    public IntStream mapToInt(DoubleToIntFunction mapper) {
         return ThrowingBridge.of(getDelegate().mapToInt(mapper::applyAsInt), getExceptionClass());
     }
     
     @Override
-    public DoubleStream mapToDouble(LongToDoubleFunction mapper) {
-        return ThrowingBridge.of(getDelegate().mapToDouble(mapper::applyAsDouble), getExceptionClass());
+    public LongStream mapToLong(DoubleToLongFunction mapper) {
+        return ThrowingBridge.of(getDelegate().mapToLong(mapper::applyAsLong), getExceptionClass());
     }
     
     @Override
-    public LongStream flatMap(LongFunction<? extends LongStream> mapper) {
-        LongFunction<? extends ThrowingLongStream<? extends X>> f = i -> ThrowingBridge.of(mapper.apply(i),
+    public DoubleStream flatMap(DoubleFunction<? extends DoubleStream> mapper) {
+        DoubleFunction<? extends ThrowingDoubleStream<? extends X>> f = i -> ThrowingBridge.of(mapper.apply(i),
                 getExceptionClass());
         return chain(getDelegate().flatMap(f::apply));
     }
     
     @Override
-    public LongStream distinct() {
+    public DoubleStream distinct() {
         return chain(getDelegate().distinct());
     }
     
     @Override
-    public LongStream sorted() {
+    public DoubleStream sorted() {
         return chain(getDelegate().sorted());
     }
     
     @Override
-    public LongStream peek(LongConsumer action) {
+    public DoubleStream peek(DoubleConsumer action) {
         return chain(getDelegate().peek(action::accept));
     }
     
     @Override
-    public LongStream limit(long maxSize) {
+    public DoubleStream limit(long maxSize) {
         return chain(getDelegate().limit(maxSize));
     }
     
     @Override
-    public LongStream skip(long n) {
+    public DoubleStream skip(long n) {
         return chain(getDelegate().skip(n));
     }
     
     @Override
-    public void forEach(LongConsumer action) {
+    public void forEach(DoubleConsumer action) {
         launder(() -> getDelegate().forEach(action::accept));
     }
     
     @Override
-    public void forEachOrdered(LongConsumer action) {
+    public void forEachOrdered(DoubleConsumer action) {
         launder(() -> getDelegate().forEachOrdered(action::accept));
     }
     
     @Override
-    public long[] toArray() {
+    public double[] toArray() {
         return launder(getDelegate()::toArray);
     }
     
     @Override
-    public long reduce(long identity, LongBinaryOperator op) {
-        return launder(() -> getDelegate().reduce(identity, op::applyAsLong));
+    public double reduce(double identity, DoubleBinaryOperator op) {
+        return launder(() -> getDelegate().reduce(identity, op::applyAsDouble));
     }
     
     @Override
-    public OptionalLong reduce(LongBinaryOperator op) {
-        return launder(() -> getDelegate().reduce(op::applyAsLong));
+    public OptionalDouble reduce(DoubleBinaryOperator op) {
+        return launder(() -> getDelegate().reduce(op::applyAsDouble));
     }
     
     @Override
-    public <R> R collect(Supplier<R> supplier, ObjLongConsumer<R> accumulator, BiConsumer<R, R> combiner) {
+    public <R> R collect(Supplier<R> supplier, ObjDoubleConsumer<R> accumulator, BiConsumer<R, R> combiner) {
         return launder(() -> getDelegate().collect(supplier::get, accumulator::accept, combiner::accept));
     }
     
     @Override
-    public long sum() {
+    public double sum() {
         return launder(getDelegate()::sum);
     }
     
     @Override
-    public OptionalLong min() {
+    public OptionalDouble min() {
         return launder(getDelegate()::min);
     }
     
     @Override
-    public OptionalLong max() {
+    public OptionalDouble max() {
         return launder(getDelegate()::max);
     }
     
@@ -163,42 +162,37 @@ class UncheckedLongStream<X extends Throwable> extends UncheckedBaseStream<Long,
     }
     
     @Override
-    public LongSummaryStatistics summaryStatistics() {
+    public DoubleSummaryStatistics summaryStatistics() {
         return launder(getDelegate()::summaryStatistics);
     }
     
     @Override
-    public boolean anyMatch(LongPredicate predicate) {
+    public boolean anyMatch(DoublePredicate predicate) {
         return launder(() -> getDelegate().anyMatch(predicate::test));
     }
     
     @Override
-    public boolean allMatch(LongPredicate predicate) {
+    public boolean allMatch(DoublePredicate predicate) {
         return launder(() -> getDelegate().allMatch(predicate::test));
     }
     
     @Override
-    public boolean noneMatch(LongPredicate predicate) {
+    public boolean noneMatch(DoublePredicate predicate) {
         return launder(() -> getDelegate().noneMatch(predicate::test));
     }
     
     @Override
-    public OptionalLong findFirst() {
+    public OptionalDouble findFirst() {
         return launder(getDelegate()::findFirst);
     }
     
     @Override
-    public OptionalLong findAny() {
+    public OptionalDouble findAny() {
         return launder(getDelegate()::findAny);
     }
     
     @Override
-    public DoubleStream asDoubleStream() {
-        return ThrowingBridge.of(getDelegate().asDoubleStream(), getExceptionClass());
-    }
-    
-    @Override
-    public Stream<Long> boxed() {
+    public Stream<Double> boxed() {
         return ThrowingBridge.of(getDelegate().boxed(), getExceptionClass());
     }
 }

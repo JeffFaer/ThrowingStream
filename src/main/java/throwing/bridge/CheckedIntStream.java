@@ -73,8 +73,7 @@ class CheckedIntStream<X extends Throwable> extends CheckedBaseStream<Integer, X
     
     @Override
     public ThrowingDoubleStream<X> mapToDouble(ThrowingIntToDoubleFunction<? extends X> mapper) {
-        // TODO Auto-generated method stub
-        return null;
+        return ThrowingBridge.of(getDelegate().mapToDouble(getBridge().convert(mapper)), getBridge());
     }
     
     @Override
@@ -204,8 +203,7 @@ class CheckedIntStream<X extends Throwable> extends CheckedBaseStream<Integer, X
     
     @Override
     public ThrowingDoubleStream<X> asDoubleStream() {
-        // TODO Auto-generated method stub
-        return null;
+        return ThrowingBridge.of(getDelegate().asDoubleStream(), getBridge());
     }
     
     @Override

@@ -4,6 +4,7 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.IntFunction;
 import java.util.function.Supplier;
+import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
@@ -67,8 +68,7 @@ class CheckedStream<T, X extends Throwable> extends CheckedBaseStream<T, X, Thro
     
     @Override
     public ThrowingDoubleStream<X> mapToDouble(ThrowingToDoubleFunction<? super T, ? extends X> mapper) {
-        // TODO Auto-generated method stub
-        return null;
+        return ThrowingBridge.of(getDelegate().mapToDouble(getBridge().convert(mapper)), getBridge());
     }
     
     @Override
@@ -99,8 +99,10 @@ class CheckedStream<T, X extends Throwable> extends CheckedBaseStream<T, X, Thro
     @Override
     public ThrowingDoubleStream<X> flatMapToDouble(
             ThrowingFunction<? super T, ? extends ThrowingDoubleStream<? extends X>, ? extends X> mapper) {
-        // TODO Auto-generated method stub
-        return null;
+        @SuppressWarnings("unchecked") Function<? super ThrowingDoubleStream<? extends X>, ? extends DoubleStream> c = s -> ThrowingBridge.of(
+                (ThrowingDoubleStream<X>) s, getBridge().getExceptionClass());
+        return ThrowingBridge.of(getDelegate().flatMapToDouble(getBridge().convert(mapper.andThen(c::apply))),
+                getBridge());
     }
     
     @Override

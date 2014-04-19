@@ -3,6 +3,7 @@ package throwing.bridge;
 import java.util.Iterator;
 import java.util.Objects;
 import java.util.Spliterator;
+import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
@@ -10,6 +11,7 @@ import java.util.stream.Stream;
 import throwing.Nothing;
 import throwing.ThrowingIterator;
 import throwing.ThrowingSpliterator;
+import throwing.stream.ThrowingDoubleStream;
 import throwing.stream.ThrowingIntStream;
 import throwing.stream.ThrowingLongStream;
 import throwing.stream.ThrowingStream;
@@ -65,6 +67,22 @@ public final class ThrowingBridge {
     static <X extends Throwable> ThrowingLongStream<X> of(LongStream stream, FunctionBridge<X> x) {
         Objects.requireNonNull(stream, "stream");
         return new CheckedLongStream<>(stream, x);
+    }
+    
+    // double stream
+    
+    public static ThrowingDoubleStream<Nothing> of(DoubleStream stream) {
+        return of(stream, Nothing.class);
+    }
+    
+    public static <X extends Throwable> ThrowingDoubleStream<X> of(DoubleStream stream, Class<X> x) {
+        Objects.requireNonNull(x, "x");
+        return of(stream, new FunctionBridge<>(x));
+    }
+    
+    static <X extends Throwable> ThrowingDoubleStream<X> of(DoubleStream stream, FunctionBridge<X> x) {
+        Objects.requireNonNull(stream, "stream");
+        return new CheckedDoubleStream<>(stream, x);
     }
     
     // utilities
@@ -133,6 +151,18 @@ public final class ThrowingBridge {
         Objects.requireNonNull(stream, "stream");
         Objects.requireNonNull(x, "x");
         return new UncheckedLongStream<>(stream, x);
+    }
+    
+    // double stream
+    
+    public static DoubleStream of(ThrowingDoubleStream<Nothing> stream) {
+        return of(stream, Nothing.class);
+    }
+    
+    static <X extends Throwable> DoubleStream of(ThrowingDoubleStream<X> stream, Class<X> x) {
+        Objects.requireNonNull(stream, "stream");
+        Objects.requireNonNull(x, "x");
+        return new UncheckedDoubleStream<>(stream, x);
     }
     
     // utilities

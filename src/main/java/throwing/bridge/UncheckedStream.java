@@ -26,6 +26,7 @@ import throwing.function.ThrowingBinaryOperator;
 import throwing.function.ThrowingFunction;
 import throwing.function.ThrowingSupplier;
 import throwing.stream.ThrowingCollector;
+import throwing.stream.ThrowingDoubleStream;
 import throwing.stream.ThrowingIntStream;
 import throwing.stream.ThrowingLongStream;
 import throwing.stream.ThrowingStream;
@@ -72,8 +73,7 @@ class UncheckedStream<T, X extends Throwable> extends UncheckedBaseStream<T, X, 
     
     @Override
     public DoubleStream mapToDouble(ToDoubleFunction<? super T> mapper) {
-        // TODO Auto-generated method stub
-        return null;
+        return ThrowingBridge.of(getDelegate().mapToDouble(mapper::applyAsDouble), getExceptionClass());
     }
     
     @Override
@@ -99,8 +99,9 @@ class UncheckedStream<T, X extends Throwable> extends UncheckedBaseStream<T, X, 
     
     @Override
     public DoubleStream flatMapToDouble(Function<? super T, ? extends DoubleStream> mapper) {
-        // TODO Auto-generated method stub
-        return null;
+        Function<? super T, ? extends ThrowingDoubleStream<? extends X>> f = mapper.andThen(s -> ThrowingBridge.of(s,
+                getExceptionClass()));
+        return ThrowingBridge.of(getDelegate().flatMapToDouble(f::apply), getExceptionClass());
     }
     
     @Override
