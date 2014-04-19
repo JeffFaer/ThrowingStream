@@ -40,14 +40,12 @@ class CheckedDoubleStream<X extends Throwable> extends
     
     @Override
     public OfDouble<X> iterator() {
-        // TODO Auto-generated method stub
-        return null;
+        return ThrowingBridge.of(getDelegate().iterator(), getBridge());
     }
     
     @Override
     public ThrowingSpliterator.OfDouble<X> spliterator() {
-        // TODO Auto-generated method stub
-        return null;
+        return ThrowingBridge.of(getDelegate().spliterator(), getBridge());
     }
     
     @Override

@@ -41,14 +41,12 @@ class CheckedLongStream<X extends Throwable> extends CheckedBaseStream<Long, X, 
     
     @Override
     public OfLong<X> iterator() {
-        // TODO Auto-generated method stub
-        return null;
+        return ThrowingBridge.of(getDelegate().iterator(), getBridge());
     }
     
     @Override
     public ThrowingSpliterator.OfLong<X> spliterator() {
-        // TODO Auto-generated method stub
-        return null;
+        return ThrowingBridge.of(getDelegate().spliterator(), getBridge());
     }
     
     @Override
