@@ -76,7 +76,7 @@ class CheckedStream<T, X extends Throwable> extends CheckedBaseStream<T, X, Thro
             ThrowingFunction<? super T, ? extends ThrowingStream<? extends R, ? extends X>, ? extends X> mapper) {
         @SuppressWarnings("unchecked") Function<? super ThrowingStream<? extends R, ? extends X>, ? extends Stream<? extends R>> c = s -> ThrowingBridge.of(
                 (ThrowingStream<? extends R, X>) s, getBridge().getExceptionClass());
-        return newStream(getDelegate().flatMap(getBridge().convert(mapper.andThen(c::apply))));
+        return newStream(getDelegate().flatMap(getBridge().convert(mapper.andThen(c))));
     }
     
     @Override
@@ -84,7 +84,7 @@ class CheckedStream<T, X extends Throwable> extends CheckedBaseStream<T, X, Thro
             ThrowingFunction<? super T, ? extends ThrowingIntStream<? extends X>, ? extends X> mapper) {
         @SuppressWarnings("unchecked") Function<? super ThrowingIntStream<? extends X>, ? extends IntStream> c = s -> ThrowingBridge.of(
                 (ThrowingIntStream<X>) s, getBridge().getExceptionClass());
-        return ThrowingBridge.of(getDelegate().flatMapToInt(getBridge().convert(mapper.andThen(c::apply))), getBridge());
+        return ThrowingBridge.of(getDelegate().flatMapToInt(getBridge().convert(mapper.andThen(c))), getBridge());
     }
     
     @Override
@@ -92,7 +92,7 @@ class CheckedStream<T, X extends Throwable> extends CheckedBaseStream<T, X, Thro
             ThrowingFunction<? super T, ? extends ThrowingLongStream<? extends X>, ? extends X> mapper) {
         @SuppressWarnings("unchecked") Function<? super ThrowingLongStream<? extends X>, ? extends LongStream> c = s -> ThrowingBridge.of(
                 (ThrowingLongStream<X>) s, getBridge().getExceptionClass());
-        return ThrowingBridge.of(getDelegate().flatMapToLong(getBridge().convert(mapper.andThen(c::apply))),
+        return ThrowingBridge.of(getDelegate().flatMapToLong(getBridge().convert(mapper.andThen(c))),
                 getBridge());
     }
     
@@ -101,7 +101,7 @@ class CheckedStream<T, X extends Throwable> extends CheckedBaseStream<T, X, Thro
             ThrowingFunction<? super T, ? extends ThrowingDoubleStream<? extends X>, ? extends X> mapper) {
         @SuppressWarnings("unchecked") Function<? super ThrowingDoubleStream<? extends X>, ? extends DoubleStream> c = s -> ThrowingBridge.of(
                 (ThrowingDoubleStream<X>) s, getBridge().getExceptionClass());
-        return ThrowingBridge.of(getDelegate().flatMapToDouble(getBridge().convert(mapper.andThen(c::apply))),
+        return ThrowingBridge.of(getDelegate().flatMapToDouble(getBridge().convert(mapper.andThen(c))),
                 getBridge());
     }
     

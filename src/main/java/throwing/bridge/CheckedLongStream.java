@@ -79,7 +79,7 @@ class CheckedLongStream<X extends Throwable> extends CheckedBaseStream<Long, X, 
             ThrowingLongFunction<? extends ThrowingLongStream<? extends X>, ? extends X> mapper) {
         @SuppressWarnings("unchecked") Function<? super ThrowingLongStream<? extends X>, ? extends LongStream> c = s -> ThrowingBridge.of(
                 (ThrowingLongStream<X>) s, getBridge().getExceptionClass());
-        return chain(getDelegate().flatMap(getBridge().convert(mapper.andThen(c::apply))));
+        return chain(getDelegate().flatMap(getBridge().convert(mapper.andThen(c))));
     }
     
     @Override
