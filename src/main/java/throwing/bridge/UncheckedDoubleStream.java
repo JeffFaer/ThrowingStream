@@ -39,14 +39,12 @@ public class UncheckedDoubleStream<X extends Throwable> extends
     
     @Override
     public OfDouble iterator() {
-        // TODO Auto-generated method stub
-        return null;
+        return ThrowingBridge.of(getDelegate().iterator(), getExceptionClass());
     }
     
     @Override
     public Spliterator.OfDouble spliterator() {
-        // TODO Auto-generated method stub
-        return null;
+        return ThrowingBridge.of(getDelegate().spliterator(), getExceptionClass());
     }
     
     @Override

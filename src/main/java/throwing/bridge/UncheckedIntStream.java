@@ -40,14 +40,12 @@ class UncheckedIntStream<X extends Throwable> extends UncheckedBaseStream<Intege
     
     @Override
     public OfInt iterator() {
-        // TODO Auto-generated method stub
-        return null;
+        return ThrowingBridge.of(getDelegate().iterator(), getExceptionClass());
     }
     
     @Override
     public Spliterator.OfInt spliterator() {
-        // TODO Auto-generated method stub
-        return null;
+        return ThrowingBridge.of(getDelegate().spliterator(), getExceptionClass());
     }
     
     @Override

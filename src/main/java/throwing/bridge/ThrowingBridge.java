@@ -268,21 +268,91 @@ public final class ThrowingBridge {
     
     // utilities
     
+    // spliterator
+    
     public static <T> Spliterator<T> of(ThrowingSpliterator<T, Nothing> itr) {
-        return unchecked(itr);
+        return of(itr, Nothing.class);
     }
     
-    static <T> Spliterator<T> unchecked(ThrowingSpliterator<T, ?> itr) {
+    static <T, X extends Throwable> Spliterator<T> of(ThrowingSpliterator<T, X> itr, Class<X> x) {
         Objects.requireNonNull(itr, "itr");
-        return new UncheckedSpliterator<>(itr);
+        return new UncheckedSpliterator<>(itr, x);
     }
+    
+    // int
+    
+    public static <T> Spliterator.OfInt of(ThrowingSpliterator.OfInt<Nothing> itr) {
+        return of(itr, Nothing.class);
+    }
+    
+    static <T, X extends Throwable> Spliterator.OfInt of(ThrowingSpliterator.OfInt<X> itr, Class<X> x) {
+        Objects.requireNonNull(itr, "itr");
+        return new UncheckedSpliterator.OfInt<>(itr, x);
+    }
+    
+    // long
+    
+    public static <T> Spliterator.OfLong of(ThrowingSpliterator.OfLong<Nothing> itr) {
+        return of(itr, Nothing.class);
+    }
+    
+    static <T, X extends Throwable> Spliterator.OfLong of(ThrowingSpliterator.OfLong<X> itr, Class<X> x) {
+        Objects.requireNonNull(itr, "itr");
+        return new UncheckedSpliterator.OfLong<>(itr, x);
+    }
+    
+    // double
+    
+    public static <T> Spliterator.OfDouble of(ThrowingSpliterator.OfDouble<Nothing> itr) {
+        return of(itr, Nothing.class);
+    }
+    
+    static <T, X extends Throwable> Spliterator.OfDouble of(ThrowingSpliterator.OfDouble<X> itr, Class<X> x) {
+        Objects.requireNonNull(itr, "itr");
+        return new UncheckedSpliterator.OfDouble<>(itr, x);
+    }
+    
+    // iterator
     
     public static <T> Iterator<T> of(ThrowingIterator<T, Nothing> itr) {
-        return unchecked(itr);
+        return of(itr, Nothing.class);
     }
     
-    static <T> Iterator<T> unchecked(ThrowingIterator<T, ?> itr) {
+    static <T, X extends Throwable> Iterator<T> of(ThrowingIterator<T, X> itr, Class<X> x) {
         Objects.requireNonNull(itr, "itr");
-        return new UncheckedIterator<>(itr);
+        return new UncheckedIterator<>(itr, x);
+    }
+    
+    // int
+    
+    public static PrimitiveIterator.OfInt of(ThrowingIterator.OfInt<Nothing> itr) {
+        return of(itr, Nothing.class);
+    }
+    
+    static <X extends Throwable> PrimitiveIterator.OfInt of(ThrowingIterator.OfInt<X> itr, Class<X> x) {
+        Objects.requireNonNull(itr, "itr");
+        return new UncheckedIterator.OfInt<>(itr, x);
+    }
+    
+    // long
+    
+    public static PrimitiveIterator.OfLong of(ThrowingIterator.OfLong<Nothing> itr) {
+        return of(itr, Nothing.class);
+    }
+    
+    static <X extends Throwable> PrimitiveIterator.OfLong of(ThrowingIterator.OfLong<X> itr, Class<X> x) {
+        Objects.requireNonNull(itr, "itr");
+        return new UncheckedIterator.OfLong<>(itr, x);
+    }
+    
+    // double
+    
+    public static PrimitiveIterator.OfDouble of(ThrowingIterator.OfDouble<Nothing> itr) {
+        return of(itr, Nothing.class);
+    }
+    
+    static <X extends Throwable> PrimitiveIterator.OfDouble of(ThrowingIterator.OfDouble<X> itr, Class<X> x) {
+        Objects.requireNonNull(itr, "itr");
+        return new UncheckedIterator.OfDouble<>(itr, x);
     }
 }

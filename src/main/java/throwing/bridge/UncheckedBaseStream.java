@@ -14,12 +14,12 @@ abstract class UncheckedBaseStream<T, X extends Throwable, S extends BaseStream<
     
     @Override
     public Iterator<T> iterator() {
-        return ThrowingBridge.unchecked(getDelegate().iterator());
+        return ThrowingBridge.of(getDelegate().iterator(), getExceptionClass());
     }
     
     @Override
     public Spliterator<T> spliterator() {
-        return ThrowingBridge.unchecked(getDelegate().spliterator());
+        return ThrowingBridge.of(getDelegate().spliterator(), getExceptionClass());
     }
     
     @Override

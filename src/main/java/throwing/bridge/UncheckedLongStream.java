@@ -40,14 +40,12 @@ class UncheckedLongStream<X extends Throwable> extends UncheckedBaseStream<Long,
     
     @Override
     public OfLong iterator() {
-        // TODO Auto-generated method stub
-        return null;
+        return ThrowingBridge.of(getDelegate().iterator(), getExceptionClass());
     }
     
     @Override
     public Spliterator.OfLong spliterator() {
-        // TODO Auto-generated method stub
-        return null;
+        return ThrowingBridge.of(getDelegate().spliterator(), getExceptionClass());
     }
     
     @Override
