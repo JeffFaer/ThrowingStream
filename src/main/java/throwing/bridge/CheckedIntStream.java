@@ -4,6 +4,7 @@ import java.util.IntSummaryStatistics;
 import java.util.OptionalDouble;
 import java.util.OptionalInt;
 import java.util.function.Function;
+import java.util.function.IntFunction;
 import java.util.stream.IntStream;
 
 import throwing.ThrowingIterator.OfInt;
@@ -61,7 +62,8 @@ class CheckedIntStream<X extends Throwable> extends CheckedBaseStream<Integer, X
     
     @Override
     public <U> ThrowingStream<U, X> mapToObj(ThrowingIntFunction<? extends U, ? extends X> mapper) {
-        return ThrowingBridge.of(getDelegate().mapToObj(getBridge().convert(mapper)), getBridge());
+        IntFunction<? extends U> f = getBridge().convert(mapper);
+        return ThrowingBridge.of(getDelegate().mapToObj(f), getBridge());
     }
     
     @Override

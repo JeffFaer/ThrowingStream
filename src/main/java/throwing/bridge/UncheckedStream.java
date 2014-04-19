@@ -19,6 +19,7 @@ import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
+import throwing.function.ThrowingFunction;
 import throwing.function.ThrowingSupplier;
 import throwing.stream.ThrowingDoubleStream;
 import throwing.stream.ThrowingIntStream;
@@ -52,7 +53,8 @@ class UncheckedStream<T, X extends Throwable> extends UncheckedBaseStream<T, X, 
     
     @Override
     public <R> Stream<R> map(Function<? super T, ? extends R> mapper) {
-        return newStream(getDelegate().map(mapper::apply));
+        ThrowingFunction<? super T, ? extends R, ? extends X> f = mapper::apply;
+        return newStream(getDelegate().map(f));
     }
     
     @Override

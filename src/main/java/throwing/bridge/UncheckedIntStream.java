@@ -20,6 +20,7 @@ import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
+import throwing.function.ThrowingIntFunction;
 import throwing.stream.ThrowingIntStream;
 
 class UncheckedIntStream<X extends Throwable> extends UncheckedBaseStream<Integer, X, IntStream, ThrowingIntStream<X>>
@@ -60,7 +61,8 @@ class UncheckedIntStream<X extends Throwable> extends UncheckedBaseStream<Intege
     
     @Override
     public <U> Stream<U> mapToObj(IntFunction<? extends U> mapper) {
-        return ThrowingBridge.of(getDelegate().mapToObj(mapper::apply), getExceptionClass());
+        ThrowingIntFunction<? extends U, ? extends X> f = mapper::apply;
+        return ThrowingBridge.of(getDelegate().mapToObj(f), getExceptionClass());
     }
     
     @Override

@@ -19,6 +19,7 @@ import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
+import throwing.function.ThrowingDoubleFunction;
 import throwing.stream.ThrowingDoubleStream;
 
 public class UncheckedDoubleStream<X extends Throwable> extends
@@ -59,7 +60,8 @@ public class UncheckedDoubleStream<X extends Throwable> extends
     
     @Override
     public <U> Stream<U> mapToObj(DoubleFunction<? extends U> mapper) {
-        return ThrowingBridge.of(getDelegate().mapToObj(mapper::apply), getExceptionClass());
+        ThrowingDoubleFunction<? extends U, ? extends X> f = mapper::apply;
+        return ThrowingBridge.of(getDelegate().mapToObj(f), getExceptionClass());
     }
     
     @Override

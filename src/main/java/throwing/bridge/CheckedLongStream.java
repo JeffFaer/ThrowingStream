@@ -4,6 +4,7 @@ import java.util.LongSummaryStatistics;
 import java.util.OptionalDouble;
 import java.util.OptionalLong;
 import java.util.function.Function;
+import java.util.function.LongFunction;
 import java.util.stream.LongStream;
 
 import throwing.ThrowingIterator.OfLong;
@@ -61,7 +62,8 @@ class CheckedLongStream<X extends Throwable> extends CheckedBaseStream<Long, X, 
     
     @Override
     public <U> ThrowingStream<U, X> mapToObj(ThrowingLongFunction<? extends U, ? extends X> mapper) {
-        return ThrowingBridge.of(getDelegate().mapToObj(getBridge().convert(mapper)), getBridge());
+        LongFunction<? extends U> f = getBridge().convert(mapper);
+        return ThrowingBridge.of(getDelegate().mapToObj(f), getBridge());
     }
     
     @Override

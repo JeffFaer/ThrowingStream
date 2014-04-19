@@ -2,6 +2,7 @@ package throwing.bridge;
 
 import java.util.DoubleSummaryStatistics;
 import java.util.OptionalDouble;
+import java.util.function.DoubleFunction;
 import java.util.function.Function;
 import java.util.stream.DoubleStream;
 
@@ -60,7 +61,8 @@ class CheckedDoubleStream<X extends Throwable> extends
     
     @Override
     public <U> ThrowingStream<U, X> mapToObj(ThrowingDoubleFunction<? extends U, ? extends X> mapper) {
-        return ThrowingBridge.of(getDelegate().mapToObj(getBridge().convert(mapper)), getBridge());
+        DoubleFunction<? extends U> f = getBridge().convert(mapper);
+        return ThrowingBridge.of(getDelegate().mapToObj(f), getBridge());
     }
     @Override
     public ThrowingIntStream<X> mapToInt(ThrowingDoubleToIntFunction<? extends X> mapper) {
