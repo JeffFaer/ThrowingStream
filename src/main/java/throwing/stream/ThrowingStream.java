@@ -19,11 +19,13 @@ import throwing.function.ThrowingToIntFunction;
 import throwing.function.ThrowingToLongFunction;
 
 /**
- * A mirror of {@link Stream}. A {@link Stream} normally allows for lazy
- * functions to be applied to is. A {@link ThrowingStream} allows for these
- * functions to throw checked exceptions. Any terminal operation has the
- * possibility of applying one of these lazy functions, so each stateful
- * intermediate operation and terminal operation declares a thrown exception.
+ * A mirror of {@link Stream}. A {@link Stream} allows for functions to be
+ * lazily applied to it. A {@link ThrowingStream} allows for these
+ * functions to also throw checked exceptions. Since a terminal operation on
+ * a {@link Stream} (with the exception of {@code iterator} and {@code spliterator},
+ * which are lazy terminal operations) applied all of the functions, and since one
+ * of those functions may throw an exception, each terminal operation in a 
+ * {@code ThrowingStream} declares a thrown exception.
  * 
  * @author jeffrey
  *
