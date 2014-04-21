@@ -23,8 +23,8 @@
 		</license>
 	</licenses>
 	<scm>
-		<connection>scm:git:https://github.com/JeffreyFalgout/ThrowingStream.git</connection>
-		<developerConnection>scm:git:https://github.com/JeffreyFalgout/ThrowingStream.git</developerConnection>
+		<connection>scm:git:${project.scm.url}.git</connection>
+		<developerConnection>scm:git:git@github.com:JeffreyFalgout/ThrowingStream.git</developerConnection>
 		<url>https://github.com/JeffreyFalgout/ThrowingStream</url>
 	</scm>
 	<issueManagement>
