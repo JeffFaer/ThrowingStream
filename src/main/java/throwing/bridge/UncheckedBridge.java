@@ -26,12 +26,12 @@ class UncheckedBridge<D, X extends Throwable> extends AbstractBridge<D> {
         try {
             return supplier.get();
         } catch (Throwable e) {
-            if (e instanceof RuntimeException) {
+            if (x.isInstance(e)) {
+                throw new BridgeException(e);
+            } else if (e instanceof RuntimeException) {
                 throw (RuntimeException) e;
             } else if (e instanceof Error) {
                 throw (Error) e;
-            } else if (x.isInstance(e)) {
-                throw new BridgeException(e);
             } else {
                 throw new AssertionError(e);
             }
