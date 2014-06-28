@@ -64,6 +64,7 @@ class CheckedDoubleStream<X extends Throwable> extends
         DoubleFunction<? extends U> f = getBridge().convert(mapper);
         return ThrowingBridge.of(getDelegate().mapToObj(f), getBridge());
     }
+    
     @Override
     public ThrowingIntStream<X> mapToInt(ThrowingDoubleToIntFunction<? extends X> mapper) {
         return ThrowingBridge.of(getDelegate().mapToInt(getBridge().convert(mapper)), getBridge());

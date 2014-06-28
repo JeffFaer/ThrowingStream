@@ -434,4 +434,22 @@ public final class ThrowingBridge {
             }
         };
     }
+    
+    public static <X extends Throwable> X launder(Throwable t, Class<X> x) {
+        return launder(t, x, e -> {
+            throw new AssertionError(e);
+        });
+    }
+    
+    public static <X extends Throwable> X launder(Throwable t, Class<X> x, Function<Throwable, X> fallback) {
+        if (x.isInstance(t)) {
+            return x.cast(t);
+        } else if (t instanceof Error) {
+            throw (Error) t;
+        } else if (t instanceof RuntimeException) {
+            throw (RuntimeException) t;
+        } else {
+            return fallback.apply(t);
+        }
+    }
 }

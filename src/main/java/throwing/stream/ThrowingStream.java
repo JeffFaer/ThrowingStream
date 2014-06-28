@@ -23,19 +23,19 @@ import throwing.function.ThrowingToLongFunction;
 
 /**
  * A mirror of {@link Stream}. A {@link Stream} allows for functions to be
- * lazily applied to it. A {@link ThrowingStream} allows for these
- * functions to also throw checked exceptions. Since a terminal operation on
- * a {@link Stream} (with the exception of {@code iterator} and
- * {@code spliterator},
- * which are lazy terminal operations) applied all of the functions, and since
- * one
- * of those functions may throw an exception, each terminal operation in a
+ * lazily applied to it. A {@link ThrowingStream} allows for these functions to
+ * also throw checked exceptions. Since a terminal operation on a {@link Stream}
+ * (with the exception of {@code iterator} and {@code spliterator}, which are
+ * lazy terminal operations) applied all of the functions, and since one of
+ * those functions may throw an exception, each terminal operation in a
  * {@code ThrowingStream} declares a thrown exception.
  * 
  * @author jeffrey
  *
- * @param <T> The type of the stream elements
- * @param <X> The type of the exception that might be thrown
+ * @param <T>
+ *            The type of the stream elements
+ * @param <X>
+ *            The type of the exception that might be thrown
  */
 public interface ThrowingStream<T, X extends Throwable> extends ThrowingBaseStream<T, X, ThrowingStream<T, X>> {
     public ThrowingStream<T, X> filter(ThrowingPredicate<? super T, ? extends X> predicate);
