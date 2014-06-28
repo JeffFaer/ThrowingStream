@@ -3,6 +3,9 @@ package throwing.stream;
 import java.util.Optional;
 import java.util.function.IntFunction;
 import java.util.stream.Collector;
+import java.util.stream.DoubleStream;
+import java.util.stream.IntStream;
+import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
 import throwing.ThrowingComparator;
@@ -22,9 +25,11 @@ import throwing.function.ThrowingToLongFunction;
  * A mirror of {@link Stream}. A {@link Stream} allows for functions to be
  * lazily applied to it. A {@link ThrowingStream} allows for these
  * functions to also throw checked exceptions. Since a terminal operation on
- * a {@link Stream} (with the exception of {@code iterator} and {@code spliterator},
- * which are lazy terminal operations) applied all of the functions, and since one
- * of those functions may throw an exception, each terminal operation in a 
+ * a {@link Stream} (with the exception of {@code iterator} and
+ * {@code spliterator},
+ * which are lazy terminal operations) applied all of the functions, and since
+ * one
+ * of those functions may throw an exception, each terminal operation in a
  * {@code ThrowingStream} declares a thrown exception.
  * 
  * @author jeffrey
@@ -107,4 +112,20 @@ public interface ThrowingStream<T, X extends Throwable> extends ThrowingBaseStre
     public Optional<T> findFirst() throws X;
     
     public Optional<T> findAny() throws X;
+    
+    public static <T, X extends Throwable> ThrowingStream<T, X> of(Stream<T> stream, Class<X> x) {
+        return ThrowingBridge.of(stream, x);
+    }
+    
+    public static <X extends Throwable> ThrowingIntStream<X> of(IntStream stream, Class<X> x) {
+        return ThrowingBridge.of(stream, x);
+    }
+    
+    public static <X extends Throwable> ThrowingLongStream<X> of(LongStream stream, Class<X> x) {
+        return ThrowingBridge.of(stream, x);
+    }
+    
+    public static <X extends Throwable> ThrowingDoubleStream<X> of(DoubleStream stream, Class<X> x) {
+        return ThrowingBridge.of(stream, x);
+    }
 }
