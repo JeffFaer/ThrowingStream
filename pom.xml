@@ -9,7 +9,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.github.jeffreyfalgout</groupId>
 	<artifactId>throwing-streams</artifactId>
-	<version>2.1.2-SNAPSHOT</version>
+	<version>2.2.0</version>
 	<packaging>jar</packaging>
 	<name>Throwing Streams</name>
 	<description>This project is an alternative API to java.util.stream and its various supporting interfaces that allows for checked exceptions to be thrown.</description>
