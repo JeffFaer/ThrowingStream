@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.IntSummaryStatistics;
 import java.util.List;
+import java.util.Optional;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
@@ -13,14 +15,58 @@ abstract class CheckedBridge<D, X extends Throwable> extends AbstractBridge<D, X
     public static volatile boolean FILTER_STACK = true;
 
     private final FunctionBridge<X> bridge;
+    private final RethrowChain<X> chain;
+    private final Function<Throwable, X> launder;
 
     CheckedBridge(D delegate, FunctionBridge<X> bridge) {
-        super(delegate, bridge.getExceptionClass());
-        this.bridge = bridge;
+        this(delegate, bridge, RethrowChain.start());
     }
 
-    protected FunctionBridge<X> getBridge() {
+    CheckedBridge(D delegate, FunctionBridge<X> bridge, RethrowChain<X> chain) {
+        super(delegate, bridge.getExceptionClass());
+        this.bridge = bridge;
+        this.chain = chain.chain(t -> {
+            if (t instanceof BridgeException) {
+                Throwable cause = t.getCause();
+                if (getExceptionClass().isInstance(cause)) {
+                    // filter out bridge lines from the exception. They can get
+                    // rather verbose.
+                    if (FILTER_STACK) {
+                        filterStackTrace(cause);
+                    }
+
+                    return Optional.of(getExceptionClass().cast(cause));
+                }
+            }
+
+            return Optional.empty();
+        });
+        launder = this.chain.finish();
+    }
+
+    private void filterStackTrace(Throwable cause) {
+        List<StackTraceElement> ste = Arrays.asList(cause.getStackTrace());
+
+        IntSummaryStatistics stats = IntStream.range(0, ste.size()).filter(
+                i -> ste.get(i).getClassName().startsWith(PACKAGE)).summaryStatistics();
+        if (stats.getCount() > 0) {
+            List<StackTraceElement> filtered = new ArrayList<>(ste.size() - (stats.getMax() - stats.getMin()));
+            for (int x = 0; x < stats.getMin(); x++) {
+                filtered.add(ste.get(x));
+            }
+            for (int x = stats.getMax() + 1; x < ste.size(); x++) {
+                filtered.add(ste.get(x));
+            }
+            cause.setStackTrace(filtered.toArray(new StackTraceElement[filtered.size()]));
+        }
+    }
+
+    public FunctionBridge<X> getBridge() {
         return bridge;
+    }
+
+    public RethrowChain<X> getChain() {
+        return chain;
     }
 
     protected void filterBridgeException(Runnable runnable) throws X {
@@ -34,37 +80,11 @@ abstract class CheckedBridge<D, X extends Throwable> extends AbstractBridge<D, X
         try {
             return supplier.get();
         } catch (Throwable t) {
-            throw launder(t, BridgeException.class::isInstance, e -> {
-                Throwable cause = e.getCause();
-                if (getExceptionClass().isInstance(cause)) {
-                    // filter out bridge lines from the exception. They can get
-                    // rather verbose.
-                    if (FILTER_STACK) {
-                        filterStackTrace(cause);
-                    }
-
-                    return getExceptionClass().cast(cause);
-                } else {
-                    throw t;
-                }
-            });
-        }
-    }
-
-    // this method also filters out a lot of the java.util.stream trace elements
-    private void filterStackTrace(Throwable cause) {
-        List<StackTraceElement> ste = Arrays.asList(cause.getStackTrace());
-        IntSummaryStatistics stats = IntStream.range(0, ste.size()).filter(
-                i -> ste.get(i).getClassName().startsWith(PACKAGE)).summaryStatistics();
-        if (stats.getCount() > 0) {
-            List<StackTraceElement> filtered = new ArrayList<>(ste.size() - (stats.getMax() - stats.getMin()));
-            for (int x = 0; x < stats.getMin(); x++) {
-                filtered.add(ste.get(x));
-            }
-            for (int x = stats.getMax() + 1; x < ste.size(); x++) {
-                filtered.add(ste.get(x));
-            }
-            cause.setStackTrace(filtered.toArray(new StackTraceElement[filtered.size()]));
+            X x = launder.apply(t);
+            // it's possible that we've mapped from Y -> X with a new X(Y) call.
+            // this would result in a brand new stack trace free of filtering
+            filterStackTrace(x);
+            throw x;
         }
     }
 }
