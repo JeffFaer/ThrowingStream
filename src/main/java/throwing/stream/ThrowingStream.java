@@ -23,13 +23,15 @@ import throwing.function.ThrowingToIntFunction;
 import throwing.function.ThrowingToLongFunction;
 
 /**
- * A mirror of {@link Stream}. A {@link Stream} allows for functions to be
- * lazily applied to it. A {@link ThrowingStream} allows for these functions to
- * also throw checked exceptions. Since a terminal operation on a {@link Stream}
- * (with the exception of {@code iterator} and {@code spliterator}, which are
- * lazy terminal operations) applied all of the functions, and since one of
- * those functions may throw an exception, each terminal operation in a
- * {@code ThrowingStream} declares a thrown exception.
+ * A standard {@link Stream} does not allow you to throw any checked exceptions.
+ * This class is a mirror of {@code Stream} except this class allows for checked
+ * exceptions. Each method in the exception-free API has its mirror here using
+ * interfaces which support exceptions. There are also helper methods such as
+ * {@link #rethrow(Class, Function)}.
+ * 
+ * <br><br>
+ * 
+ * Each terminal operation may throw an {@code X}
  * 
  * @author jeffrey
  *
