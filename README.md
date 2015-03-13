@@ -22,3 +22,6 @@ interface java.util.stream.Stream
  1. [Clone the repository](http://git-scm.com/book/en/Git-Basics-Getting-a-Git-Repository#Cloning-an-Existing-Repository) and execute `mvn package` to create a .jar file
  2. Download a .jar from the [releases](https://github.com/JeffreyFalgout/ThrowingStream/releases) page
  3. Maven central
+
+###How does it work?
+Check out the [wiki](https://github.com/JeffreyFalgout/ThrowingStream/wiki/How-it-works).
