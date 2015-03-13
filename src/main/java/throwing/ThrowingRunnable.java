@@ -1,5 +1,7 @@
 package throwing;
 
+import throwing.function.ThrowingSupplier;
+
 @FunctionalInterface
 public interface ThrowingRunnable<X extends Throwable> {
     public void run() throws X;
@@ -10,17 +12,13 @@ public interface ThrowingRunnable<X extends Throwable> {
     }
 
     default public <Y extends Throwable> ThrowingRunnable<Y> orTry(ThrowingRunnable<? extends Y> r) {
-        return () -> {
-            try {
-                run();
-            } catch (Throwable x) {
-                try {
-                    r.run();
-                } catch (Throwable x2) {
-                    x2.addSuppressed(x);
-                    throw x2;
-                }
-            }
+        ThrowingSupplier<Void, X> s1 = () -> {
+            run();
+            return null;
         };
+        return s1.orTry(() -> {
+            r.run();
+            return null;
+        })::get;
     }
 }
