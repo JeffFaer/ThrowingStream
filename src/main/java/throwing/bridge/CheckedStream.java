@@ -222,9 +222,4 @@ class CheckedStream<T, X extends Throwable> extends CheckedBaseStream<T, X, Thro
     public Optional<T> findAny() throws X {
         return filterBridgeException(getDelegate()::findAny);
     }
-
-    @Override
-    public <Y extends Throwable> ThrowingStream<T, Y> rethrow(Class<Y> e, Function<? super X, ? extends Y> mapper) {
-        return null;
-    }
 }
