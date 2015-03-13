@@ -30,7 +30,7 @@ class CheckedLongStream<X extends Throwable> extends CheckedBaseStream<Long, X, 
         super(delegate, bridge);
     }
 
-    CheckedLongStream(LongStream delegate, FunctionBridge<X> bridge, RethrowChain<X> chain) {
+    CheckedLongStream(LongStream delegate, FunctionBridge<X> bridge, RethrowChain<BridgeException, X> chain) {
         super(delegate, bridge, chain);
     }
 
@@ -213,7 +213,7 @@ class CheckedLongStream<X extends Throwable> extends CheckedBaseStream<Long, X, 
 
     @Override
     public <Y extends Throwable> ThrowingLongStream<Y> rethrow(Class<Y> e, Function<? super X, ? extends Y> mapper) {
-        RethrowChain<Y> c = getChain().rethrow(mapper);
+        RethrowChain<BridgeException, Y> c = getChain().rethrow(mapper);
         return new CheckedLongStream<>(getDelegate(), new FunctionBridge<>(e), c);
     }
 }

@@ -30,7 +30,7 @@ class CheckedIntStream<X extends Throwable> extends CheckedBaseStream<Integer, X
         super(delegate, bridge);
     }
 
-    CheckedIntStream(IntStream delegate, FunctionBridge<X> bridge, RethrowChain<X> chain) {
+    CheckedIntStream(IntStream delegate, FunctionBridge<X> bridge, RethrowChain<BridgeException, X> chain) {
         super(delegate, bridge, chain);
     }
 
@@ -217,7 +217,7 @@ class CheckedIntStream<X extends Throwable> extends CheckedBaseStream<Integer, X
 
     @Override
     public <Y extends Throwable> ThrowingIntStream<Y> rethrow(Class<Y> e, Function<? super X, ? extends Y> mapper) {
-        RethrowChain<Y> c = getChain().rethrow(mapper);
+        RethrowChain<BridgeException, Y> c = getChain().rethrow(mapper);
         return new CheckedIntStream<>(getDelegate(), new FunctionBridge<>(e), c);
     }
 }

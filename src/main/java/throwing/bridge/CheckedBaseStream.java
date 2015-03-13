@@ -12,7 +12,7 @@ abstract class CheckedBaseStream<T, X extends Throwable, S extends ThrowingBaseS
         super(delegate, bridge);
     }
 
-    CheckedBaseStream(D delegate, FunctionBridge<X> bridge, RethrowChain<X> chain) {
+    CheckedBaseStream(D delegate, FunctionBridge<X> bridge, RethrowChain<BridgeException, X> chain) {
         super(delegate, bridge, chain);
     }
 

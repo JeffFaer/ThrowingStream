@@ -29,7 +29,7 @@ class CheckedDoubleStream<X extends Throwable> extends
         super(delegate, bridge);
     }
 
-    CheckedDoubleStream(DoubleStream delegate, FunctionBridge<X> bridge, RethrowChain<X> chain) {
+    CheckedDoubleStream(DoubleStream delegate, FunctionBridge<X> bridge, RethrowChain<BridgeException, X> chain) {
         super(delegate, bridge, chain);
     }
 
@@ -207,7 +207,7 @@ class CheckedDoubleStream<X extends Throwable> extends
 
     @Override
     public <Y extends Throwable> ThrowingDoubleStream<Y> rethrow(Class<Y> e, Function<? super X, ? extends Y> mapper) {
-        RethrowChain<Y> c = getChain().rethrow(mapper);
+        RethrowChain<BridgeException, Y> c = getChain().rethrow(mapper);
         return new CheckedDoubleStream<>(getDelegate(), new FunctionBridge<>(e), c);
     }
 }

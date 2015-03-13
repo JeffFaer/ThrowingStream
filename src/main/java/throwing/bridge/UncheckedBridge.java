@@ -11,7 +11,7 @@ class UncheckedBridge<D, X extends Throwable> extends AbstractBridge<D, X> {
 
     UncheckedBridge(D delegate, Class<X> x) {
         super(delegate, x);
-        RethrowChain<BridgeException> c = t -> Optional.ofNullable(getExceptionClass().isInstance(t) ? new BridgeException(
+        RethrowChain<Throwable, BridgeException> c = t -> Optional.ofNullable(getExceptionClass().isInstance(t) ? new BridgeException(
                 t) : null);
         launder = c.finish();
     }

@@ -15,28 +15,26 @@ abstract class CheckedBridge<D, X extends Throwable> extends AbstractBridge<D, X
     public static volatile boolean FILTER_STACK = true;
 
     private final FunctionBridge<X> bridge;
-    private final RethrowChain<X> chain;
-    private final Function<Throwable, X> launder;
+    private final RethrowChain<BridgeException, X> chain;
+    private final Function<BridgeException, X> launder;
 
     CheckedBridge(D delegate, FunctionBridge<X> bridge) {
         this(delegate, bridge, RethrowChain.start());
     }
 
-    CheckedBridge(D delegate, FunctionBridge<X> bridge, RethrowChain<X> chain) {
+    CheckedBridge(D delegate, FunctionBridge<X> bridge, RethrowChain<BridgeException, X> chain) {
         super(delegate, bridge.getExceptionClass());
         this.bridge = bridge;
         this.chain = chain.chain(t -> {
-            if (t instanceof BridgeException) {
-                Throwable cause = t.getCause();
-                if (getExceptionClass().isInstance(cause)) {
-                    // filter out bridge lines from the exception. They can get
-                    // rather verbose.
-                    if (FILTER_STACK) {
-                        filterStackTrace(cause);
-                    }
-
-                    return Optional.of(getExceptionClass().cast(cause));
+            Throwable cause = t.getCause();
+            if (getExceptionClass().isInstance(cause)) {
+                // filter out bridge lines from the exception. They can get
+                // rather verbose.
+                if (FILTER_STACK) {
+                    filterStackTrace(cause);
                 }
+
+                return Optional.of(getExceptionClass().cast(cause));
             }
 
             return Optional.empty();
@@ -65,7 +63,7 @@ abstract class CheckedBridge<D, X extends Throwable> extends AbstractBridge<D, X
         return bridge;
     }
 
-    public RethrowChain<X> getChain() {
+    public RethrowChain<BridgeException, X> getChain() {
         return chain;
     }
 
@@ -79,8 +77,8 @@ abstract class CheckedBridge<D, X extends Throwable> extends AbstractBridge<D, X
     protected <R> R filterBridgeException(Supplier<R> supplier) throws X {
         try {
             return supplier.get();
-        } catch (Throwable t) {
-            X x = launder.apply(t);
+        } catch (BridgeException e) {
+            X x = launder.apply(e);
             // it's possible that we've mapped from Y -> X with a new X(Y) call.
             // this would result in a brand new stack trace free of filtering
             filterStackTrace(x);
