@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
-abstract class CheckedBridge<D, X extends Throwable> extends AbstractBridge<D> {
+abstract class CheckedBridge<D, X extends Throwable> extends AbstractBridge<D, X> {
     private static final String PACKAGE = CheckedBridge.class.getPackage().getName();
     // it might be useful to have a way to turn this off
     public static volatile boolean FILTER_STACK = true;
@@ -15,7 +15,7 @@ abstract class CheckedBridge<D, X extends Throwable> extends AbstractBridge<D> {
     private final FunctionBridge<X> bridge;
 
     CheckedBridge(D delegate, FunctionBridge<X> bridge) {
-        super(delegate);
+        super(delegate, bridge.getExceptionClass());
         this.bridge = bridge;
     }
 
@@ -34,26 +34,20 @@ abstract class CheckedBridge<D, X extends Throwable> extends AbstractBridge<D> {
         try {
             return supplier.get();
         } catch (Throwable t) {
-            if (t instanceof BridgeException) {
-                Throwable cause = t.getCause();
-                if (getBridge().getExceptionClass().isInstance(cause)) {
+            throw launder(t, BridgeException.class::isInstance, e -> {
+                Throwable cause = e.getCause();
+                if (getExceptionClass().isInstance(cause)) {
                     // filter out bridge lines from the exception. They can get
                     // rather verbose.
                     if (FILTER_STACK) {
                         filterStackTrace(cause);
                     }
 
-                    throw getBridge().getExceptionClass().cast(cause);
+                    return getExceptionClass().cast(cause);
                 } else {
                     throw t;
                 }
-            } else if (t instanceof RuntimeException) {
-                throw (RuntimeException) t;
-            } else if (t instanceof Error) {
-                throw (Error) t;
-            } else {
-                throw new AssertionError(t);
-            }
+            });
         }
     }
 
