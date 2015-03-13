@@ -124,7 +124,6 @@ public class ThrowingStreamTest {
             s.count();
             fail("did not throw exception");
         } catch (Throwable e) {
-            e.printStackTrace();
             assertEquals("correct exception thrown", x, e.getClass());
             assertThat("stack trace verbose",
                     Stream.of(e.getStackTrace()).map(StackTraceElement::getClassName).toArray(String[]::new),
