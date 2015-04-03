@@ -1,5 +1,6 @@
 package throwing.function;
 
+import java.util.function.Consumer;
 import java.util.function.IntToLongFunction;
 
 import throwing.Nothing;
@@ -14,9 +15,13 @@ public interface ThrowingIntToLongFunction<X extends Throwable> {
     }
 
     default public <Y extends Throwable> ThrowingIntToLongFunction<Y> orTry(ThrowingIntToLongFunction<? extends Y> f) {
+        return orTry(f, null);
+    }
+    
+    default public <Y extends Throwable> ThrowingIntToLongFunction<Y> orTry(ThrowingIntToLongFunction<? extends Y> f, Consumer<? super Throwable> thrown) {
         return t -> {
             ThrowingSupplier<Long, X> s = () -> applyAsLong(t);
-            return s.orTry(() -> f.applyAsLong(t)).get();
+            return s.orTry(() -> f.applyAsLong(t), thrown).get();
         };
     }
 }

@@ -1,5 +1,6 @@
 package throwing.function;
 
+import java.util.function.Consumer;
 import java.util.function.IntPredicate;
 
 import throwing.Nothing;
@@ -14,9 +15,14 @@ public interface ThrowingIntPredicate<X extends Throwable> {
     }
 
     default public <Y extends Throwable> ThrowingIntPredicate<Y> orTry(ThrowingIntPredicate<? extends Y> f) {
+        return orTry(f, null);
+    }
+
+    default public <Y extends Throwable> ThrowingIntPredicate<Y> orTry(ThrowingIntPredicate<? extends Y> f,
+            Consumer<? super Throwable> thrown) {
         return t -> {
             ThrowingSupplier<Boolean, X> s = () -> test(t);
-            return s.orTry(() -> f.test(t)).get();
+            return s.orTry(() -> f.test(t), thrown).get();
         };
     }
 }

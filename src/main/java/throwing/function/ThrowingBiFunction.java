@@ -1,6 +1,7 @@
 package throwing.function;
 
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 
 import throwing.Nothing;
 
@@ -15,9 +16,14 @@ public interface ThrowingBiFunction<T, U, R, X extends Throwable> {
 
     default public <Y extends Throwable> ThrowingBiFunction<T, U, R, Y> orTry(
             ThrowingBiFunction<? super T, ? super U, ? extends R, ? extends Y> f) {
+        return orTry(f, null);
+    }
+
+    default public <Y extends Throwable> ThrowingBiFunction<T, U, R, Y> orTry(
+            ThrowingBiFunction<? super T, ? super U, ? extends R, ? extends Y> f, Consumer<? super Throwable> thrown) {
         return (t, u) -> {
             ThrowingSupplier<R, X> s = () -> apply(t, u);
-            return s.orTry(() -> f.apply(t, u)).get();
+            return s.orTry(() -> f.apply(t, u), thrown).get();
         };
     }
 }

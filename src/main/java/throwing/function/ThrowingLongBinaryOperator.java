@@ -1,5 +1,6 @@
 package throwing.function;
 
+import java.util.function.Consumer;
 import java.util.function.LongBinaryOperator;
 
 import throwing.Nothing;
@@ -14,9 +15,14 @@ public interface ThrowingLongBinaryOperator<X extends Throwable> {
     }
 
     default public <Y extends Throwable> ThrowingLongBinaryOperator<Y> orTry(ThrowingLongBinaryOperator<? extends Y> f) {
+        return orTry(f, null);
+    }
+
+    default public <Y extends Throwable> ThrowingLongBinaryOperator<Y> orTry(ThrowingLongBinaryOperator<? extends Y> f,
+            Consumer<? super Throwable> thrown) {
         return (t1, t2) -> {
             ThrowingSupplier<Long, X> s = () -> applyAsLong(t1, t2);
-            return s.orTry(() -> f.applyAsLong(t1, t2)).get();
+            return s.orTry(() -> f.applyAsLong(t1, t2), thrown).get();
         };
     }
 }

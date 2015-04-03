@@ -1,5 +1,6 @@
 package throwing.function;
 
+import java.util.function.Consumer;
 import java.util.function.ObjLongConsumer;
 
 import throwing.Nothing;
@@ -16,9 +17,14 @@ public interface ThrowingObjLongConsumer<T, X extends Throwable> {
 
     default public <Y extends Throwable> ThrowingObjLongConsumer<T, Y> orTry(
             ThrowingObjLongConsumer<? super T, ? extends Y> f) {
+        return orTry(f, null);
+    }
+
+    default public <Y extends Throwable> ThrowingObjLongConsumer<T, Y> orTry(
+            ThrowingObjLongConsumer<? super T, ? extends Y> f, Consumer<? super Throwable> thrown) {
         return (t, v) -> {
             ThrowingRunnable<X> s = () -> accept(t, v);
-            s.orTry(() -> f.accept(t, v)).run();
+            s.orTry(() -> f.accept(t, v), thrown).run();
         };
     }
 }

@@ -1,6 +1,7 @@
 package throwing.function;
 
 import java.util.Objects;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.LongFunction;
 
@@ -17,9 +18,14 @@ public interface ThrowingLongFunction<R, X extends Throwable> {
 
     default public <Y extends Throwable> ThrowingLongFunction<R, Y> orTry(
             ThrowingLongFunction<? extends R, ? extends Y> f) {
+        return orTry(f, null);
+    }
+
+    default public <Y extends Throwable> ThrowingLongFunction<R, Y> orTry(
+            ThrowingLongFunction<? extends R, ? extends Y> f, Consumer<? super Throwable> thrown) {
         return t -> {
             ThrowingSupplier<R, X> s = () -> apply(t);
-            return s.orTry(() -> f.apply(t)).get();
+            return s.orTry(() -> f.apply(t), thrown).get();
         };
     }
 

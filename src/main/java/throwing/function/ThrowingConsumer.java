@@ -15,9 +15,14 @@ public interface ThrowingConsumer<T, X extends Throwable> {
     }
 
     default public <Y extends Throwable> ThrowingConsumer<T, Y> orTry(ThrowingConsumer<? super T, ? extends Y> f) {
+        return orTry(f, null);
+    }
+
+    default public <Y extends Throwable> ThrowingConsumer<T, Y> orTry(ThrowingConsumer<? super T, ? extends Y> f,
+            Consumer<? super Throwable> thrown) {
         return t -> {
             ThrowingRunnable<X> s = () -> accept(t);
-            s.orTry(() -> f.accept(t)).run();
+            s.orTry(() -> f.accept(t), thrown).run();
         };
     }
 }

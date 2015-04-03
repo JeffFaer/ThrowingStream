@@ -1,5 +1,6 @@
 package throwing.function;
 
+import java.util.function.Consumer;
 import java.util.function.DoubleBinaryOperator;
 
 import throwing.Nothing;
@@ -15,9 +16,14 @@ public interface ThrowingDoubleBinaryOperator<X extends Throwable> {
 
     default public <Y extends Throwable> ThrowingDoubleBinaryOperator<Y> orTry(
             ThrowingDoubleBinaryOperator<? extends Y> f) {
+        return orTry(f, null);
+    }
+
+    default public <Y extends Throwable> ThrowingDoubleBinaryOperator<Y> orTry(
+            ThrowingDoubleBinaryOperator<? extends Y> f, Consumer<? super Throwable> thrown) {
         return (t1, t2) -> {
             ThrowingSupplier<Double, X> s = () -> applyAsDouble(t1, t2);
-            return s.orTry(() -> f.applyAsDouble(t1, t2)).get();
+            return s.orTry(() -> f.applyAsDouble(t1, t2), thrown).get();
         };
     }
 }

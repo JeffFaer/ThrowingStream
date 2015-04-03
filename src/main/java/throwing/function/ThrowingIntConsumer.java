@@ -1,5 +1,6 @@
 package throwing.function;
 
+import java.util.function.Consumer;
 import java.util.function.IntConsumer;
 
 import throwing.Nothing;
@@ -15,9 +16,14 @@ public interface ThrowingIntConsumer<X extends Throwable> {
     }
 
     default public <Y extends Throwable> ThrowingIntConsumer<Y> orTry(ThrowingIntConsumer<? extends Y> f) {
+        return orTry(f, null);
+    }
+
+    default public <Y extends Throwable> ThrowingIntConsumer<Y> orTry(ThrowingIntConsumer<? extends Y> f,
+            Consumer<? super Throwable> thrown) {
         return t -> {
             ThrowingRunnable<X> s = () -> accept(t);
-            s.orTry(() -> f.accept(t)).run();
+            s.orTry(() -> f.accept(t), thrown).run();
         };
     }
 }
