@@ -17,10 +17,7 @@ public interface ThrowingBiConsumer<T, U, X extends Throwable> {
 
     default public <Y extends Throwable> ThrowingBiConsumer<T, U, Y> orTry(
             ThrowingBiConsumer<? super T, ? super U, ? extends Y> f) {
-        return (t, u) -> {
-            ThrowingRunnable<X> s = () -> accept(t, u);
-            s.orTry(() -> f.accept(t, u)).run();
-        };
+        return orTry(f, null);
     }
 
     default public <Y extends Throwable> ThrowingBiConsumer<T, U, Y> orTry(
