@@ -1,5 +1,6 @@
 ThrowingStream
 ==============
+![](https://img.shields.io/maven-central/v/com.github.jeffreyfalgout/throwing-streams.svg?label=maven%20central)
 
 This project is an alternative API to `java.util.stream` and its various supporting interfaces that allows for checked exceptions to be thrown.
 
