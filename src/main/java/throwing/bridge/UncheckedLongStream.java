@@ -109,87 +109,87 @@ class UncheckedLongStream<X extends Throwable> extends UncheckedBaseStream<Long,
     
     @Override
     public void forEach(LongConsumer action) {
-        launder(() -> getDelegate().forEach(action::accept));
+        maskException(() -> getDelegate().forEach(action::accept));
     }
     
     @Override
     public void forEachOrdered(LongConsumer action) {
-        launder(() -> getDelegate().forEachOrdered(action::accept));
+        maskException(() -> getDelegate().forEachOrdered(action::accept));
     }
     
     @Override
     public long[] toArray() {
-        return launder(getDelegate()::toArray);
+        return maskException(getDelegate()::toArray);
     }
     
     @Override
     public long reduce(long identity, LongBinaryOperator op) {
-        return launder(() -> getDelegate().reduce(identity, op::applyAsLong));
+        return maskException(() -> getDelegate().reduce(identity, op::applyAsLong));
     }
     
     @Override
     public OptionalLong reduce(LongBinaryOperator op) {
-        return launder(() -> getDelegate().reduce(op::applyAsLong));
+        return maskException(() -> getDelegate().reduce(op::applyAsLong));
     }
     
     @Override
     public <R> R collect(Supplier<R> supplier, ObjLongConsumer<R> accumulator, BiConsumer<R, R> combiner) {
-        return launder(() -> getDelegate().collect(supplier::get, accumulator::accept, combiner::accept));
+        return maskException(() -> getDelegate().collect(supplier::get, accumulator::accept, combiner::accept));
     }
     
     @Override
     public long sum() {
-        return launder(getDelegate()::sum);
+        return maskException(getDelegate()::sum);
     }
     
     @Override
     public OptionalLong min() {
-        return launder(getDelegate()::min);
+        return maskException(getDelegate()::min);
     }
     
     @Override
     public OptionalLong max() {
-        return launder(getDelegate()::max);
+        return maskException(getDelegate()::max);
     }
     
     @Override
     public long count() {
-        return launder(getDelegate()::count);
+        return maskException(getDelegate()::count);
     }
     
     @Override
     public OptionalDouble average() {
-        return launder(getDelegate()::average);
+        return maskException(getDelegate()::average);
     }
     
     @Override
     public LongSummaryStatistics summaryStatistics() {
-        return launder(getDelegate()::summaryStatistics);
+        return maskException(getDelegate()::summaryStatistics);
     }
     
     @Override
     public boolean anyMatch(LongPredicate predicate) {
-        return launder(() -> getDelegate().anyMatch(predicate::test));
+        return maskException(() -> getDelegate().anyMatch(predicate::test));
     }
     
     @Override
     public boolean allMatch(LongPredicate predicate) {
-        return launder(() -> getDelegate().allMatch(predicate::test));
+        return maskException(() -> getDelegate().allMatch(predicate::test));
     }
     
     @Override
     public boolean noneMatch(LongPredicate predicate) {
-        return launder(() -> getDelegate().noneMatch(predicate::test));
+        return maskException(() -> getDelegate().noneMatch(predicate::test));
     }
     
     @Override
     public OptionalLong findFirst() {
-        return launder(getDelegate()::findFirst);
+        return maskException(getDelegate()::findFirst);
     }
     
     @Override
     public OptionalLong findAny() {
-        return launder(getDelegate()::findAny);
+        return maskException(getDelegate()::findAny);
     }
     
     @Override

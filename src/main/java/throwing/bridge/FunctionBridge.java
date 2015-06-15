@@ -78,149 +78,149 @@ class FunctionBridge<X extends Throwable> extends UncheckedBridge<Void, X> {
     }
     
     public <R> Supplier<R> convert(ThrowingSupplier<? extends R, ? extends X> supplier) {
-        return () -> launder(supplier);
+        return () -> maskException(supplier);
     }
     
     public <T> Predicate<T> convert(ThrowingPredicate<? super T, ? extends X> predicate) {
-        return t -> launder(() -> predicate.test(t));
+        return t -> maskException(() -> predicate.test(t));
     }
     
     public <T, R> Function<T, R> convert(ThrowingFunction<? super T, ? extends R, ? extends X> function) {
-        return t -> launder(() -> function.apply(t));
+        return t -> maskException(() -> function.apply(t));
     }
     
     public <T> Consumer<T> convert(ThrowingConsumer<? super T, ? extends X> consumer) {
-        return t -> launder(() -> consumer.accept(t));
+        return t -> maskException(() -> consumer.accept(t));
     }
     
     public <T, U, R> BiFunction<T, U, R> convert(
             ThrowingBiFunction<? super T, ? super U, ? extends R, ? extends X> function) {
-        return (t, u) -> launder(() -> function.apply(t, u));
+        return (t, u) -> maskException(() -> function.apply(t, u));
     }
     
     public <T> BinaryOperator<T> convert(ThrowingBinaryOperator<T, ? extends X> operator) {
-        return (t1, t2) -> launder(() -> operator.apply(t1, t2));
+        return (t1, t2) -> maskException(() -> operator.apply(t1, t2));
     }
     
     public <T> Comparator<T> convert(ThrowingComparator<? super T, ? extends X> comparator) {
-        return (t1, t2) -> launder(() -> comparator.compare(t1, t2));
+        return (t1, t2) -> maskException(() -> comparator.compare(t1, t2));
     }
     
     public <T, U> BiConsumer<T, U> convert(ThrowingBiConsumer<? super T, ? super U, ? extends X> consumer) {
-        return (t, u) -> launder(() -> consumer.accept(t, u));
+        return (t, u) -> maskException(() -> consumer.accept(t, u));
     }
     
     // int
     
     public IntConsumer convert(ThrowingIntConsumer<? extends X> consumer) {
-        return i -> launder(() -> consumer.accept(i));
+        return i -> maskException(() -> consumer.accept(i));
     }
     
     public IntPredicate convert(ThrowingIntPredicate<? extends X> predicate) {
-        return i -> launder(() -> predicate.test(i));
+        return i -> maskException(() -> predicate.test(i));
     }
     
     public IntBinaryOperator convert(ThrowingIntBinaryOperator<? extends X> operator) {
-        return (i1, i2) -> launder(() -> operator.applyAsInt(i1, i2));
+        return (i1, i2) -> maskException(() -> operator.applyAsInt(i1, i2));
     }
     
     public <T> ObjIntConsumer<T> convert(ThrowingObjIntConsumer<T, ? extends X> consumer) {
-        return (t, i) -> launder(() -> consumer.accept(t, i));
+        return (t, i) -> maskException(() -> consumer.accept(t, i));
     }
     
     public IntUnaryOperator convert(ThrowingIntUnaryOperator<? extends X> operator) {
-        return i -> launder(() -> operator.applyAsInt(i));
+        return i -> maskException(() -> operator.applyAsInt(i));
     }
     
     public <R> IntFunction<R> convert(ThrowingIntFunction<R, ? extends X> function) {
-        return i -> launder(() -> function.apply(i));
+        return i -> maskException(() -> function.apply(i));
     }
     
     public <T> ToIntFunction<T> convert(ThrowingToIntFunction<T, ? extends X> function) {
-        return t -> launder(() -> function.applyAsInt(t));
+        return t -> maskException(() -> function.applyAsInt(t));
     }
     
     public IntToLongFunction convert(ThrowingIntToLongFunction<? extends X> function) {
-        return i -> launder(() -> function.applyAsLong(i));
+        return i -> maskException(() -> function.applyAsLong(i));
     }
     
     public IntToDoubleFunction convert(ThrowingIntToDoubleFunction<? extends X> function) {
-        return i -> launder(() -> function.applyAsDouble(i));
+        return i -> maskException(() -> function.applyAsDouble(i));
     }
     
     // long
     
     public LongConsumer convert(ThrowingLongConsumer<? extends X> consumer) {
-        return l -> launder(() -> consumer.accept(l));
+        return l -> maskException(() -> consumer.accept(l));
     }
     
     public LongPredicate convert(ThrowingLongPredicate<? extends X> predicate) {
-        return l -> launder(() -> predicate.test(l));
+        return l -> maskException(() -> predicate.test(l));
     }
     
     public LongBinaryOperator convert(ThrowingLongBinaryOperator<? extends X> operator) {
-        return (l1, l2) -> launder(() -> operator.applyAsLong(l1, l2));
+        return (l1, l2) -> maskException(() -> operator.applyAsLong(l1, l2));
     }
     
     public <T> ObjLongConsumer<T> convert(ThrowingObjLongConsumer<T, ? extends X> consumer) {
-        return (t, l) -> launder(() -> consumer.accept(t, l));
+        return (t, l) -> maskException(() -> consumer.accept(t, l));
     }
     
     public LongUnaryOperator convert(ThrowingLongUnaryOperator<? extends X> operator) {
-        return l -> launder(() -> operator.applyAsLong(l));
+        return l -> maskException(() -> operator.applyAsLong(l));
     }
     
     public <R> LongFunction<R> convert(ThrowingLongFunction<R, ? extends X> function) {
-        return l -> launder(() -> function.apply(l));
+        return l -> maskException(() -> function.apply(l));
     }
     
     public <T> ToLongFunction<T> convert(ThrowingToLongFunction<T, ? extends X> function) {
-        return t -> launder(() -> function.applyAsLong(t));
+        return t -> maskException(() -> function.applyAsLong(t));
     }
     
     public LongToIntFunction convert(ThrowingLongToIntFunction<? extends X> function) {
-        return l -> launder(() -> function.applyAsInt(l));
+        return l -> maskException(() -> function.applyAsInt(l));
     }
     
     public LongToDoubleFunction convert(ThrowingLongToDoubleFunction<? extends X> function) {
-        return l -> launder(() -> function.applyAsDouble(l));
+        return l -> maskException(() -> function.applyAsDouble(l));
     }
     
     // double
     
     public DoubleConsumer convert(ThrowingDoubleConsumer<? extends X> consumer) {
-        return d -> launder(() -> consumer.accept(d));
+        return d -> maskException(() -> consumer.accept(d));
     }
     
     public DoublePredicate convert(ThrowingDoublePredicate<? extends X> predicate) {
-        return d -> launder(() -> predicate.test(d));
+        return d -> maskException(() -> predicate.test(d));
     }
     
     public DoubleBinaryOperator convert(ThrowingDoubleBinaryOperator<? extends X> operator) {
-        return (d1, d2) -> launder(() -> operator.applyAsDouble(d1, d2));
+        return (d1, d2) -> maskException(() -> operator.applyAsDouble(d1, d2));
     }
     
     public <T> ObjDoubleConsumer<T> convert(ThrowingObjDoubleConsumer<T, ? extends X> consumer) {
-        return (t, d) -> launder(() -> consumer.accept(t, d));
+        return (t, d) -> maskException(() -> consumer.accept(t, d));
     }
     
     public DoubleUnaryOperator convert(ThrowingDoubleUnaryOperator<? extends X> operator) {
-        return d -> launder(() -> operator.applyAsDouble(d));
+        return d -> maskException(() -> operator.applyAsDouble(d));
     }
     
     public <R> DoubleFunction<R> convert(ThrowingDoubleFunction<R, ? extends X> function) {
-        return d -> launder(() -> function.apply(d));
+        return d -> maskException(() -> function.apply(d));
     }
     
     public <T> ToDoubleFunction<T> convert(ThrowingToDoubleFunction<T, ? extends X> function) {
-        return t -> launder(() -> function.applyAsDouble(t));
+        return t -> maskException(() -> function.applyAsDouble(t));
     }
     
     public DoubleToIntFunction convert(ThrowingDoubleToIntFunction<? extends X> function) {
-        return d -> launder(() -> function.applyAsInt(d));
+        return d -> maskException(() -> function.applyAsInt(d));
     }
     
     public DoubleToLongFunction convert(ThrowingDoubleToLongFunction<? extends X> function) {
-        return d -> launder(() -> function.applyAsLong(d));
+        return d -> maskException(() -> function.applyAsLong(d));
     }
 }

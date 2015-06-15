@@ -26,7 +26,7 @@ class UncheckedSpliterator<T, S extends ThrowingSpliterator<T, X>, X extends Thr
         
         @Override
         public boolean tryAdvance(IntConsumer action) {
-            return launder(() -> getDelegate().tryAdvance((ThrowingIntConsumer<X>) action::accept));
+            return maskException(() -> getDelegate().tryAdvance((ThrowingIntConsumer<X>) action::accept));
         }
     }
     
@@ -43,7 +43,7 @@ class UncheckedSpliterator<T, S extends ThrowingSpliterator<T, X>, X extends Thr
         
         @Override
         public boolean tryAdvance(LongConsumer action) {
-            return launder(() -> getDelegate().tryAdvance((ThrowingLongConsumer<X>) action::accept));
+            return maskException(() -> getDelegate().tryAdvance((ThrowingLongConsumer<X>) action::accept));
         }
     }
     
@@ -60,7 +60,7 @@ class UncheckedSpliterator<T, S extends ThrowingSpliterator<T, X>, X extends Thr
         
         @Override
         public boolean tryAdvance(DoubleConsumer action) {
-            return launder(() -> getDelegate().tryAdvance((ThrowingDoubleConsumer<X>) action::accept));
+            return maskException(() -> getDelegate().tryAdvance((ThrowingDoubleConsumer<X>) action::accept));
         }
     }
     
@@ -70,7 +70,7 @@ class UncheckedSpliterator<T, S extends ThrowingSpliterator<T, X>, X extends Thr
     
     @Override
     public boolean tryAdvance(Consumer<? super T> action) {
-        return launder(() -> getDelegate().tryAdvance(action::accept));
+        return maskException(() -> getDelegate().tryAdvance(action::accept));
     }
     
     @Override

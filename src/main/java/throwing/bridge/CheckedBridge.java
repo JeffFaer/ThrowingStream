@@ -16,7 +16,7 @@ abstract class CheckedBridge<D, X extends Throwable> extends AbstractBridge<D, X
     
     private final FunctionBridge<X> bridge;
     private final RethrowChain<BridgeException, X> chain;
-    private final Function<BridgeException, X> launder;
+    private final Function<BridgeException, X> unmasker;
     
     CheckedBridge(D delegate, FunctionBridge<X> bridge) {
         this(delegate, bridge, RethrowChain.start());
@@ -29,11 +29,13 @@ abstract class CheckedBridge<D, X extends Throwable> extends AbstractBridge<D, X
             Throwable cause = t.getCause();
             if (getExceptionClass().isInstance(cause)) {
                 return Optional.of(getExceptionClass().cast(cause));
+            } else {
+                System.out.println(t.getClass());
             }
             
             return Optional.empty();
         });
-        launder = this.chain.finish();
+        unmasker = this.chain.finish();
     }
     
     private void filterStackTrace(Throwable cause) {
@@ -61,18 +63,18 @@ abstract class CheckedBridge<D, X extends Throwable> extends AbstractBridge<D, X
         return chain;
     }
     
-    protected void filterBridgeException(Runnable runnable) throws X {
-        filterBridgeException(() -> {
+    protected void unmaskBridgeException(Runnable runnable) throws X {
+        unmaskBridgeException(() -> {
             runnable.run();
             return null;
         });
     }
     
-    protected <R> R filterBridgeException(Supplier<R> supplier) throws X {
+    protected <R> R unmaskBridgeException(Supplier<R> supplier) throws X {
         try {
             return supplier.get();
         } catch (BridgeException e) {
-            X x = launder.apply(e);
+            X x = unmasker.apply(e);
             // filter out bridge lines from the exception. They can get
             // rather verbose.
             if (FILTER_STACK) {

@@ -17,12 +17,12 @@ class CheckedIterator<E, I extends Iterator<E>, X extends Throwable> extends Che
         
         @Override
         public void forEachRemaining(ThrowingIntConsumer<X> action) throws X {
-            filterBridgeException(() -> getDelegate().forEachRemaining(getBridge().convert(action)));
+            unmaskBridgeException(() -> getDelegate().forEachRemaining(getBridge().convert(action)));
         }
         
         @Override
         public int nextInt() throws X {
-            return filterBridgeException(getDelegate()::nextInt);
+            return unmaskBridgeException(getDelegate()::nextInt);
         }
     }
     
@@ -34,12 +34,12 @@ class CheckedIterator<E, I extends Iterator<E>, X extends Throwable> extends Che
         
         @Override
         public void forEachRemaining(ThrowingLongConsumer<X> action) throws X {
-            filterBridgeException(() -> getDelegate().forEachRemaining(getBridge().convert(action)));
+            unmaskBridgeException(() -> getDelegate().forEachRemaining(getBridge().convert(action)));
         }
         
         @Override
         public long nextLong() throws X {
-            return filterBridgeException(getDelegate()::nextLong);
+            return unmaskBridgeException(getDelegate()::nextLong);
         }
     }
     
@@ -51,12 +51,12 @@ class CheckedIterator<E, I extends Iterator<E>, X extends Throwable> extends Che
         
         @Override
         public void forEachRemaining(ThrowingDoubleConsumer<X> action) throws X {
-            filterBridgeException(() -> getDelegate().forEachRemaining(getBridge().convert(action)));
+            unmaskBridgeException(() -> getDelegate().forEachRemaining(getBridge().convert(action)));
         }
         
         @Override
         public double nextDouble() throws X {
-            return filterBridgeException(getDelegate()::nextDouble);
+            return unmaskBridgeException(getDelegate()::nextDouble);
         }
     }
     
@@ -66,11 +66,11 @@ class CheckedIterator<E, I extends Iterator<E>, X extends Throwable> extends Che
     
     @Override
     public boolean hasNext() throws X {
-        return filterBridgeException(getDelegate()::hasNext);
+        return unmaskBridgeException(getDelegate()::hasNext);
     }
     
     @Override
     public E next() throws X {
-        return filterBridgeException(getDelegate()::next);
+        return unmaskBridgeException(getDelegate()::next);
     }
 }

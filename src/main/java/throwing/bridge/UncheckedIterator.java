@@ -18,12 +18,12 @@ class UncheckedIterator<T, I extends ThrowingIterator<T, X>, X extends Throwable
         
         @Override
         public void forEachRemaining(IntConsumer action) {
-            launder(() -> getDelegate().forEachRemaining(action::accept));
+            maskException(() -> getDelegate().forEachRemaining(action::accept));
         }
         
         @Override
         public int nextInt() {
-            return launder(getDelegate()::nextInt);
+            return maskException(getDelegate()::nextInt);
         }
     }
     
@@ -35,12 +35,12 @@ class UncheckedIterator<T, I extends ThrowingIterator<T, X>, X extends Throwable
         
         @Override
         public void forEachRemaining(LongConsumer action) {
-            launder(() -> getDelegate().forEachRemaining(action::accept));
+            maskException(() -> getDelegate().forEachRemaining(action::accept));
         }
         
         @Override
         public long nextLong() {
-            return launder(getDelegate()::nextLong);
+            return maskException(getDelegate()::nextLong);
         }
     }
     
@@ -52,12 +52,12 @@ class UncheckedIterator<T, I extends ThrowingIterator<T, X>, X extends Throwable
         
         @Override
         public void forEachRemaining(DoubleConsumer action) {
-            launder(() -> getDelegate().forEachRemaining(action::accept));
+            maskException(() -> getDelegate().forEachRemaining(action::accept));
         }
         
         @Override
         public double nextDouble() {
-            return launder(getDelegate()::nextDouble);
+            return maskException(getDelegate()::nextDouble);
         }
     }
     
@@ -67,11 +67,11 @@ class UncheckedIterator<T, I extends ThrowingIterator<T, X>, X extends Throwable
     
     @Override
     public boolean hasNext() {
-        return launder(getDelegate()::hasNext);
+        return maskException(getDelegate()::hasNext);
     }
     
     @Override
     public T next() {
-        return launder(getDelegate()::next);
+        return maskException(getDelegate()::next);
     }
 }

@@ -23,7 +23,7 @@ class CheckedSpliterator<T, S extends Spliterator<T>, X extends Throwable> exten
         
         @Override
         public boolean tryAdvance(ThrowingIntConsumer<X> action) throws X {
-            return filterBridgeException(() -> getDelegate().tryAdvance(getBridge().convert(action)));
+            return unmaskBridgeException(() -> getDelegate().tryAdvance(getBridge().convert(action)));
         }
     }
     
@@ -40,7 +40,7 @@ class CheckedSpliterator<T, S extends Spliterator<T>, X extends Throwable> exten
         
         @Override
         public boolean tryAdvance(ThrowingLongConsumer<X> action) throws X {
-            return filterBridgeException(() -> getDelegate().tryAdvance(getBridge().convert(action)));
+            return unmaskBridgeException(() -> getDelegate().tryAdvance(getBridge().convert(action)));
         }
     }
     
@@ -57,7 +57,7 @@ class CheckedSpliterator<T, S extends Spliterator<T>, X extends Throwable> exten
         
         @Override
         public boolean tryAdvance(ThrowingDoubleConsumer<X> action) throws X {
-            return filterBridgeException(() -> getDelegate().tryAdvance(getBridge().convert(action)));
+            return unmaskBridgeException(() -> getDelegate().tryAdvance(getBridge().convert(action)));
         }
     }
     
@@ -67,7 +67,7 @@ class CheckedSpliterator<T, S extends Spliterator<T>, X extends Throwable> exten
     
     @Override
     public boolean tryAdvance(ThrowingConsumer<? super T, ? extends X> action) throws X {
-        return filterBridgeException(() -> getDelegate().tryAdvance(getBridge().convert(action)));
+        return unmaskBridgeException(() -> getDelegate().tryAdvance(getBridge().convert(action)));
     }
     
     @Override

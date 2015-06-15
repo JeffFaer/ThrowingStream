@@ -115,89 +115,89 @@ class CheckedIntStream<X extends Throwable> extends CheckedBaseStream<Integer, X
 
     @Override
     public void forEach(ThrowingIntConsumer<? extends X> action) throws X {
-        filterBridgeException(() -> getDelegate().forEach(getBridge().convert(action)));
+        unmaskBridgeException(() -> getDelegate().forEach(getBridge().convert(action)));
     }
 
     @Override
     public void forEachOrdered(ThrowingIntConsumer<? extends X> action) throws X {
-        filterBridgeException(() -> getDelegate().forEachOrdered(getBridge().convert(action)));
+        unmaskBridgeException(() -> getDelegate().forEachOrdered(getBridge().convert(action)));
     }
 
     @Override
     public int[] toArray() throws X {
-        return filterBridgeException(getDelegate()::toArray);
+        return unmaskBridgeException(getDelegate()::toArray);
     }
 
     @Override
     public int reduce(int identity, ThrowingIntBinaryOperator<? extends X> op) throws X {
-        return filterBridgeException(() -> getDelegate().reduce(identity, getBridge().convert(op)));
+        return unmaskBridgeException(() -> getDelegate().reduce(identity, getBridge().convert(op)));
     }
 
     @Override
     public OptionalInt reduce(ThrowingIntBinaryOperator<? extends X> op) throws X {
-        return filterBridgeException(() -> getDelegate().reduce(getBridge().convert(op)));
+        return unmaskBridgeException(() -> getDelegate().reduce(getBridge().convert(op)));
     }
 
     @Override
     public <R> R collect(ThrowingSupplier<R, ? extends X> supplier, ThrowingObjIntConsumer<R, ? extends X> accumulator,
             ThrowingBiConsumer<R, R, ? extends X> combiner) throws X {
-        return filterBridgeException(() -> getDelegate().collect(getBridge().convert(supplier),
+        return unmaskBridgeException(() -> getDelegate().collect(getBridge().convert(supplier),
                 getBridge().convert(accumulator), getBridge().convert(combiner)));
     }
 
     @Override
     public int sum() throws X {
-        return filterBridgeException(getDelegate()::sum);
+        return unmaskBridgeException(getDelegate()::sum);
     }
 
     @Override
     public OptionalInt min() throws X {
-        return filterBridgeException(getDelegate()::min);
+        return unmaskBridgeException(getDelegate()::min);
     }
 
     @Override
     public OptionalInt max() throws X {
-        return filterBridgeException(getDelegate()::max);
+        return unmaskBridgeException(getDelegate()::max);
     }
 
     @Override
     public long count() throws X {
-        return filterBridgeException(getDelegate()::count);
+        return unmaskBridgeException(getDelegate()::count);
     }
 
     @Override
     public OptionalDouble average() throws X {
-        return filterBridgeException(getDelegate()::average);
+        return unmaskBridgeException(getDelegate()::average);
     }
 
     @Override
     public IntSummaryStatistics summaryStatistics() throws X {
-        return filterBridgeException(getDelegate()::summaryStatistics);
+        return unmaskBridgeException(getDelegate()::summaryStatistics);
     }
 
     @Override
     public boolean anyMatch(ThrowingIntPredicate<? extends X> predicate) throws X {
-        return filterBridgeException(() -> getDelegate().anyMatch(getBridge().convert(predicate)));
+        return unmaskBridgeException(() -> getDelegate().anyMatch(getBridge().convert(predicate)));
     }
 
     @Override
     public boolean allMatch(ThrowingIntPredicate<? extends X> predicate) throws X {
-        return filterBridgeException(() -> getDelegate().allMatch(getBridge().convert(predicate)));
+        return unmaskBridgeException(() -> getDelegate().allMatch(getBridge().convert(predicate)));
     }
 
     @Override
     public boolean noneMatch(ThrowingIntPredicate<? extends X> predicate) throws X {
-        return filterBridgeException(() -> getDelegate().noneMatch(getBridge().convert(predicate)));
+        return unmaskBridgeException(() -> getDelegate().noneMatch(getBridge().convert(predicate)));
     }
 
     @Override
     public OptionalInt findFirst() throws X {
-        return filterBridgeException(getDelegate()::findFirst);
+        return unmaskBridgeException(getDelegate()::findFirst);
     }
 
     @Override
     public OptionalInt findAny() throws X {
-        return filterBridgeException(getDelegate()::findAny);
+        return unmaskBridgeException(getDelegate()::findAny);
     }
 
     @Override

@@ -132,86 +132,86 @@ class UncheckedStream<T, X extends Throwable> extends UncheckedBaseStream<T, X, 
     
     @Override
     public void forEach(Consumer<? super T> action) {
-        launder(() -> getDelegate().forEach(action::accept));
+        maskException(() -> getDelegate().forEach(action::accept));
     }
     
     @Override
     public void forEachOrdered(Consumer<? super T> action) {
-        launder(() -> getDelegate().forEachOrdered(action::accept));
+        maskException(() -> getDelegate().forEachOrdered(action::accept));
     }
     
     @Override
     public Object[] toArray() {
-        return launder((ThrowingSupplier<Object[], X>) getDelegate()::toArray);
+        return maskException((ThrowingSupplier<Object[], X>) getDelegate()::toArray);
     }
     
     @Override
     public <A> A[] toArray(IntFunction<A[]> generator) {
-        return launder(() -> getDelegate().toArray(generator));
+        return maskException(() -> getDelegate().toArray(generator));
     }
     
     @Override
     public T reduce(T identity, BinaryOperator<T> accumulator) {
-        return launder(() -> getDelegate().reduce(identity, accumulator::apply));
+        return maskException(() -> getDelegate().reduce(identity, accumulator::apply));
     }
     
     @Override
     public Optional<T> reduce(BinaryOperator<T> accumulator) {
-        return launder(() -> getDelegate().reduce(accumulator::apply));
+        return maskException(() -> getDelegate().reduce(accumulator::apply));
     }
     
     @Override
     public <U> U reduce(U identity, BiFunction<U, ? super T, U> accumulator, BinaryOperator<U> combiner) {
-        return launder(() -> getDelegate().reduce(identity, accumulator::apply, combiner::apply));
+        return maskException(() -> getDelegate().reduce(identity, accumulator::apply, combiner::apply));
     }
     
     @Override
     public <R> R collect(Supplier<R> supplier, BiConsumer<R, ? super T> accumulator, BiConsumer<R, R> combiner) {
-        return launder(() -> getDelegate().collect(supplier::get, accumulator::accept, combiner::accept));
+        return maskException(() -> getDelegate().collect(supplier::get, accumulator::accept, combiner::accept));
     }
     
     @Override
     public <R, A> R collect(Collector<? super T, A, R> collector) {
-        return launder(() -> getDelegate().collect(ThrowingBridge.of(collector)));
+        return maskException(() -> getDelegate().collect(ThrowingBridge.of(collector)));
     }
     
     @Override
     public Optional<T> min(Comparator<? super T> comparator) {
-        return launder(() -> getDelegate().min(comparator::compare));
+        return maskException(() -> getDelegate().min(comparator::compare));
     }
     
     @Override
     public Optional<T> max(Comparator<? super T> comparator) {
-        return launder(() -> getDelegate().max(comparator::compare));
+        return maskException(() -> getDelegate().max(comparator::compare));
     }
     
     @Override
     public long count() {
-        return launder(getDelegate()::count);
+        return maskException(getDelegate()::count);
     }
     
     @Override
     public boolean anyMatch(Predicate<? super T> predicate) {
-        return launder(() -> getDelegate().anyMatch(predicate::test));
+        return maskException(() -> getDelegate().anyMatch(predicate::test));
     }
     
     @Override
     public boolean allMatch(Predicate<? super T> predicate) {
-        return launder(() -> getDelegate().allMatch(predicate::test));
+        return maskException(() -> getDelegate().allMatch(predicate::test));
     }
     
     @Override
     public boolean noneMatch(Predicate<? super T> predicate) {
-        return launder(() -> getDelegate().noneMatch(predicate::test));
+        return maskException(() -> getDelegate().noneMatch(predicate::test));
     }
     
     @Override
     public Optional<T> findFirst() {
-        return launder(getDelegate()::findFirst);
+        return maskException(getDelegate()::findFirst);
     }
     
     @Override
     public Optional<T> findAny() {
-        return launder(getDelegate()::findAny);
+        return maskException(getDelegate()::findAny);
     }
 }
