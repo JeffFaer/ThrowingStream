@@ -2,6 +2,7 @@ package throwing.function;
 
 import java.util.function.Consumer;
 import java.util.function.DoubleToLongFunction;
+import java.util.function.Function;
 
 import throwing.Nothing;
 
@@ -24,6 +25,14 @@ public interface ThrowingDoubleToLongFunction<X extends Throwable> {
         return t -> {
             ThrowingSupplier<Long, X> s = () -> applyAsLong(t);
             return s.orTry(() -> f.applyAsLong(t), thrown).get();
+        };
+    }
+
+    default public <Y extends Throwable> ThrowingDoubleToLongFunction<Y> rethrow(Class<X> x,
+            Function<? super X, ? extends Y> mapper) {
+        return t -> {
+            ThrowingSupplier<Long, X> s = () -> applyAsLong(t);
+            return s.rethrow(x, mapper).get();
         };
     }
 }

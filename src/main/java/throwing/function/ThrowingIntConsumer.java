@@ -1,6 +1,7 @@
 package throwing.function;
 
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.IntConsumer;
 
 import throwing.Nothing;
@@ -24,6 +25,14 @@ public interface ThrowingIntConsumer<X extends Throwable> {
         return t -> {
             ThrowingRunnable<X> s = () -> accept(t);
             s.orTry(() -> f.accept(t), thrown).run();
+        };
+    }
+
+    default public <Y extends Throwable> ThrowingIntConsumer<Y> rethrow(Class<X> x,
+            Function<? super X, ? extends Y> mapper) {
+        return t -> {
+            ThrowingRunnable<X> s = () -> accept(t);
+            s.rethrow(x, mapper).run();
         };
     }
 }

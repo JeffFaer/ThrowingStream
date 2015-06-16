@@ -2,6 +2,7 @@ package throwing.function;
 
 import java.util.function.Consumer;
 import java.util.function.DoubleToIntFunction;
+import java.util.function.Function;
 
 import throwing.Nothing;
 
@@ -23,6 +24,14 @@ public interface ThrowingDoubleToIntFunction<X extends Throwable> {
         return t -> {
             ThrowingSupplier<Integer, X> s = () -> applyAsInt(t);
             return s.orTry(() -> f.applyAsInt(t), thrown).get();
+        };
+    }
+
+    default public <Y extends Throwable> ThrowingDoubleToIntFunction<Y> rethrow(Class<X> x,
+            Function<? super X, ? extends Y> mapper) {
+        return t -> {
+            ThrowingSupplier<Integer, X> s = () -> applyAsInt(t);
+            return s.rethrow(x, mapper).get();
         };
     }
 }

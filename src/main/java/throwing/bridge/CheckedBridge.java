@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.IntSummaryStatistics;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.IntStream;
@@ -27,15 +26,11 @@ abstract class CheckedBridge<D, X extends Throwable> extends AbstractBridge<D, X
     CheckedBridge(D delegate, FunctionBridge<X> bridge, RethrowChain<BridgeException, X> chain) {
         super(delegate, bridge.getExceptionClass());
         this.bridge = bridge;
+
+        RethrowChain<Throwable, X> link = RethrowChain.rethrowAs(getExceptionClass());
         this.chain = chain.chain(t -> {
             Throwable cause = t.getCause();
-            if (getExceptionClass().isInstance(cause)) {
-                return Optional.of(getExceptionClass().cast(cause));
-            } else {
-                System.out.println(t.getClass());
-            }
-            
-            return Optional.empty();
+            return link.apply(cause);
         });
         unmasker = this.chain.finish();
     }

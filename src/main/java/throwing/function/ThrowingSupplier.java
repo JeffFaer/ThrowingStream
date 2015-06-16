@@ -2,9 +2,11 @@ package throwing.function;
 
 import java.util.Objects;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import throwing.Nothing;
+import throwing.RethrowChain;
 
 @FunctionalInterface
 public interface ThrowingSupplier<R, X extends Throwable> {
@@ -40,6 +42,18 @@ public interface ThrowingSupplier<R, X extends Throwable> {
                     x2.addSuppressed(x);
                     throw x2;
                 }
+            }
+        };
+    }
+
+    default public <Y extends Throwable> ThrowingSupplier<R, Y> rethrow(Class<X> x,
+            Function<? super X, ? extends Y> mapper) {
+        Function<Throwable, ? extends Y> rethrower = RethrowChain.rethrowAs(x).rethrow(mapper).finish();
+        return () -> {
+            try {
+                return get();
+            } catch (Throwable t) {
+                throw rethrower.apply(t);
             }
         };
     }

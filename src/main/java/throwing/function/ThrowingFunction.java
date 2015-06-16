@@ -28,6 +28,14 @@ public interface ThrowingFunction<T, R, X extends Throwable> {
         };
     }
 
+    default public <Y extends Throwable> ThrowingFunction<T, R, Y> rethrow(Class<X> x,
+            Function<? super X, ? extends Y> mapper) {
+        return t -> {
+            ThrowingSupplier<R, X> s = () -> apply(t);
+            return s.rethrow(x, mapper).get();
+        };
+    }
+
     default public <RR> ThrowingFunction<T, RR, X> andThen(Function<? super R, ? extends RR> after) {
         return andThen((ThrowingFunction<? super R, ? extends RR, ? extends X>) after::apply);
     }

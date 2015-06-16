@@ -4,7 +4,8 @@ import java.util.Optional;
 import java.util.function.Function;
 
 @FunctionalInterface
-public interface RethrowChain<X extends Throwable, Y extends Throwable> extends Function<X, Optional<Y>> {
+public interface RethrowChain<X extends Throwable, Y extends Throwable> extends
+        Function<X, Optional<Y>> {
     public static final RethrowChain<Throwable, Throwable> START = t -> Optional.empty();
     public static final RethrowChain<Throwable, Throwable> END = t -> {
         if (t instanceof Error) {
@@ -15,8 +16,7 @@ public interface RethrowChain<X extends Throwable, Y extends Throwable> extends 
             throw new AssertionError(t);
         }
     };
-    public static final Function<Throwable, Error> END_FUNCTION = RethrowChain.<Throwable, Error> start()
-            .finish();
+    public static final Function<Throwable, Error> END_FUNCTION = RethrowChain.<Throwable, Error> start().finish();
 
     @SuppressWarnings("unchecked")
     public static <X extends Throwable, Y extends Throwable> RethrowChain<X, Y> start() {
@@ -28,7 +28,12 @@ public interface RethrowChain<X extends Throwable, Y extends Throwable> extends 
         return (RethrowChain<X, Y>) END;
     }
 
-    default public <Z extends Throwable> RethrowChain<X, Z> rethrow(Function<? super Y, ? extends Z> mapper) {
+    public static <Y extends Throwable> RethrowChain<Throwable, Y> rethrowAs(Class<Y> clazz) {
+        return e -> clazz.isInstance(e) ? Optional.of(clazz.cast(e)) : Optional.empty();
+    }
+
+    default public <Z extends Throwable> RethrowChain<X, Z> rethrow(
+            Function<? super Y, ? extends Z> mapper) {
         return t -> apply(t).map(mapper);
     }
 

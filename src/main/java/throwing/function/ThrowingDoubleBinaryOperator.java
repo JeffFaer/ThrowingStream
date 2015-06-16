@@ -2,6 +2,7 @@ package throwing.function;
 
 import java.util.function.Consumer;
 import java.util.function.DoubleBinaryOperator;
+import java.util.function.Function;
 
 import throwing.Nothing;
 
@@ -24,6 +25,14 @@ public interface ThrowingDoubleBinaryOperator<X extends Throwable> {
         return (t1, t2) -> {
             ThrowingSupplier<Double, X> s = () -> applyAsDouble(t1, t2);
             return s.orTry(() -> f.applyAsDouble(t1, t2), thrown).get();
+        };
+    }
+
+    default public <Y extends Throwable> ThrowingDoubleBinaryOperator<Y> rethrow(Class<X> x,
+            Function<? super X, ? extends Y> mapper) {
+        return (t1, t2) -> {
+            ThrowingSupplier<Double, X> s = () -> applyAsDouble(t1, t2);
+            return s.rethrow(x, mapper).get();
         };
     }
 }

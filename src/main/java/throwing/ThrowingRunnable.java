@@ -1,6 +1,7 @@
 package throwing;
 
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 import throwing.function.ThrowingSupplier;
 
@@ -27,5 +28,13 @@ public interface ThrowingRunnable<X extends Throwable> {
             r.run();
             return null;
         }, thrown)::get;
+    }
+
+    default public <Y extends Throwable> ThrowingRunnable<Y> rethrow(Class<X> x, Function<? super X, ? extends Y> mapper) {
+        ThrowingSupplier<Void, X> s1 = () -> {
+            run();
+            return null;
+        };
+        return s1.rethrow(x, mapper)::get;
     }
 }

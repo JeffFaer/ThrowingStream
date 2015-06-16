@@ -1,6 +1,7 @@
 package throwing.function;
 
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.LongToIntFunction;
 
 import throwing.Nothing;
@@ -23,6 +24,14 @@ public interface ThrowingLongToIntFunction<X extends Throwable> {
         return t -> {
             ThrowingSupplier<Integer, X> s = () -> applyAsInt(t);
             return s.orTry(() -> f.applyAsInt(t), thrown).get();
+        };
+    }
+
+    default public <Y extends Throwable> ThrowingLongToIntFunction<Y> rethrow(Class<X> x,
+            Function<? super X, ? extends Y> mapper) {
+        return t -> {
+            ThrowingSupplier<Integer, X> s = () -> applyAsInt(t);
+            return s.rethrow(x, mapper).get();
         };
     }
 }
