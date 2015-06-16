@@ -20,8 +20,8 @@ import java.util.stream.Stream;
 import org.junit.Test;
 
 import throwing.Nothing;
-import throwing.bridge.ThrowingBridge;
 import throwing.function.ThrowingIntPredicate;
+import throwing.stream.bridge.ThrowingBridge;
 
 public class ThrowingStreamTest {
     public IntStream numbers = IntStream.range(0, 20);

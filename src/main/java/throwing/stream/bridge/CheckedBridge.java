@@ -1,4 +1,4 @@
-package throwing.bridge;
+package throwing.stream.bridge;
 
 import java.util.ArrayList;
 import java.util.Arrays;

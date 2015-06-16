@@ -5,7 +5,6 @@ import java.util.function.IntFunction;
 import java.util.stream.Collector;
 
 import throwing.ThrowingComparator;
-import throwing.bridge.ThrowingBridge;
 import throwing.function.ThrowingBiConsumer;
 import throwing.function.ThrowingBiFunction;
 import throwing.function.ThrowingBinaryOperator;
@@ -21,6 +20,7 @@ import throwing.stream.ThrowingDoubleStream;
 import throwing.stream.ThrowingIntStream;
 import throwing.stream.ThrowingLongStream;
 import throwing.stream.ThrowingStream;
+import throwing.stream.bridge.ThrowingBridge;
 
 public interface UnionStream<T> extends ThrowingStream<T, Throwable> {
     @Override

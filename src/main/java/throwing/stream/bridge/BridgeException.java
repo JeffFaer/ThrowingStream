@@ -1,4 +1,4 @@
-package throwing.bridge;
+package throwing.stream.bridge;
 
 final class BridgeException extends RuntimeException {
     private static final long serialVersionUID = -3986425123148316828L;

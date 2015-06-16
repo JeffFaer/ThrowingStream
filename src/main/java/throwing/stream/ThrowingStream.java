@@ -10,7 +10,6 @@ import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
 import throwing.ThrowingComparator;
-import throwing.bridge.ThrowingBridge;
 import throwing.function.ThrowingBiConsumer;
 import throwing.function.ThrowingBiFunction;
 import throwing.function.ThrowingBinaryOperator;
@@ -21,6 +20,7 @@ import throwing.function.ThrowingSupplier;
 import throwing.function.ThrowingToDoubleFunction;
 import throwing.function.ThrowingToIntFunction;
 import throwing.function.ThrowingToLongFunction;
+import throwing.stream.bridge.ThrowingBridge;
 
 /**
  * A standard {@link Stream} does not allow you to throw any checked exceptions.

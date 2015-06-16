@@ -1,4 +1,4 @@
-package throwing.bridge;
+package throwing.stream.bridge;
 
 class AbstractBridge<D, X extends Throwable> implements Bridge<D> {
     private final D delegate;

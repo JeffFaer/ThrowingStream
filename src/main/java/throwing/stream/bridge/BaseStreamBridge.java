@@ -1,4 +1,4 @@
-package throwing.bridge;
+package throwing.stream.bridge;
 
 interface BaseStreamBridge<S, D> extends Bridge<D> {
     default public S chain(D newDelegate) {
