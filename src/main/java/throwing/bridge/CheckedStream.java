@@ -9,6 +9,7 @@ import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
+import throwing.RethrowChain;
 import throwing.ThrowingComparator;
 import throwing.function.ThrowingBiConsumer;
 import throwing.function.ThrowingBiFunction;

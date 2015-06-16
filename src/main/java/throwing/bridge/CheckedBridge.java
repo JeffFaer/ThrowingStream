@@ -9,6 +9,8 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
+import throwing.RethrowChain;
+
 abstract class CheckedBridge<D, X extends Throwable> extends AbstractBridge<D, X> {
     private static final String PACKAGE = CheckedBridge.class.getPackage().getName();
     // it might be useful to have a way to turn this off

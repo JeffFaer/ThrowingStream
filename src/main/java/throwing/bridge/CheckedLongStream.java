@@ -8,6 +8,7 @@ import java.util.function.LongFunction;
 import java.util.stream.LongStream;
 
 import throwing.ThrowingIterator.OfLong;
+import throwing.RethrowChain;
 import throwing.ThrowingSpliterator;
 import throwing.function.ThrowingBiConsumer;
 import throwing.function.ThrowingLongBinaryOperator;

@@ -3,6 +3,7 @@ package throwing.bridge;
 import java.util.Optional;
 import java.util.function.Function;
 
+import throwing.RethrowChain;
 import throwing.ThrowingRunnable;
 import throwing.function.ThrowingSupplier;
 

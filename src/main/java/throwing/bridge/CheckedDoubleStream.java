@@ -7,6 +7,7 @@ import java.util.function.Function;
 import java.util.stream.DoubleStream;
 
 import throwing.ThrowingIterator.OfDouble;
+import throwing.RethrowChain;
 import throwing.ThrowingSpliterator;
 import throwing.function.ThrowingBiConsumer;
 import throwing.function.ThrowingDoubleBinaryOperator;

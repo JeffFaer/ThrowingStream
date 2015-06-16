@@ -8,6 +8,7 @@ import java.util.function.IntFunction;
 import java.util.stream.IntStream;
 
 import throwing.ThrowingIterator.OfInt;
+import throwing.RethrowChain;
 import throwing.ThrowingSpliterator;
 import throwing.function.ThrowingBiConsumer;
 import throwing.function.ThrowingIntBinaryOperator;

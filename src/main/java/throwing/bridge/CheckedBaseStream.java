@@ -2,6 +2,7 @@ package throwing.bridge;
 
 import java.util.stream.BaseStream;
 
+import throwing.RethrowChain;
 import throwing.ThrowingIterator;
 import throwing.ThrowingSpliterator;
 import throwing.stream.ThrowingBaseStream;

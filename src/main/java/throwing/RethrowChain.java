@@ -1,10 +1,10 @@
-package throwing.bridge;
+package throwing;
 
 import java.util.Optional;
 import java.util.function.Function;
 
 @FunctionalInterface
-interface RethrowChain<X extends Throwable, Y extends Throwable> extends Function<X, Optional<Y>> {
+public interface RethrowChain<X extends Throwable, Y extends Throwable> extends Function<X, Optional<Y>> {
     public static final RethrowChain<Throwable, Throwable> START = t -> Optional.empty();
     public static final RethrowChain<Throwable, Throwable> END = t -> {
         if (t instanceof Error) {
@@ -15,6 +15,8 @@ interface RethrowChain<X extends Throwable, Y extends Throwable> extends Functio
             throw new AssertionError(t);
         }
     };
+    public static final Function<Throwable, Error> END_FUNCTION = RethrowChain.<Throwable, Error> start()
+            .finish();
 
     @SuppressWarnings("unchecked")
     public static <X extends Throwable, Y extends Throwable> RethrowChain<X, Y> start() {
