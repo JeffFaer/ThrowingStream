@@ -65,4 +65,8 @@ public interface ThrowingIterator<E, X extends Throwable> {
     public boolean hasNext() throws X;
     
     public E next() throws X;
+    
+    default public void remove() throws X {
+        throw new UnsupportedOperationException();
+    }
 }
