@@ -21,7 +21,12 @@ interface java.util.stream.Stream
 ````
 
 ###How can I use this library in my project?
- 1. [Clone the repository](http://git-scm.com/book/en/Git-Basics-Getting-a-Git-Repository#Cloning-an-Existing-Repository) and execute `mvn package` to create a .jar file
+ 1. [Clone the repository](http://git-scm.com/book/en/Git-Basics-Getting-a-Git-Repository#Cloning-an-Existing-Repository) and use maven to generate a .jar file:
+````
+git clone https://github.com/JeffreyFalgout/ThrowingStream
+cd ThrowingStream
+mvn package
+````
  2. Download a .jar from the [releases](https://github.com/JeffreyFalgout/ThrowingStream/releases) page
  3. Maven central:
 ````
