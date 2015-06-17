@@ -16,24 +16,14 @@ import throwing.function.ThrowingObjIntConsumer;
 import throwing.function.ThrowingSupplier;
 import throwing.stream.ThrowingIntStream;
 
-public interface UnionIntStream<X extends UnionThrowable> extends ThrowingIntStream<Throwable> {
+public interface UnionIntStream<X extends UnionThrowable> extends
+        UnionBaseStream<Integer, X, UnionIntStream<X>, ThrowingIntStream<Throwable>>,
+        ThrowingIntStream<Throwable> {
     @Override
     public UnionIterator.OfInt<X> iterator();
 
     @Override
     public UnionSpliterator.OfInt<X> spliterator();
-
-    @Override
-    public UnionIntStream<X> onClose(Runnable closeHandler);
-
-    @Override
-    public UnionIntStream<X> parallel();
-
-    @Override
-    public UnionIntStream<X> sequential();
-
-    @Override
-    public UnionIntStream<X> unordered();
 
     @Override
     public UnionIntStream<X> filter(ThrowingIntPredicate<? extends Throwable> predicate);
@@ -122,6 +112,9 @@ public interface UnionIntStream<X extends UnionThrowable> extends ThrowingIntStr
 
     @Override
     public OptionalInt findAny() throws X;
+
+    @Override
+    public UnionLongStream<X> asLongStream();
 
     @Override
     public UnionDoubleStream<X> asDoubleStream();

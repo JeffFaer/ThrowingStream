@@ -16,24 +16,14 @@ import throwing.function.ThrowingObjLongConsumer;
 import throwing.function.ThrowingSupplier;
 import throwing.stream.ThrowingLongStream;
 
-public interface UnionLongStream<X extends UnionThrowable> extends ThrowingLongStream<Throwable> {
+public interface UnionLongStream<X extends UnionThrowable> extends
+        UnionBaseStream<Long, X, UnionLongStream<X>, ThrowingLongStream<Throwable>>,
+        ThrowingLongStream<Throwable> {
     @Override
     public UnionIterator.OfLong<X> iterator();
 
     @Override
     public UnionSpliterator.OfLong<X> spliterator();
-
-    @Override
-    public UnionLongStream<X> onClose(Runnable closeHandler);
-
-    @Override
-    public UnionLongStream<X> parallel();
-
-    @Override
-    public UnionLongStream<X> sequential();
-
-    @Override
-    public UnionLongStream<X> unordered();
 
     @Override
     public UnionLongStream<X> filter(ThrowingLongPredicate<? extends Throwable> predicate);

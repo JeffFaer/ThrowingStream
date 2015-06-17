@@ -22,25 +22,9 @@ import throwing.stream.ThrowingLongStream;
 import throwing.stream.ThrowingStream;
 import throwing.stream.adapter.ThrowingAdapter;
 
-public interface UnionStream<T, X extends UnionThrowable> extends ThrowingStream<T, Throwable> {
-    @Override
-    public UnionIterator<T, X> iterator();
-
-    @Override
-    public UnionSpliterator<T, X> spliterator();
-
-    @Override
-    public UnionStream<T, X> onClose(Runnable closeHandler);
-
-    @Override
-    public UnionStream<T, X> parallel();
-
-    @Override
-    public UnionStream<T, X> sequential();
-
-    @Override
-    public UnionStream<T, X> unordered();
-
+public interface UnionStream<T, X extends UnionThrowable> extends
+        UnionBaseStream<T, X, UnionStream<T, X>, ThrowingStream<T, Throwable>>,
+        ThrowingStream<T, Throwable> {
     @Override
     public UnionStream<T, X> filter(ThrowingPredicate<? super T, ? extends Throwable> predicate);
 
@@ -52,7 +36,8 @@ public interface UnionStream<T, X extends UnionThrowable> extends ThrowingStream
     public UnionIntStream<X> mapToInt(ThrowingToIntFunction<? super T, ? extends Throwable> mapper);
 
     @Override
-    public UnionLongStream<X> mapToLong(ThrowingToLongFunction<? super T, ? extends Throwable> mapper);
+    public UnionLongStream<X> mapToLong(
+            ThrowingToLongFunction<? super T, ? extends Throwable> mapper);
 
     @Override
     public UnionDoubleStream<X> mapToDouble(

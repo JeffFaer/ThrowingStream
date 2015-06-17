@@ -23,7 +23,7 @@ class CheckedSpliterator<T, S extends Spliterator<T>, X extends Throwable> exten
         }
 
         @Override
-        public boolean tryAdvance(ThrowingIntConsumer<X> action) throws X {
+        public boolean tryAdvance(ThrowingIntConsumer<? extends X> action) throws X {
             return unmaskException(() -> getDelegate().tryAdvance(
                     getFunctionAdapter().convert(action)));
         }
@@ -42,7 +42,7 @@ class CheckedSpliterator<T, S extends Spliterator<T>, X extends Throwable> exten
         }
 
         @Override
-        public boolean tryAdvance(ThrowingLongConsumer<X> action) throws X {
+        public boolean tryAdvance(ThrowingLongConsumer<? extends X> action) throws X {
             return unmaskException(() -> getDelegate().tryAdvance(
                     getFunctionAdapter().convert(action)));
         }
@@ -61,7 +61,7 @@ class CheckedSpliterator<T, S extends Spliterator<T>, X extends Throwable> exten
         }
 
         @Override
-        public boolean tryAdvance(ThrowingDoubleConsumer<X> action) throws X {
+        public boolean tryAdvance(ThrowingDoubleConsumer<? extends X> action) throws X {
             return unmaskException(() -> getDelegate().tryAdvance(
                     getFunctionAdapter().convert(action)));
         }
