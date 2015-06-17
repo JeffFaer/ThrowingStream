@@ -1,4 +1,4 @@
-package throwing.stream.bridge;
+package throwing.stream.adapter;
 
 import java.util.Iterator;
 import java.util.Spliterator;
@@ -7,19 +7,19 @@ import java.util.stream.BaseStream;
 import throwing.stream.ThrowingBaseStream;
 
 abstract class UncheckedBaseStream<T, X extends Throwable, S extends BaseStream<T, S>, D extends ThrowingBaseStream<T, X, D>>
-        extends UncheckedBridge<D, X> implements BaseStream<T, S>, BaseStreamBridge<S, D> {
+        extends UncheckedAdapter<D, X> implements BaseStream<T, S>, BaseStreamAdapter<S, D> {
     UncheckedBaseStream(D delegate, Class<X> x) {
         super(delegate, x);
     }
     
     @Override
     public Iterator<T> iterator() {
-        return ThrowingBridge.of(getDelegate().iterator(), getExceptionClass());
+        return ThrowingAdapter.of(getDelegate().iterator(), getExceptionClass());
     }
     
     @Override
     public Spliterator<T> spliterator() {
-        return ThrowingBridge.of(getDelegate().spliterator(), getExceptionClass());
+        return ThrowingAdapter.of(getDelegate().spliterator(), getExceptionClass());
     }
     
     @Override

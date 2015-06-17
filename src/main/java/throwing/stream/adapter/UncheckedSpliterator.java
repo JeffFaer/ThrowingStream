@@ -1,4 +1,4 @@
-package throwing.stream.bridge;
+package throwing.stream.adapter;
 
 import java.util.Spliterator;
 import java.util.function.Consumer;
@@ -11,7 +11,7 @@ import throwing.function.ThrowingDoubleConsumer;
 import throwing.function.ThrowingIntConsumer;
 import throwing.function.ThrowingLongConsumer;
 
-class UncheckedSpliterator<T, S extends ThrowingSpliterator<T, X>, X extends Throwable> extends UncheckedBridge<S, X>
+class UncheckedSpliterator<T, S extends ThrowingSpliterator<T, X>, X extends Throwable> extends UncheckedAdapter<S, X>
         implements Spliterator<T> {
     static class OfInt<X extends Throwable> extends UncheckedSpliterator<Integer, ThrowingSpliterator.OfInt<X>, X>
             implements Spliterator.OfInt {

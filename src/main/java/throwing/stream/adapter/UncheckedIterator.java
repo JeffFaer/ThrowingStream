@@ -1,4 +1,4 @@
-package throwing.stream.bridge;
+package throwing.stream.adapter;
 
 import java.util.Iterator;
 import java.util.PrimitiveIterator;
@@ -8,7 +8,7 @@ import java.util.function.LongConsumer;
 
 import throwing.ThrowingIterator;
 
-class UncheckedIterator<T, I extends ThrowingIterator<T, X>, X extends Throwable> extends UncheckedBridge<I, X>
+class UncheckedIterator<T, I extends ThrowingIterator<T, X>, X extends Throwable> extends UncheckedAdapter<I, X>
         implements Iterator<T> {
     static class OfInt<X extends Throwable> extends UncheckedIterator<Integer, ThrowingIterator.OfInt<X>, X> implements
             PrimitiveIterator.OfInt {

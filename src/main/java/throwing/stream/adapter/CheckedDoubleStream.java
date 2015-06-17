@@ -1,4 +1,4 @@
-package throwing.stream.bridge;
+package throwing.stream.adapter;
 
 import java.util.DoubleSummaryStatistics;
 import java.util.OptionalDouble;
@@ -6,8 +6,8 @@ import java.util.function.DoubleFunction;
 import java.util.function.Function;
 import java.util.stream.DoubleStream;
 
-import throwing.ThrowingIterator.OfDouble;
 import throwing.RethrowChain;
+import throwing.ThrowingIterator.OfDouble;
 import throwing.ThrowingSpliterator;
 import throwing.function.ThrowingBiConsumer;
 import throwing.function.ThrowingDoubleBinaryOperator;
@@ -25,13 +25,15 @@ import throwing.stream.ThrowingLongStream;
 import throwing.stream.ThrowingStream;
 
 class CheckedDoubleStream<X extends Throwable> extends
-        CheckedBaseStream<Double, X, ThrowingDoubleStream<X>, DoubleStream> implements ThrowingDoubleStream<X> {
-    CheckedDoubleStream(DoubleStream delegate, FunctionBridge<X> bridge) {
-        super(delegate, bridge);
+        CheckedBaseStream<Double, X, ThrowingDoubleStream<X>, DoubleStream> implements
+        ThrowingDoubleStream<X> {
+    CheckedDoubleStream(DoubleStream delegate, FunctionAdapter<X> functionAdapter) {
+        super(delegate, functionAdapter);
     }
 
-    CheckedDoubleStream(DoubleStream delegate, FunctionBridge<X> bridge, RethrowChain<BridgeException, X> chain) {
-        super(delegate, bridge, chain);
+    CheckedDoubleStream(DoubleStream delegate, FunctionAdapter<X> functionAdapter,
+            RethrowChain<AdapterException, X> chain) {
+        super(delegate, functionAdapter, chain);
     }
 
     @Override
@@ -41,51 +43,53 @@ class CheckedDoubleStream<X extends Throwable> extends
 
     @Override
     public ThrowingDoubleStream<X> createNewStream(DoubleStream delegate) {
-        return new CheckedDoubleStream<>(delegate, getBridge(), getChain());
+        return new CheckedDoubleStream<>(delegate, getFunctionAdapter(), getChain());
     }
 
     @Override
     public OfDouble<X> iterator() {
-        return ThrowingBridge.of(getDelegate().iterator(), getBridge());
+        return ThrowingAdapter.of(getDelegate().iterator(), getFunctionAdapter());
     }
 
     @Override
     public ThrowingSpliterator.OfDouble<X> spliterator() {
-        return ThrowingBridge.of(getDelegate().spliterator(), getBridge());
+        return ThrowingAdapter.of(getDelegate().spliterator(), getFunctionAdapter());
     }
 
     @Override
     public ThrowingDoubleStream<X> filter(ThrowingDoublePredicate<? extends X> predicate) {
-        return chain(getDelegate().filter(getBridge().convert(predicate)));
+        return chain(getDelegate().filter(getFunctionAdapter().convert(predicate)));
     }
 
     @Override
     public ThrowingDoubleStream<X> map(ThrowingDoubleUnaryOperator<? extends X> mapper) {
-        return chain(getDelegate().map(getBridge().convert(mapper)));
+        return chain(getDelegate().map(getFunctionAdapter().convert(mapper)));
     }
 
     @Override
     public <U> ThrowingStream<U, X> mapToObj(ThrowingDoubleFunction<? extends U, ? extends X> mapper) {
-        DoubleFunction<? extends U> f = getBridge().convert(mapper);
-        return ThrowingBridge.of(getDelegate().mapToObj(f), getBridge());
+        DoubleFunction<? extends U> f = getFunctionAdapter().convert(mapper);
+        return ThrowingAdapter.of(getDelegate().mapToObj(f), getFunctionAdapter());
     }
 
     @Override
     public ThrowingIntStream<X> mapToInt(ThrowingDoubleToIntFunction<? extends X> mapper) {
-        return ThrowingBridge.of(getDelegate().mapToInt(getBridge().convert(mapper)), getBridge());
+        return ThrowingAdapter.of(getDelegate().mapToInt(getFunctionAdapter().convert(mapper)),
+                getFunctionAdapter());
     }
 
     @Override
     public ThrowingLongStream<X> mapToLong(ThrowingDoubleToLongFunction<? extends X> mapper) {
-        return ThrowingBridge.of(getDelegate().mapToLong(getBridge().convert(mapper)), getBridge());
+        return ThrowingAdapter.of(getDelegate().mapToLong(getFunctionAdapter().convert(mapper)),
+                getFunctionAdapter());
     }
 
     @Override
     public ThrowingDoubleStream<X> flatMap(
             ThrowingDoubleFunction<? extends ThrowingDoubleStream<? extends X>, ? extends X> mapper) {
-        @SuppressWarnings("unchecked") Function<? super ThrowingDoubleStream<? extends X>, ? extends DoubleStream> c = s -> ThrowingBridge.of(
+        @SuppressWarnings("unchecked") Function<? super ThrowingDoubleStream<? extends X>, ? extends DoubleStream> c = s -> ThrowingAdapter.of(
                 (ThrowingDoubleStream<X>) s, getExceptionClass());
-        return chain(getDelegate().flatMap(getBridge().convert(mapper.andThen(c))));
+        return chain(getDelegate().flatMap(getFunctionAdapter().convert(mapper.andThen(c))));
     }
 
     @Override
@@ -100,7 +104,7 @@ class CheckedDoubleStream<X extends Throwable> extends
 
     @Override
     public ThrowingDoubleStream<X> peek(ThrowingDoubleConsumer<? extends X> action) {
-        return chain(getDelegate().peek(getBridge().convert(action)));
+        return chain(getDelegate().peek(getFunctionAdapter().convert(action)));
     }
 
     @Override
@@ -115,100 +119,103 @@ class CheckedDoubleStream<X extends Throwable> extends
 
     @Override
     public void forEach(ThrowingDoubleConsumer<? extends X> action) throws X {
-        unmaskBridgeException(() -> getDelegate().forEach(getBridge().convert(action)));
+        unmaskException(() -> getDelegate().forEach(getFunctionAdapter().convert(action)));
     }
 
     @Override
     public void forEachOrdered(ThrowingDoubleConsumer<? extends X> action) throws X {
-        unmaskBridgeException(() -> getDelegate().forEachOrdered(getBridge().convert(action)));
+        unmaskException(() -> getDelegate().forEachOrdered(getFunctionAdapter().convert(action)));
     }
 
     @Override
     public double[] toArray() throws X {
-        return unmaskBridgeException(getDelegate()::toArray);
+        return unmaskException(getDelegate()::toArray);
     }
 
     @Override
     public double reduce(double identity, ThrowingDoubleBinaryOperator<? extends X> op) throws X {
-        return unmaskBridgeException(() -> getDelegate().reduce(identity, getBridge().convert(op)));
+        return unmaskException(() -> getDelegate().reduce(identity,
+                getFunctionAdapter().convert(op)));
     }
 
     @Override
     public OptionalDouble reduce(ThrowingDoubleBinaryOperator<? extends X> op) throws X {
-        return unmaskBridgeException(() -> getDelegate().reduce(getBridge().convert(op)));
+        return unmaskException(() -> getDelegate().reduce(getFunctionAdapter().convert(op)));
     }
 
     @Override
     public <R> R collect(ThrowingSupplier<R, ? extends X> supplier,
-            ThrowingObjDoubleConsumer<R, ? extends X> accumulator, ThrowingBiConsumer<R, R, ? extends X> combiner)
-        throws X {
-        return unmaskBridgeException(() -> getDelegate().collect(getBridge().convert(supplier),
-                getBridge().convert(accumulator), getBridge().convert(combiner)));
+            ThrowingObjDoubleConsumer<R, ? extends X> accumulator,
+            ThrowingBiConsumer<R, R, ? extends X> combiner) throws X {
+        return unmaskException(() -> getDelegate().collect(getFunctionAdapter().convert(supplier),
+                getFunctionAdapter().convert(accumulator), getFunctionAdapter().convert(combiner)));
     }
 
     @Override
     public double sum() throws X {
-        return unmaskBridgeException(getDelegate()::sum);
+        return unmaskException(getDelegate()::sum);
     }
 
     @Override
     public OptionalDouble min() throws X {
-        return unmaskBridgeException(getDelegate()::min);
+        return unmaskException(getDelegate()::min);
     }
 
     @Override
     public OptionalDouble max() throws X {
-        return unmaskBridgeException(getDelegate()::max);
+        return unmaskException(getDelegate()::max);
     }
 
     @Override
     public long count() throws X {
-        return unmaskBridgeException(getDelegate()::count);
+        return unmaskException(getDelegate()::count);
     }
 
     @Override
     public OptionalDouble average() throws X {
-        return unmaskBridgeException(getDelegate()::average);
+        return unmaskException(getDelegate()::average);
     }
 
     @Override
     public DoubleSummaryStatistics summaryStatistics() throws X {
-        return unmaskBridgeException(getDelegate()::summaryStatistics);
+        return unmaskException(getDelegate()::summaryStatistics);
     }
 
     @Override
     public boolean anyMatch(ThrowingDoublePredicate<? extends X> predicate) throws X {
-        return unmaskBridgeException(() -> getDelegate().anyMatch(getBridge().convert(predicate)));
+        return unmaskException(() -> getDelegate().anyMatch(getFunctionAdapter().convert(predicate)));
     }
 
     @Override
     public boolean allMatch(ThrowingDoublePredicate<? extends X> predicate) throws X {
-        return unmaskBridgeException(() -> getDelegate().allMatch(getBridge().convert(predicate)));
+        return unmaskException(() -> getDelegate().allMatch(getFunctionAdapter().convert(predicate)));
     }
 
     @Override
     public boolean noneMatch(ThrowingDoublePredicate<? extends X> predicate) throws X {
-        return unmaskBridgeException(() -> getDelegate().noneMatch(getBridge().convert(predicate)));
+        return unmaskException(() -> getDelegate().noneMatch(
+                getFunctionAdapter().convert(predicate)));
     }
 
     @Override
     public OptionalDouble findFirst() throws X {
-        return unmaskBridgeException(getDelegate()::findFirst);
+        return unmaskException(getDelegate()::findFirst);
     }
 
     @Override
     public OptionalDouble findAny() throws X {
-        return unmaskBridgeException(getDelegate()::findAny);
+        return unmaskException(getDelegate()::findAny);
     }
 
     @Override
     public ThrowingStream<Double, X> boxed() {
-        return ThrowingBridge.of(getDelegate().boxed(), getBridge());
+        return ThrowingAdapter.of(getDelegate().boxed(), getFunctionAdapter());
     }
 
     @Override
-    public <Y extends Throwable> ThrowingDoubleStream<Y> rethrow(Class<Y> e, Function<? super X, ? extends Y> mapper) {
-        RethrowChain<BridgeException, Y> c = getChain().rethrow(mapper);
-        return new CheckedDoubleStream<>(getDelegate(), new FunctionBridge<>(e), c);
+    public <Y extends Throwable> ThrowingDoubleStream<Y> rethrow(Class<Y> e,
+            Function<? super X, ? extends Y> mapper) {
+        RethrowChain<AdapterException, Y> c = getChain().rethrow(mapper);
+        return new CheckedDoubleStream<>(getDelegate(), new FunctionAdapter<>(e), c);
     }
 }

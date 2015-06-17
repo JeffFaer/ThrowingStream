@@ -1,10 +1,10 @@
-package throwing.stream.bridge;
+package throwing.stream.adapter;
 
-class AbstractBridge<D, X extends Throwable> implements Bridge<D> {
+class AbstractAdapter<D, X extends Throwable> implements Adapter<D> {
     private final D delegate;
     private final Class<X> x;
 
-    AbstractBridge(D delegate, Class<X> x) {
+    AbstractAdapter(D delegate, Class<X> x) {
         this.delegate = delegate;
         this.x = x;
     }

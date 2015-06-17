@@ -1,4 +1,4 @@
-package throwing.stream.bridge;
+package throwing.stream.adapter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -10,22 +10,23 @@ import java.util.stream.IntStream;
 
 import throwing.RethrowChain;
 
-abstract class CheckedBridge<D, X extends Throwable> extends AbstractBridge<D, X> {
-    private static final String PACKAGE = CheckedBridge.class.getPackage().getName();
+abstract class CheckedAdapter<D, X extends Throwable> extends AbstractAdapter<D, X> {
+    private static final String PACKAGE = CheckedAdapter.class.getPackage().getName();
     // it might be useful to have a way to turn this off
     public static volatile boolean FILTER_STACK = true;
     
-    private final FunctionBridge<X> bridge;
-    private final RethrowChain<BridgeException, X> chain;
-    private final Function<BridgeException, X> unmasker;
+    private final FunctionAdapter<X> functionAdapter;
+    private final RethrowChain<AdapterException, X> chain;
+    private final Function<AdapterException, X> unmasker;
     
-    CheckedBridge(D delegate, FunctionBridge<X> bridge) {
-        this(delegate, bridge, RethrowChain.start());
+    CheckedAdapter(D delegate, FunctionAdapter<X> functionAdapter) {
+        this(delegate, functionAdapter, RethrowChain.start());
     }
     
-    CheckedBridge(D delegate, FunctionBridge<X> bridge, RethrowChain<BridgeException, X> chain) {
-        super(delegate, bridge.getExceptionClass());
-        this.bridge = bridge;
+    CheckedAdapter(D delegate, FunctionAdapter<X> functionAdapter,
+            RethrowChain<AdapterException, X> chain) {
+        super(delegate, functionAdapter.getExceptionClass());
+        this.functionAdapter = functionAdapter;
 
         RethrowChain<Throwable, X> link = RethrowChain.rethrowAs(getExceptionClass());
         this.chain = chain.chain(t -> {
@@ -52,27 +53,27 @@ abstract class CheckedBridge<D, X extends Throwable> extends AbstractBridge<D, X
         }
     }
     
-    public FunctionBridge<X> getBridge() {
-        return bridge;
+    public FunctionAdapter<X> getFunctionAdapter() {
+        return functionAdapter;
     }
     
-    public RethrowChain<BridgeException, X> getChain() {
+    public RethrowChain<AdapterException, X> getChain() {
         return chain;
     }
     
-    protected void unmaskBridgeException(Runnable runnable) throws X {
-        unmaskBridgeException(() -> {
+    protected void unmaskException(Runnable runnable) throws X {
+        unmaskException(() -> {
             runnable.run();
             return null;
         });
     }
     
-    protected <R> R unmaskBridgeException(Supplier<R> supplier) throws X {
+    protected <R> R unmaskException(Supplier<R> supplier) throws X {
         try {
             return supplier.get();
-        } catch (BridgeException e) {
+        } catch (AdapterException e) {
             X x = unmasker.apply(e);
-            // filter out bridge lines from the exception. They can get
+            // filter out adapter lines from the exception. They can get
             // rather verbose.
             if (FILTER_STACK) {
                 filterStackTrace(x);

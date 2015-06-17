@@ -1,4 +1,4 @@
-package throwing.stream.bridge;
+package throwing.stream.adapter;
 
 import java.util.DoubleSummaryStatistics;
 import java.util.OptionalDouble;
@@ -40,12 +40,12 @@ public class UncheckedDoubleStream<X extends Throwable> extends
     
     @Override
     public OfDouble iterator() {
-        return ThrowingBridge.of(getDelegate().iterator(), getExceptionClass());
+        return ThrowingAdapter.of(getDelegate().iterator(), getExceptionClass());
     }
     
     @Override
     public Spliterator.OfDouble spliterator() {
-        return ThrowingBridge.of(getDelegate().spliterator(), getExceptionClass());
+        return ThrowingAdapter.of(getDelegate().spliterator(), getExceptionClass());
     }
     
     @Override
@@ -61,22 +61,22 @@ public class UncheckedDoubleStream<X extends Throwable> extends
     @Override
     public <U> Stream<U> mapToObj(DoubleFunction<? extends U> mapper) {
         ThrowingDoubleFunction<? extends U, ? extends X> f = mapper::apply;
-        return ThrowingBridge.of(getDelegate().mapToObj(f), getExceptionClass());
+        return ThrowingAdapter.of(getDelegate().mapToObj(f), getExceptionClass());
     }
     
     @Override
     public IntStream mapToInt(DoubleToIntFunction mapper) {
-        return ThrowingBridge.of(getDelegate().mapToInt(mapper::applyAsInt), getExceptionClass());
+        return ThrowingAdapter.of(getDelegate().mapToInt(mapper::applyAsInt), getExceptionClass());
     }
     
     @Override
     public LongStream mapToLong(DoubleToLongFunction mapper) {
-        return ThrowingBridge.of(getDelegate().mapToLong(mapper::applyAsLong), getExceptionClass());
+        return ThrowingAdapter.of(getDelegate().mapToLong(mapper::applyAsLong), getExceptionClass());
     }
     
     @Override
     public DoubleStream flatMap(DoubleFunction<? extends DoubleStream> mapper) {
-        DoubleFunction<? extends ThrowingDoubleStream<? extends X>> f = i -> ThrowingBridge.of(mapper.apply(i),
+        DoubleFunction<? extends ThrowingDoubleStream<? extends X>> f = i -> ThrowingAdapter.of(mapper.apply(i),
                 getExceptionClass());
         return chain(getDelegate().flatMap(f::apply));
     }
@@ -193,6 +193,6 @@ public class UncheckedDoubleStream<X extends Throwable> extends
     
     @Override
     public Stream<Double> boxed() {
-        return ThrowingBridge.of(getDelegate().boxed(), getExceptionClass());
+        return ThrowingAdapter.of(getDelegate().boxed(), getExceptionClass());
     }
 }

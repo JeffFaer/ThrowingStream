@@ -1,4 +1,4 @@
-package throwing.stream.bridge;
+package throwing.stream.adapter;
 
 import java.util.Comparator;
 import java.util.Optional;
@@ -59,45 +59,45 @@ class UncheckedStream<T, X extends Throwable> extends UncheckedBaseStream<T, X, 
     
     @Override
     public IntStream mapToInt(ToIntFunction<? super T> mapper) {
-        return ThrowingBridge.of(getDelegate().mapToInt(mapper::applyAsInt), getExceptionClass());
+        return ThrowingAdapter.of(getDelegate().mapToInt(mapper::applyAsInt), getExceptionClass());
     }
     
     @Override
     public LongStream mapToLong(ToLongFunction<? super T> mapper) {
-        return ThrowingBridge.of(getDelegate().mapToLong(mapper::applyAsLong), getExceptionClass());
+        return ThrowingAdapter.of(getDelegate().mapToLong(mapper::applyAsLong), getExceptionClass());
     }
     
     @Override
     public DoubleStream mapToDouble(ToDoubleFunction<? super T> mapper) {
-        return ThrowingBridge.of(getDelegate().mapToDouble(mapper::applyAsDouble), getExceptionClass());
+        return ThrowingAdapter.of(getDelegate().mapToDouble(mapper::applyAsDouble), getExceptionClass());
     }
     
     @Override
     public <R> Stream<R> flatMap(Function<? super T, ? extends Stream<? extends R>> mapper) {
-        Function<? super T, ? extends ThrowingStream<? extends R, ? extends X>> f = mapper.andThen(s -> ThrowingBridge.of(
+        Function<? super T, ? extends ThrowingStream<? extends R, ? extends X>> f = mapper.andThen(s -> ThrowingAdapter.of(
                 (Stream<? extends R>) s, getExceptionClass()));
         return newStream(getDelegate().flatMap(f::apply));
     }
     
     @Override
     public IntStream flatMapToInt(Function<? super T, ? extends IntStream> mapper) {
-        Function<? super T, ? extends ThrowingIntStream<? extends X>> f = mapper.andThen(s -> ThrowingBridge.of(s,
+        Function<? super T, ? extends ThrowingIntStream<? extends X>> f = mapper.andThen(s -> ThrowingAdapter.of(s,
                 getExceptionClass()));
-        return ThrowingBridge.of(getDelegate().flatMapToInt(f::apply), getExceptionClass());
+        return ThrowingAdapter.of(getDelegate().flatMapToInt(f::apply), getExceptionClass());
     }
     
     @Override
     public LongStream flatMapToLong(Function<? super T, ? extends LongStream> mapper) {
-        Function<? super T, ? extends ThrowingLongStream<? extends X>> f = mapper.andThen(s -> ThrowingBridge.of(s,
+        Function<? super T, ? extends ThrowingLongStream<? extends X>> f = mapper.andThen(s -> ThrowingAdapter.of(s,
                 getExceptionClass()));
-        return ThrowingBridge.of(getDelegate().flatMapToLong(f::apply), getExceptionClass());
+        return ThrowingAdapter.of(getDelegate().flatMapToLong(f::apply), getExceptionClass());
     }
     
     @Override
     public DoubleStream flatMapToDouble(Function<? super T, ? extends DoubleStream> mapper) {
-        Function<? super T, ? extends ThrowingDoubleStream<? extends X>> f = mapper.andThen(s -> ThrowingBridge.of(s,
+        Function<? super T, ? extends ThrowingDoubleStream<? extends X>> f = mapper.andThen(s -> ThrowingAdapter.of(s,
                 getExceptionClass()));
-        return ThrowingBridge.of(getDelegate().flatMapToDouble(f::apply), getExceptionClass());
+        return ThrowingAdapter.of(getDelegate().flatMapToDouble(f::apply), getExceptionClass());
     }
     
     @Override
@@ -172,7 +172,7 @@ class UncheckedStream<T, X extends Throwable> extends UncheckedBaseStream<T, X, 
     
     @Override
     public <R, A> R collect(Collector<? super T, A, R> collector) {
-        return maskException(() -> getDelegate().collect(ThrowingBridge.of(collector)));
+        return maskException(() -> getDelegate().collect(ThrowingAdapter.of(collector)));
     }
     
     @Override

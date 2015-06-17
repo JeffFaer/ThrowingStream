@@ -1,4 +1,4 @@
-package throwing.stream.bridge;
+package throwing.stream.adapter;
 
 import java.util.Comparator;
 import java.util.function.BiConsumer;
@@ -72,8 +72,8 @@ import throwing.function.ThrowingToDoubleFunction;
 import throwing.function.ThrowingToIntFunction;
 import throwing.function.ThrowingToLongFunction;
 
-class FunctionBridge<X extends Throwable> extends UncheckedBridge<Void, X> {
-    FunctionBridge(Class<X> x) {
+class FunctionAdapter<X extends Throwable> extends UncheckedAdapter<Void, X> {
+    FunctionAdapter(Class<X> x) {
         super(null, x);
     }
     

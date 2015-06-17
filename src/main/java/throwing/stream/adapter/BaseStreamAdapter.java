@@ -1,6 +1,6 @@
-package throwing.stream.bridge;
+package throwing.stream.adapter;
 
-interface BaseStreamBridge<S, D> extends Bridge<D> {
+interface BaseStreamAdapter<S, D> extends Adapter<D> {
     default public S chain(D newDelegate) {
         if (newDelegate == getDelegate()) {
             return getSelf();

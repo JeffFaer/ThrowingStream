@@ -20,7 +20,7 @@ import throwing.function.ThrowingSupplier;
 import throwing.function.ThrowingToDoubleFunction;
 import throwing.function.ThrowingToIntFunction;
 import throwing.function.ThrowingToLongFunction;
-import throwing.stream.bridge.ThrowingBridge;
+import throwing.stream.adapter.ThrowingAdapter;
 
 /**
  * A standard {@link Stream} does not allow you to throw any checked exceptions.
@@ -97,7 +97,7 @@ public interface ThrowingStream<T, X extends Throwable> extends ThrowingBaseStre
     public <R, A> R collect(ThrowingCollector<? super T, A, R, ? extends X> collector) throws X;
 
     default public <R, A> R collect(Collector<? super T, A, R> collector) throws X {
-        return collect(ThrowingBridge.of(collector));
+        return collect(ThrowingAdapter.of(collector));
     }
 
     public Optional<T> min(ThrowingComparator<? super T, ? extends X> comparator) throws X;
@@ -131,18 +131,18 @@ public interface ThrowingStream<T, X extends Throwable> extends ThrowingBaseStre
     public <Y extends Throwable> ThrowingStream<T, Y> rethrow(Class<Y> y, Function<? super X, ? extends Y> mapper);
 
     public static <T, X extends Throwable> ThrowingStream<T, X> of(Stream<T> stream, Class<X> x) {
-        return ThrowingBridge.of(stream, x);
+        return ThrowingAdapter.of(stream, x);
     }
 
     public static <X extends Throwable> ThrowingIntStream<X> of(IntStream stream, Class<X> x) {
-        return ThrowingBridge.of(stream, x);
+        return ThrowingAdapter.of(stream, x);
     }
 
     public static <X extends Throwable> ThrowingLongStream<X> of(LongStream stream, Class<X> x) {
-        return ThrowingBridge.of(stream, x);
+        return ThrowingAdapter.of(stream, x);
     }
 
     public static <X extends Throwable> ThrowingDoubleStream<X> of(DoubleStream stream, Class<X> x) {
-        return ThrowingBridge.of(stream, x);
+        return ThrowingAdapter.of(stream, x);
     }
 }
