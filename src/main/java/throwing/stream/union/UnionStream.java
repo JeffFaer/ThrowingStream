@@ -22,118 +22,135 @@ import throwing.stream.ThrowingLongStream;
 import throwing.stream.ThrowingStream;
 import throwing.stream.bridge.ThrowingBridge;
 
-public interface UnionStream<T> extends ThrowingStream<T, Throwable> {
+public interface UnionStream<T, X extends UnionThrowable> extends ThrowingStream<T, Throwable> {
     @Override
-    public UnionIterator<T> iterator();
-    
-    @Override
-    public UnionSpliterator<T> spliterator();
+    public UnionIterator<T, X> iterator();
 
     @Override
-    public UnionStream<T> filter(ThrowingPredicate<? super T, ? extends Throwable> predicate);
-    
+    public UnionSpliterator<T, X> spliterator();
+
     @Override
-    public <R> UnionStream<R> map(ThrowingFunction<? super T, ? extends R, ? extends Throwable> mapper);
-    
+    public UnionStream<T, X> onClose(Runnable closeHandler);
+
     @Override
-    public UnionIntStream mapToInt(ThrowingToIntFunction<? super T, ? extends Throwable> mapper);
-    
+    public UnionStream<T, X> parallel();
+
     @Override
-    public UnionLongStream mapToLong(ThrowingToLongFunction<? super T, ? extends Throwable> mapper);
-    
+    public UnionStream<T, X> sequential();
+
     @Override
-    public UnionDoubleStream mapToDouble(ThrowingToDoubleFunction<? super T, ? extends Throwable> mapper);
-    
+    public UnionStream<T, X> unordered();
+
     @Override
-    public <R> UnionStream<R> flatMap(
+    public UnionStream<T, X> filter(ThrowingPredicate<? super T, ? extends Throwable> predicate);
+
+    @Override
+    public <R> UnionStream<R, X> map(
+            ThrowingFunction<? super T, ? extends R, ? extends Throwable> mapper);
+
+    @Override
+    public UnionIntStream<X> mapToInt(ThrowingToIntFunction<? super T, ? extends Throwable> mapper);
+
+    @Override
+    public UnionLongStream<X> mapToLong(ThrowingToLongFunction<? super T, ? extends Throwable> mapper);
+
+    @Override
+    public UnionDoubleStream<X> mapToDouble(
+            ThrowingToDoubleFunction<? super T, ? extends Throwable> mapper);
+
+    @Override
+    public <R> UnionStream<R, X> flatMap(
             ThrowingFunction<? super T, ? extends ThrowingStream<? extends R, ? extends Throwable>, ? extends Throwable> mapper);
-    
-    @Override
-    public UnionIntStream flatMapToInt(
-            ThrowingFunction<? super T, ? extends ThrowingIntStream<? extends Throwable>, ? extends Throwable> mapper);
-    
-    @Override
-    public UnionLongStream flatMapToLong(
-            ThrowingFunction<? super T, ? extends ThrowingLongStream<? extends Throwable>, ? extends Throwable> mapper);
-    
-    @Override
-    public UnionDoubleStream flatMapToDouble(
-            ThrowingFunction<? super T, ? extends ThrowingDoubleStream<? extends Throwable>, ? extends Throwable> mapper);
-    
-    @Override
-    public UnionStream<T> distinct();
-    
-    @Override
-    public UnionStream<T> sorted();
-    
-    @Override
-    public UnionStream<T> sorted(ThrowingComparator<? super T, ? extends Throwable> comparator);
-    
-    @Override
-    public UnionStream<T> peek(ThrowingConsumer<? super T, ? extends Throwable> action);
-    
-    @Override
-    public UnionStream<T> limit(long maxSize);
-    
-    @Override
-    public UnionStream<T> skip(long n);
 
     @Override
-    public void forEach(ThrowingConsumer<? super T, ? extends Throwable> action) throws UnionThrowable;
-    
+    public UnionIntStream<X> flatMapToInt(
+            ThrowingFunction<? super T, ? extends ThrowingIntStream<? extends Throwable>, ? extends Throwable> mapper);
+
     @Override
-    public void forEachOrdered(ThrowingConsumer<? super T, ? extends Throwable> action) throws UnionThrowable;
-    
+    public UnionLongStream<X> flatMapToLong(
+            ThrowingFunction<? super T, ? extends ThrowingLongStream<? extends Throwable>, ? extends Throwable> mapper);
+
     @Override
-    public Object[] toArray() throws UnionThrowable;
-    
+    public UnionDoubleStream<X> flatMapToDouble(
+            ThrowingFunction<? super T, ? extends ThrowingDoubleStream<? extends Throwable>, ? extends Throwable> mapper);
+
     @Override
-    public <A> A[] toArray(IntFunction<A[]> generator) throws UnionThrowable;
-    
+    public UnionStream<T, X> distinct();
+
     @Override
-    public T reduce(T identity, ThrowingBinaryOperator<T, ? extends Throwable> accumulator) throws UnionThrowable;
-    
+    public UnionStream<T, X> sorted();
+
     @Override
-    public Optional<T> reduce(ThrowingBinaryOperator<T, ? extends Throwable> accumulator) throws UnionThrowable;
-    
+    public UnionStream<T, X> sorted(ThrowingComparator<? super T, ? extends Throwable> comparator);
+
     @Override
-    public <U> U reduce(U identity, ThrowingBiFunction<U, ? super T, U, ? extends Throwable> accumulator,
-            ThrowingBinaryOperator<U, ? extends Throwable> combiner) throws UnionThrowable;
-    
+    public UnionStream<T, X> peek(ThrowingConsumer<? super T, ? extends Throwable> action);
+
+    @Override
+    public UnionStream<T, X> limit(long maxSize);
+
+    @Override
+    public UnionStream<T, X> skip(long n);
+
+    @Override
+    public void forEach(ThrowingConsumer<? super T, ? extends Throwable> action) throws X;
+
+    @Override
+    public void forEachOrdered(ThrowingConsumer<? super T, ? extends Throwable> action) throws X;
+
+    @Override
+    public Object[] toArray() throws X;
+
+    @Override
+    public <A> A[] toArray(IntFunction<A[]> generator) throws X;
+
+    @Override
+    public T reduce(T identity, ThrowingBinaryOperator<T, ? extends Throwable> accumulator)
+        throws X;
+
+    @Override
+    public Optional<T> reduce(ThrowingBinaryOperator<T, ? extends Throwable> accumulator) throws X;
+
+    @Override
+    public <U> U reduce(U identity,
+            ThrowingBiFunction<U, ? super T, U, ? extends Throwable> accumulator,
+            ThrowingBinaryOperator<U, ? extends Throwable> combiner) throws X;
+
     @Override
     public <R> R collect(ThrowingSupplier<R, ? extends Throwable> supplier,
             ThrowingBiConsumer<R, ? super T, ? extends Throwable> accumulator,
-            ThrowingBiConsumer<R, R, ? extends Throwable> combiner) throws UnionThrowable;
-    
-    @Override
-    public <R, A> R collect(ThrowingCollector<? super T, A, R, ? extends Throwable> collector) throws UnionThrowable;
-    
-    @Override
-    default public <R, A> R collect(Collector<? super T, A, R> collector) throws UnionThrowable {
-        return collect(ThrowingBridge.of(collector));
-    }
-    
-    @Override
-    public Optional<T> min(ThrowingComparator<? super T, ? extends Throwable> comparator) throws UnionThrowable;
-    
-    @Override
-    public Optional<T> max(ThrowingComparator<? super T, ? extends Throwable> comparator) throws UnionThrowable;
-    
-    @Override
-    public long count() throws UnionThrowable;
-    
-    @Override
-    public boolean anyMatch(ThrowingPredicate<? super T, ? extends Throwable> predicate) throws UnionThrowable;
-    
-    @Override
-    public boolean allMatch(ThrowingPredicate<? super T, ? extends Throwable> predicate) throws UnionThrowable;
-    
-    @Override
-    public boolean noneMatch(ThrowingPredicate<? super T, ? extends Throwable> predicate) throws UnionThrowable;
+            ThrowingBiConsumer<R, R, ? extends Throwable> combiner) throws X;
 
     @Override
-    public Optional<T> findFirst() throws UnionThrowable;
-    
+    public <R, A> R collect(ThrowingCollector<? super T, A, R, ? extends Throwable> collector)
+        throws X;
+
     @Override
-    public Optional<T> findAny() throws UnionThrowable;
+    default public <R, A> R collect(Collector<? super T, A, R> collector) throws X {
+        return collect(ThrowingBridge.of(collector));
+    }
+
+    @Override
+    public Optional<T> min(ThrowingComparator<? super T, ? extends Throwable> comparator) throws X;
+
+    @Override
+    public Optional<T> max(ThrowingComparator<? super T, ? extends Throwable> comparator) throws X;
+
+    @Override
+    public long count() throws X;
+
+    @Override
+    public boolean anyMatch(ThrowingPredicate<? super T, ? extends Throwable> predicate) throws X;
+
+    @Override
+    public boolean allMatch(ThrowingPredicate<? super T, ? extends Throwable> predicate) throws X;
+
+    @Override
+    public boolean noneMatch(ThrowingPredicate<? super T, ? extends Throwable> predicate) throws X;
+
+    @Override
+    public Optional<T> findFirst() throws X;
+
+    @Override
+    public Optional<T> findAny() throws X;
 }

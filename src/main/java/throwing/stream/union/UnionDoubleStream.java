@@ -15,46 +15,60 @@ import throwing.function.ThrowingObjDoubleConsumer;
 import throwing.function.ThrowingSupplier;
 import throwing.stream.ThrowingDoubleStream;
 
-public interface UnionDoubleStream extends ThrowingDoubleStream<Throwable> {
+public interface UnionDoubleStream<X extends UnionThrowable> extends
+        ThrowingDoubleStream<Throwable> {
     @Override
-    public UnionIterator.OfDouble iterator();
+    public UnionIterator.OfDouble<X> iterator();
     
     @Override
-    public UnionSpliterator.OfDouble spliterator();
-    
-    @Override
-    public UnionDoubleStream filter(ThrowingDoublePredicate<? extends Throwable> predicate);
-    
-    @Override
-    public UnionDoubleStream map(ThrowingDoubleUnaryOperator<? extends Throwable> mapper);
-    
-    @Override
-    public <U> UnionStream<U> mapToObj(ThrowingDoubleFunction<? extends U, ? extends Throwable> mapper);
-    
-    @Override
-    public UnionIntStream mapToInt(ThrowingDoubleToIntFunction<? extends Throwable> mapper);
-    
-    @Override
-    public UnionLongStream mapToLong(ThrowingDoubleToLongFunction<? extends Throwable> mapper);
+    public UnionSpliterator.OfDouble<X> spliterator();
 
     @Override
-    public UnionDoubleStream flatMap(
+    public UnionDoubleStream<X> onClose(Runnable closeHandler);
+
+    @Override
+    public UnionDoubleStream<X> parallel();
+
+    @Override
+    public UnionDoubleStream<X> sequential();
+
+    @Override
+    public UnionDoubleStream<X> unordered();
+    
+    @Override
+    public UnionDoubleStream<X> filter(ThrowingDoublePredicate<? extends Throwable> predicate);
+    
+    @Override
+    public UnionDoubleStream<X> map(ThrowingDoubleUnaryOperator<? extends Throwable> mapper);
+    
+    @Override
+    public <U> UnionStream<U, X> mapToObj(
+            ThrowingDoubleFunction<? extends U, ? extends Throwable> mapper);
+    
+    @Override
+    public UnionIntStream<X> mapToInt(ThrowingDoubleToIntFunction<? extends Throwable> mapper);
+    
+    @Override
+    public UnionLongStream<X> mapToLong(ThrowingDoubleToLongFunction<? extends Throwable> mapper);
+
+    @Override
+    public UnionDoubleStream<X> flatMap(
             ThrowingDoubleFunction<? extends ThrowingDoubleStream<? extends Throwable>, ? extends Throwable> mapper);
     
     @Override
-    public UnionDoubleStream distinct();
+    public UnionDoubleStream<X> distinct();
     
     @Override
-    public UnionDoubleStream sorted();
+    public UnionDoubleStream<X> sorted();
     
     @Override
-    public UnionDoubleStream peek(ThrowingDoubleConsumer<? extends Throwable> action);
+    public UnionDoubleStream<X> peek(ThrowingDoubleConsumer<? extends Throwable> action);
     
     @Override
-    public UnionDoubleStream limit(long maxSize);
+    public UnionDoubleStream<X> limit(long maxSize);
     
     @Override
-    public UnionDoubleStream skip(long n);
+    public UnionDoubleStream<X> skip(long n);
     
     @Override
     public void forEach(ThrowingDoubleConsumer<? extends Throwable> action) throws UnionThrowable;
@@ -110,5 +124,5 @@ public interface UnionDoubleStream extends ThrowingDoubleStream<Throwable> {
     public OptionalDouble findAny() throws UnionThrowable;
     
     @Override
-    public UnionStream<Double> boxed();
+    public UnionStream<Double, X> boxed();
 }

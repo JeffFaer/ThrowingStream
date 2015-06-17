@@ -16,103 +16,116 @@ import throwing.function.ThrowingObjIntConsumer;
 import throwing.function.ThrowingSupplier;
 import throwing.stream.ThrowingIntStream;
 
-public interface UnionIntStream extends ThrowingIntStream<Throwable> {
+public interface UnionIntStream<X extends UnionThrowable> extends ThrowingIntStream<Throwable> {
     @Override
-    public UnionIterator.OfInt iterator();
-    
-    @Override
-    public UnionSpliterator.OfInt spliterator();
-    
-    @Override
-    public UnionIntStream filter(ThrowingIntPredicate<? extends Throwable> predicate);
-    
-    @Override
-    public UnionIntStream map(ThrowingIntUnaryOperator<? extends Throwable> mapper);
-    
-    @Override
-    public <U> UnionStream<U> mapToObj(ThrowingIntFunction<? extends U, ? extends Throwable> mapper);
-    
-    @Override
-    public UnionLongStream mapToLong(ThrowingIntToLongFunction<? extends Throwable> mapper);
+    public UnionIterator.OfInt<X> iterator();
 
     @Override
-    public UnionDoubleStream mapToDouble(ThrowingIntToDoubleFunction<? extends Throwable> mapper);
-    
+    public UnionSpliterator.OfInt<X> spliterator();
+
     @Override
-    public UnionIntStream flatMap(
+    public UnionIntStream<X> onClose(Runnable closeHandler);
+
+    @Override
+    public UnionIntStream<X> parallel();
+
+    @Override
+    public UnionIntStream<X> sequential();
+
+    @Override
+    public UnionIntStream<X> unordered();
+
+    @Override
+    public UnionIntStream<X> filter(ThrowingIntPredicate<? extends Throwable> predicate);
+
+    @Override
+    public UnionIntStream<X> map(ThrowingIntUnaryOperator<? extends Throwable> mapper);
+
+    @Override
+    public <U> UnionStream<U, X> mapToObj(
+            ThrowingIntFunction<? extends U, ? extends Throwable> mapper);
+
+    @Override
+    public UnionLongStream<X> mapToLong(ThrowingIntToLongFunction<? extends Throwable> mapper);
+
+    @Override
+    public UnionDoubleStream<X> mapToDouble(ThrowingIntToDoubleFunction<? extends Throwable> mapper);
+
+    @Override
+    public UnionIntStream<X> flatMap(
             ThrowingIntFunction<? extends ThrowingIntStream<? extends Throwable>, ? extends Throwable> mapper);
-    
+
     @Override
-    public UnionIntStream distinct();
-    
+    public UnionIntStream<X> distinct();
+
     @Override
-    public UnionIntStream sorted();
-    
+    public UnionIntStream<X> sorted();
+
     @Override
-    public UnionIntStream peek(ThrowingIntConsumer<? extends Throwable> action);
-    
+    public UnionIntStream<X> peek(ThrowingIntConsumer<? extends Throwable> action);
+
     @Override
-    public UnionIntStream limit(long maxSize);
-    
+    public UnionIntStream<X> limit(long maxSize);
+
     @Override
-    public UnionIntStream skip(long n);
-    
+    public UnionIntStream<X> skip(long n);
+
     @Override
-    public void forEach(ThrowingIntConsumer<? extends Throwable> action) throws UnionThrowable;
-    
+    public void forEach(ThrowingIntConsumer<? extends Throwable> action) throws X;
+
     @Override
-    public void forEachOrdered(ThrowingIntConsumer<? extends Throwable> action) throws UnionThrowable;
-    
+    public void forEachOrdered(ThrowingIntConsumer<? extends Throwable> action) throws X;
+
     @Override
-    public int[] toArray() throws UnionThrowable;
-    
+    public int[] toArray() throws X;
+
     @Override
-    public int reduce(int identity, ThrowingIntBinaryOperator<? extends Throwable> op) throws UnionThrowable;
-    
+    public int reduce(int identity, ThrowingIntBinaryOperator<? extends Throwable> op) throws X;
+
     @Override
-    public OptionalInt reduce(ThrowingIntBinaryOperator<? extends Throwable> op) throws UnionThrowable;
-    
+    public OptionalInt reduce(ThrowingIntBinaryOperator<? extends Throwable> op) throws X;
+
     @Override
     public <R> R collect(ThrowingSupplier<R, ? extends Throwable> supplier,
             ThrowingObjIntConsumer<R, ? extends Throwable> accumulator,
-            ThrowingBiConsumer<R, R, ? extends Throwable> combiner) throws UnionThrowable;
-    
+            ThrowingBiConsumer<R, R, ? extends Throwable> combiner) throws X;
+
     @Override
-    public int sum() throws UnionThrowable;
-    
+    public int sum() throws X;
+
     @Override
-    public OptionalInt min() throws UnionThrowable;
-    
+    public OptionalInt min() throws X;
+
     @Override
-    public OptionalInt max() throws UnionThrowable;
-    
+    public OptionalInt max() throws X;
+
     @Override
-    public long count() throws UnionThrowable;
-    
+    public long count() throws X;
+
     @Override
-    public OptionalDouble average() throws UnionThrowable;
-    
+    public OptionalDouble average() throws X;
+
     @Override
-    public IntSummaryStatistics summaryStatistics() throws UnionThrowable;
-    
+    public IntSummaryStatistics summaryStatistics() throws X;
+
     @Override
-    public boolean anyMatch(ThrowingIntPredicate<? extends Throwable> predicate) throws UnionThrowable;
-    
+    public boolean anyMatch(ThrowingIntPredicate<? extends Throwable> predicate) throws X;
+
     @Override
-    public boolean allMatch(ThrowingIntPredicate<? extends Throwable> predicate) throws UnionThrowable;
-    
+    public boolean allMatch(ThrowingIntPredicate<? extends Throwable> predicate) throws X;
+
     @Override
-    public boolean noneMatch(ThrowingIntPredicate<? extends Throwable> predicate) throws UnionThrowable;
-    
+    public boolean noneMatch(ThrowingIntPredicate<? extends Throwable> predicate) throws X;
+
     @Override
-    public OptionalInt findFirst() throws UnionThrowable;
-    
+    public OptionalInt findFirst() throws X;
+
     @Override
-    public OptionalInt findAny() throws UnionThrowable;
-    
+    public OptionalInt findAny() throws X;
+
     @Override
-    public UnionDoubleStream asDoubleStream();
-    
+    public UnionDoubleStream<X> asDoubleStream();
+
     @Override
-    public UnionStream<Integer> boxed();
+    public UnionStream<Integer, X> boxed();
 }
