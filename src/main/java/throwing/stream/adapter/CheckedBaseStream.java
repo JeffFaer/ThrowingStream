@@ -21,12 +21,12 @@ abstract class CheckedBaseStream<T, X extends Throwable, S extends ThrowingBaseS
 
     @Override
     public ThrowingIterator<T, X> iterator() {
-        return ThrowingAdapter.of(getDelegate().iterator(), getFunctionAdapter());
+        return ThrowingBridge.of(getDelegate().iterator(), getFunctionAdapter());
     }
 
     @Override
     public ThrowingSpliterator<T, X> spliterator() {
-        return ThrowingAdapter.of(getDelegate().spliterator(), getFunctionAdapter());
+        return ThrowingBridge.of(getDelegate().spliterator(), getFunctionAdapter());
     }
 
     @Override

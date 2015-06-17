@@ -41,12 +41,12 @@ class UncheckedLongStream<X extends Throwable> extends UncheckedBaseStream<Long,
     
     @Override
     public OfLong iterator() {
-        return ThrowingAdapter.of(getDelegate().iterator(), getExceptionClass());
+        return ThrowingBridge.of(getDelegate().iterator(), getExceptionClass());
     }
     
     @Override
     public Spliterator.OfLong spliterator() {
-        return ThrowingAdapter.of(getDelegate().spliterator(), getExceptionClass());
+        return ThrowingBridge.of(getDelegate().spliterator(), getExceptionClass());
     }
     
     @Override
@@ -62,22 +62,22 @@ class UncheckedLongStream<X extends Throwable> extends UncheckedBaseStream<Long,
     @Override
     public <U> Stream<U> mapToObj(LongFunction<? extends U> mapper) {
         ThrowingLongFunction<? extends U, ? extends X> f = mapper::apply;
-        return ThrowingAdapter.of(getDelegate().mapToObj(f), getExceptionClass());
+        return ThrowingBridge.of(getDelegate().mapToObj(f), getExceptionClass());
     }
     
     @Override
     public IntStream mapToInt(LongToIntFunction mapper) {
-        return ThrowingAdapter.of(getDelegate().mapToInt(mapper::applyAsInt), getExceptionClass());
+        return ThrowingBridge.of(getDelegate().mapToInt(mapper::applyAsInt), getExceptionClass());
     }
     
     @Override
     public DoubleStream mapToDouble(LongToDoubleFunction mapper) {
-        return ThrowingAdapter.of(getDelegate().mapToDouble(mapper::applyAsDouble), getExceptionClass());
+        return ThrowingBridge.of(getDelegate().mapToDouble(mapper::applyAsDouble), getExceptionClass());
     }
     
     @Override
     public LongStream flatMap(LongFunction<? extends LongStream> mapper) {
-        LongFunction<? extends ThrowingLongStream<? extends X>> f = i -> ThrowingAdapter.of(mapper.apply(i),
+        LongFunction<? extends ThrowingLongStream<? extends X>> f = i -> ThrowingBridge.of(mapper.apply(i),
                 getExceptionClass());
         return chain(getDelegate().flatMap(f::apply));
     }
@@ -194,11 +194,11 @@ class UncheckedLongStream<X extends Throwable> extends UncheckedBaseStream<Long,
     
     @Override
     public DoubleStream asDoubleStream() {
-        return ThrowingAdapter.of(getDelegate().asDoubleStream(), getExceptionClass());
+        return ThrowingBridge.of(getDelegate().asDoubleStream(), getExceptionClass());
     }
     
     @Override
     public Stream<Long> boxed() {
-        return ThrowingAdapter.of(getDelegate().boxed(), getExceptionClass());
+        return ThrowingBridge.of(getDelegate().boxed(), getExceptionClass());
     }
 }

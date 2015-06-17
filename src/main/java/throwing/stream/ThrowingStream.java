@@ -20,7 +20,10 @@ import throwing.function.ThrowingSupplier;
 import throwing.function.ThrowingToDoubleFunction;
 import throwing.function.ThrowingToIntFunction;
 import throwing.function.ThrowingToLongFunction;
-import throwing.stream.adapter.ThrowingAdapter;
+import throwing.stream.adapter.ThrowingBridge;
+import throwing.stream.union.UnionStream;
+import throwing.stream.union.UnionThrowable;
+import throwing.stream.union.adapter.UnionBridge;
 
 /**
  * A standard {@link Stream} does not allow you to throw any checked exceptions.
@@ -28,11 +31,12 @@ import throwing.stream.adapter.ThrowingAdapter;
  * exceptions. Each method in the exception-free API has its mirror here using
  * interfaces which support exceptions. There are also helper methods such as
  * {@link #rethrow(Class, Function)}.
- * 
- * <br><br>
- * 
+ *
+ * <br>
+ * <br>
+ *
  * Each terminal operation may throw an {@code X}
- * 
+ *
  * @author jeffrey
  *
  * @param <T>
@@ -40,7 +44,8 @@ import throwing.stream.adapter.ThrowingAdapter;
  * @param <X>
  *            The type of the exception that might be thrown
  */
-public interface ThrowingStream<T, X extends Throwable> extends ThrowingBaseStream<T, X, ThrowingStream<T, X>> {
+public interface ThrowingStream<T, X extends Throwable> extends
+        ThrowingBaseStream<T, X, ThrowingStream<T, X>> {
     public ThrowingStream<T, X> filter(ThrowingPredicate<? super T, ? extends X> predicate);
 
     public <R> ThrowingStream<R, X> map(ThrowingFunction<? super T, ? extends R, ? extends X> mapper);
@@ -49,7 +54,8 @@ public interface ThrowingStream<T, X extends Throwable> extends ThrowingBaseStre
 
     public ThrowingLongStream<X> mapToLong(ThrowingToLongFunction<? super T, ? extends X> mapper);
 
-    public ThrowingDoubleStream<X> mapToDouble(ThrowingToDoubleFunction<? super T, ? extends X> mapper);
+    public ThrowingDoubleStream<X> mapToDouble(
+            ThrowingToDoubleFunction<? super T, ? extends X> mapper);
 
     public <R> ThrowingStream<R, X> flatMap(
             ThrowingFunction<? super T, ? extends ThrowingStream<? extends R, ? extends X>, ? extends X> mapper);
@@ -91,13 +97,13 @@ public interface ThrowingStream<T, X extends Throwable> extends ThrowingBaseStre
             ThrowingBinaryOperator<U, ? extends X> combiner) throws X;
 
     public <R> R collect(ThrowingSupplier<R, ? extends X> supplier,
-            ThrowingBiConsumer<R, ? super T, ? extends X> accumulator, ThrowingBiConsumer<R, R, ? extends X> combiner)
-        throws X;
+            ThrowingBiConsumer<R, ? super T, ? extends X> accumulator,
+            ThrowingBiConsumer<R, R, ? extends X> combiner) throws X;
 
     public <R, A> R collect(ThrowingCollector<? super T, A, R, ? extends X> collector) throws X;
 
     default public <R, A> R collect(Collector<? super T, A, R> collector) throws X {
-        return collect(ThrowingAdapter.of(collector));
+        return collect(ThrowingBridge.of(collector));
     }
 
     public Optional<T> min(ThrowingComparator<? super T, ? extends X> comparator) throws X;
@@ -119,30 +125,55 @@ public interface ThrowingStream<T, X extends Throwable> extends ThrowingBaseStre
     /**
      * Returns a stream which will only throw Y and will rethrow any X as Y as
      * specified by the mapper.
-     * 
+     *
      * This is an intermediate operation.
-     * 
+     *
      * @param y
      *            The new exception class
      * @param mapper
      *            A way to convert X exceptions to Ys
      * @return the new stream
      */
-    public <Y extends Throwable> ThrowingStream<T, Y> rethrow(Class<Y> y, Function<? super X, ? extends Y> mapper);
+    public <Y extends Throwable> ThrowingStream<T, Y> rethrow(Class<Y> y,
+            Function<? super X, ? extends Y> mapper);
 
     public static <T, X extends Throwable> ThrowingStream<T, X> of(Stream<T> stream, Class<X> x) {
-        return ThrowingAdapter.of(stream, x);
+        return ThrowingBridge.of(stream, x);
     }
 
     public static <X extends Throwable> ThrowingIntStream<X> of(IntStream stream, Class<X> x) {
-        return ThrowingAdapter.of(stream, x);
+        return ThrowingBridge.of(stream, x);
     }
 
     public static <X extends Throwable> ThrowingLongStream<X> of(LongStream stream, Class<X> x) {
-        return ThrowingAdapter.of(stream, x);
+        return ThrowingBridge.of(stream, x);
     }
 
     public static <X extends Throwable> ThrowingDoubleStream<X> of(DoubleStream stream, Class<X> x) {
-        return ThrowingAdapter.of(stream, x);
+        return ThrowingBridge.of(stream, x);
+    }
+
+    public static <T> UnionStream<T, UnionThrowable> unionOf(Stream<T> stream) {
+        return UnionBridge.of(of(stream, UnionThrowable.class));
+    }
+
+    /**
+     * This method will try to guess {@code Class<X>} using the constructor.
+     *
+     * @param stream
+     *            the stream to delegate to
+     * @param ctor
+     *            the constructor for {@code X}
+     * @return a new {@code UnionStream}.
+     */
+    public static <T, X extends UnionThrowable> UnionStream<T, X> unionOf(Stream<T> stream,
+            Function<? super Throwable, X> ctor) {
+        @SuppressWarnings("unchecked") Class<X> x = (Class<X>) ctor.apply(new Throwable()).getClass();
+        return unionOf(stream, x, ctor);
+    }
+
+    public static <T, X extends UnionThrowable> UnionStream<T, X> unionOf(Stream<T> stream,
+            Class<X> x, Function<? super Throwable, X> ctor) {
+        return UnionBridge.of(of(stream, x), x, ctor);
     }
 }

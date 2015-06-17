@@ -49,12 +49,12 @@ class CheckedLongStream<X extends Throwable> extends
 
     @Override
     public OfLong<X> iterator() {
-        return ThrowingAdapter.of(getDelegate().iterator(), getFunctionAdapter());
+        return ThrowingBridge.of(getDelegate().iterator(), getFunctionAdapter());
     }
 
     @Override
     public ThrowingSpliterator.OfLong<X> spliterator() {
-        return ThrowingAdapter.of(getDelegate().spliterator(), getFunctionAdapter());
+        return ThrowingBridge.of(getDelegate().spliterator(), getFunctionAdapter());
     }
 
     @Override
@@ -70,25 +70,25 @@ class CheckedLongStream<X extends Throwable> extends
     @Override
     public <U> ThrowingStream<U, X> mapToObj(ThrowingLongFunction<? extends U, ? extends X> mapper) {
         LongFunction<? extends U> f = getFunctionAdapter().convert(mapper);
-        return ThrowingAdapter.of(getDelegate().mapToObj(f), getFunctionAdapter());
+        return ThrowingBridge.of(getDelegate().mapToObj(f), getFunctionAdapter());
     }
 
     @Override
     public ThrowingIntStream<X> mapToInt(ThrowingLongToIntFunction<? extends X> mapper) {
-        return ThrowingAdapter.of(getDelegate().mapToInt(getFunctionAdapter().convert(mapper)),
+        return ThrowingBridge.of(getDelegate().mapToInt(getFunctionAdapter().convert(mapper)),
                 getFunctionAdapter());
     }
 
     @Override
     public ThrowingDoubleStream<X> mapToDouble(ThrowingLongToDoubleFunction<? extends X> mapper) {
-        return ThrowingAdapter.of(getDelegate().mapToDouble(getFunctionAdapter().convert(mapper)),
+        return ThrowingBridge.of(getDelegate().mapToDouble(getFunctionAdapter().convert(mapper)),
                 getFunctionAdapter());
     }
 
     @Override
     public ThrowingLongStream<X> flatMap(
             ThrowingLongFunction<? extends ThrowingLongStream<? extends X>, ? extends X> mapper) {
-        @SuppressWarnings("unchecked") Function<? super ThrowingLongStream<? extends X>, ? extends LongStream> c = s -> ThrowingAdapter.of(
+        @SuppressWarnings("unchecked") Function<? super ThrowingLongStream<? extends X>, ? extends LongStream> c = s -> ThrowingBridge.of(
                 (ThrowingLongStream<X>) s, getExceptionClass());
         return chain(getDelegate().flatMap(getFunctionAdapter().convert(mapper.andThen(c))));
     }
@@ -210,12 +210,12 @@ class CheckedLongStream<X extends Throwable> extends
 
     @Override
     public ThrowingDoubleStream<X> asDoubleStream() {
-        return ThrowingAdapter.of(getDelegate().asDoubleStream(), getFunctionAdapter());
+        return ThrowingBridge.of(getDelegate().asDoubleStream(), getFunctionAdapter());
     }
 
     @Override
     public ThrowingStream<Long, X> boxed() {
-        return ThrowingAdapter.of(getDelegate().boxed(), getFunctionAdapter());
+        return ThrowingBridge.of(getDelegate().boxed(), getFunctionAdapter());
     }
 
     @Override

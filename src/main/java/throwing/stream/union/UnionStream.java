@@ -20,7 +20,7 @@ import throwing.stream.ThrowingDoubleStream;
 import throwing.stream.ThrowingIntStream;
 import throwing.stream.ThrowingLongStream;
 import throwing.stream.ThrowingStream;
-import throwing.stream.adapter.ThrowingAdapter;
+import throwing.stream.adapter.ThrowingBridge;
 
 public interface UnionStream<T, X extends UnionThrowable> extends
         UnionBaseStream<T, X, UnionStream<T, X>, ThrowingStream<T, Throwable>>,
@@ -112,7 +112,7 @@ public interface UnionStream<T, X extends UnionThrowable> extends
 
     @Override
     default public <R, A> R collect(Collector<? super T, A, R> collector) throws X {
-        return collect(ThrowingAdapter.of(collector));
+        return collect(ThrowingBridge.of(collector));
     }
 
     @Override

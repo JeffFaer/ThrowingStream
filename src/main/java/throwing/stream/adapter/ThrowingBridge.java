@@ -25,8 +25,8 @@ import throwing.stream.ThrowingIntStream;
 import throwing.stream.ThrowingLongStream;
 import throwing.stream.ThrowingStream;
 
-public final class ThrowingAdapter {
-    private ThrowingAdapter() {}
+public final class ThrowingBridge {
+    private ThrowingBridge() {}
 
     // checked
 

@@ -21,14 +21,14 @@ import org.junit.Test;
 
 import throwing.Nothing;
 import throwing.function.ThrowingIntPredicate;
-import throwing.stream.adapter.ThrowingAdapter;
+import throwing.stream.adapter.ThrowingBridge;
 
 public class ThrowingStreamTest {
     public IntStream numbers = IntStream.range(0, 20);
 
     private <X extends Throwable> void exceptionTest(Class<X> x, Supplier<X> exceptionSupplier)
         throws X {
-        ThrowingIntStream<X> s = ThrowingAdapter.of(numbers, x);
+        ThrowingIntStream<X> s = ThrowingBridge.of(numbers, x);
 
         List<Integer> collected = new ArrayList<>();
         AtomicReference<X> ref = new AtomicReference<>();
@@ -63,14 +63,14 @@ public class ThrowingStreamTest {
 
     @Test
     public void worksCorrectlyWithoutExceptions() {
-        ThrowingIntStream<Nothing> s = ThrowingAdapter.of(numbers);
+        ThrowingIntStream<Nothing> s = ThrowingBridge.of(numbers);
         long l = s.filter(i -> i < 10).count();
         assertEquals(10, l);
     }
 
     @Test
     public void flatMapExceptions() {
-        ThrowingIntStream<Exception> s = ThrowingAdapter.of(numbers, Exception.class);
+        ThrowingIntStream<Exception> s = ThrowingBridge.of(numbers, Exception.class);
 
         List<Integer> collected = new ArrayList<>();
         Exception e = new Exception();
@@ -80,7 +80,7 @@ public class ThrowingStreamTest {
                     e.fillInStackTrace();
                     throw e;
                 }
-                return ThrowingAdapter.of(IntStream.of(i), Exception.class);
+                return ThrowingBridge.of(IntStream.of(i), Exception.class);
             }).forEach(collected::add);
             fail("did not throw exception");
         } catch (Exception e2) {
@@ -92,12 +92,12 @@ public class ThrowingStreamTest {
 
     @Test
     public void flatMapExceptionsInStream() {
-        ThrowingIntStream<Exception> s = ThrowingAdapter.of(numbers, Exception.class);
+        ThrowingIntStream<Exception> s = ThrowingBridge.of(numbers, Exception.class);
 
         List<Integer> collected = new ArrayList<>();
         Exception e = new Exception();
         try {
-            s.flatMap(i -> ThrowingAdapter.of(IntStream.of(i), Exception.class).peek(i2 -> {
+            s.flatMap(i -> ThrowingBridge.of(IntStream.of(i), Exception.class).peek(i2 -> {
                 if (i2 >= 10) {
                     e.fillInStackTrace();
                     throw e;
@@ -112,7 +112,7 @@ public class ThrowingStreamTest {
     }
 
     private <X extends Throwable> void verboseTest(Class<X> x, Supplier<X> exceptionSupplier) {
-        verboseTest(x, exceptionSupplier, ThrowingAdapter::of);
+        verboseTest(x, exceptionSupplier, ThrowingBridge::of);
     }
 
     private <X extends Throwable> void verboseTest(Class<X> x, Supplier<X> exceptionSupplier,
@@ -130,7 +130,7 @@ public class ThrowingStreamTest {
                     "stack trace verbose",
                     Stream.of(e.getStackTrace()).map(StackTraceElement::getClassName).toArray(
                             String[]::new),
-                    not(hasItemInArray(startsWith(ThrowingAdapter.class.getPackage().getName()))));
+                    not(hasItemInArray(startsWith(ThrowingBridge.class.getPackage().getName()))));
         }
     }
 
