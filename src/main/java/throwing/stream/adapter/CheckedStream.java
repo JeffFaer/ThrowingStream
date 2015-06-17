@@ -197,8 +197,7 @@ class CheckedStream<T, X extends Throwable> extends
 
     @Override
     public <R, A> R collect(ThrowingCollector<? super T, A, R, ? extends X> collector) throws X {
-        return unmaskException(() -> getDelegate().collect(
-                ThrowingAdapter.of(collector, getFunctionAdapter())));
+        return unmaskException(() -> getDelegate().collect(getFunctionAdapter().convert(collector)));
     }
 
     @Override
