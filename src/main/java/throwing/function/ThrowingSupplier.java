@@ -5,6 +5,8 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import javax.annotation.Nullable;
+
 import throwing.Nothing;
 import throwing.RethrowChain;
 
@@ -23,7 +25,8 @@ public interface ThrowingSupplier<R, X extends Throwable> {
     }
 
     default public <Y extends Throwable> ThrowingSupplier<R, Y> orTry(
-            ThrowingSupplier<? extends R, ? extends Y> supplier, Consumer<? super Throwable> thrown) {
+            ThrowingSupplier<? extends R, ? extends Y> supplier,
+            @Nullable Consumer<? super Throwable> thrown) {
         Objects.requireNonNull(supplier, "supplier");
         return () -> {
             try {

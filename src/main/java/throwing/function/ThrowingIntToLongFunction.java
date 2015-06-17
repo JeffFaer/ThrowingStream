@@ -4,6 +4,8 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.IntToLongFunction;
 
+import javax.annotation.Nullable;
+
 import throwing.Nothing;
 
 @FunctionalInterface
@@ -15,11 +17,13 @@ public interface ThrowingIntToLongFunction<X extends Throwable> {
         return orTry(t)::applyAsLong;
     }
 
-    default public <Y extends Throwable> ThrowingIntToLongFunction<Y> orTry(ThrowingIntToLongFunction<? extends Y> f) {
+    default public <Y extends Throwable> ThrowingIntToLongFunction<Y> orTry(
+            ThrowingIntToLongFunction<? extends Y> f) {
         return orTry(f, null);
     }
-    
-    default public <Y extends Throwable> ThrowingIntToLongFunction<Y> orTry(ThrowingIntToLongFunction<? extends Y> f, Consumer<? super Throwable> thrown) {
+
+    default public <Y extends Throwable> ThrowingIntToLongFunction<Y> orTry(
+            ThrowingIntToLongFunction<? extends Y> f, @Nullable Consumer<? super Throwable> thrown) {
         return t -> {
             ThrowingSupplier<Long, X> s = () -> applyAsLong(t);
             return s.orTry(() -> f.applyAsLong(t), thrown).get();

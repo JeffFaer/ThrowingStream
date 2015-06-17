@@ -4,6 +4,8 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.IntBinaryOperator;
 
+import javax.annotation.Nullable;
+
 import throwing.Nothing;
 
 @FunctionalInterface
@@ -15,12 +17,13 @@ public interface ThrowingIntBinaryOperator<X extends Throwable> {
         return orTry(t)::applyAsInt;
     }
 
-    default public <Y extends Throwable> ThrowingIntBinaryOperator<Y> orTry(ThrowingIntBinaryOperator<? extends Y> f) {
+    default public <Y extends Throwable> ThrowingIntBinaryOperator<Y> orTry(
+            ThrowingIntBinaryOperator<? extends Y> f) {
         return orTry(f, null);
     }
 
-    default public <Y extends Throwable> ThrowingIntBinaryOperator<Y> orTry(ThrowingIntBinaryOperator<? extends Y> f,
-            Consumer<? super Throwable> thrown) {
+    default public <Y extends Throwable> ThrowingIntBinaryOperator<Y> orTry(
+            ThrowingIntBinaryOperator<? extends Y> f, @Nullable Consumer<? super Throwable> thrown) {
         return (t1, t2) -> {
             ThrowingSupplier<Integer, X> s = () -> applyAsInt(t1, t2);
             return s.orTry(() -> f.applyAsInt(t1, t2), thrown).get();

@@ -4,6 +4,8 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.LongBinaryOperator;
 
+import javax.annotation.Nullable;
+
 import throwing.Nothing;
 
 @FunctionalInterface
@@ -15,12 +17,13 @@ public interface ThrowingLongBinaryOperator<X extends Throwable> {
         return orTry(t)::applyAsLong;
     }
 
-    default public <Y extends Throwable> ThrowingLongBinaryOperator<Y> orTry(ThrowingLongBinaryOperator<? extends Y> f) {
+    default public <Y extends Throwable> ThrowingLongBinaryOperator<Y> orTry(
+            ThrowingLongBinaryOperator<? extends Y> f) {
         return orTry(f, null);
     }
 
-    default public <Y extends Throwable> ThrowingLongBinaryOperator<Y> orTry(ThrowingLongBinaryOperator<? extends Y> f,
-            Consumer<? super Throwable> thrown) {
+    default public <Y extends Throwable> ThrowingLongBinaryOperator<Y> orTry(
+            ThrowingLongBinaryOperator<? extends Y> f, @Nullable Consumer<? super Throwable> thrown) {
         return (t1, t2) -> {
             ThrowingSupplier<Long, X> s = () -> applyAsLong(t1, t2);
             return s.orTry(() -> f.applyAsLong(t1, t2), thrown).get();

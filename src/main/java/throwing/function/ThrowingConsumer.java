@@ -3,6 +3,8 @@ package throwing.function;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import javax.annotation.Nullable;
+
 import throwing.Nothing;
 import throwing.ThrowingRunnable;
 
@@ -15,12 +17,13 @@ public interface ThrowingConsumer<T, X extends Throwable> {
         return orTry(t)::accept;
     }
 
-    default public <Y extends Throwable> ThrowingConsumer<T, Y> orTry(ThrowingConsumer<? super T, ? extends Y> f) {
+    default public <Y extends Throwable> ThrowingConsumer<T, Y> orTry(
+            ThrowingConsumer<? super T, ? extends Y> f) {
         return orTry(f, null);
     }
 
-    default public <Y extends Throwable> ThrowingConsumer<T, Y> orTry(ThrowingConsumer<? super T, ? extends Y> f,
-            Consumer<? super Throwable> thrown) {
+    default public <Y extends Throwable> ThrowingConsumer<T, Y> orTry(
+            ThrowingConsumer<? super T, ? extends Y> f, @Nullable Consumer<? super Throwable> thrown) {
         return t -> {
             ThrowingRunnable<X> s = () -> accept(t);
             s.orTry(() -> f.accept(t), thrown).run();

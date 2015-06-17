@@ -4,6 +4,8 @@ import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import javax.annotation.Nullable;
+
 import throwing.Nothing;
 
 @FunctionalInterface
@@ -21,7 +23,8 @@ public interface ThrowingFunction<T, R, X extends Throwable> {
     }
 
     default public <Y extends Throwable> ThrowingFunction<T, R, Y> orTry(
-            ThrowingFunction<? super T, ? extends R, ? extends Y> f, Consumer<? super Throwable> thrown) {
+            ThrowingFunction<? super T, ? extends R, ? extends Y> f,
+            @Nullable Consumer<? super Throwable> thrown) {
         return t -> {
             ThrowingSupplier<R, X> s = () -> apply(t);
             return s.orTry(() -> f.apply(t), thrown).get();
@@ -40,7 +43,8 @@ public interface ThrowingFunction<T, R, X extends Throwable> {
         return andThen((ThrowingFunction<? super R, ? extends RR, ? extends X>) after::apply);
     }
 
-    default public <RR> ThrowingFunction<T, RR, X> andThen(ThrowingFunction<? super R, ? extends RR, ? extends X> after) {
+    default public <RR> ThrowingFunction<T, RR, X> andThen(
+            ThrowingFunction<? super R, ? extends RR, ? extends X> after) {
         Objects.requireNonNull(after);
         return t -> after.apply(apply(t));
     }

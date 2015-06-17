@@ -4,6 +4,8 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.ToIntFunction;
 
+import javax.annotation.Nullable;
+
 import throwing.Nothing;
 
 @FunctionalInterface
@@ -21,7 +23,8 @@ public interface ThrowingToIntFunction<T, X extends Throwable> {
     }
 
     default public <Y extends Throwable> ThrowingToIntFunction<T, Y> orTry(
-            ThrowingToIntFunction<? super T, ? extends Y> f, Consumer<? super Throwable> thrown) {
+            ThrowingToIntFunction<? super T, ? extends Y> f,
+            @Nullable Consumer<? super Throwable> thrown) {
         return t -> {
             ThrowingSupplier<Integer, X> s = () -> applyAsInt(t);
             return s.orTry(() -> f.applyAsInt(t), thrown).get();

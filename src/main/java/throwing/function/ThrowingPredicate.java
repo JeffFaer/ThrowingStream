@@ -4,6 +4,8 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import javax.annotation.Nullable;
+
 import throwing.Nothing;
 
 @FunctionalInterface
@@ -15,12 +17,14 @@ public interface ThrowingPredicate<T, X extends Throwable> {
         return orTry(t)::test;
     }
 
-    default public <Y extends Throwable> ThrowingPredicate<T, Y> orTry(ThrowingPredicate<? super T, ? extends Y> f) {
+    default public <Y extends Throwable> ThrowingPredicate<T, Y> orTry(
+            ThrowingPredicate<? super T, ? extends Y> f) {
         return orTry(f, null);
     }
 
-    default public <Y extends Throwable> ThrowingPredicate<T, Y> orTry(ThrowingPredicate<? super T, ? extends Y> f,
-            Consumer<? super Throwable> thrown) {
+    default public <Y extends Throwable> ThrowingPredicate<T, Y> orTry(
+            ThrowingPredicate<? super T, ? extends Y> f,
+            @Nullable Consumer<? super Throwable> thrown) {
         return t -> {
             ThrowingSupplier<Boolean, X> s = () -> test(t);
             return s.orTry(() -> f.test(t), thrown).get();

@@ -4,6 +4,8 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import javax.annotation.Nullable;
+
 import throwing.Nothing;
 import throwing.ThrowingRunnable;
 
@@ -22,7 +24,8 @@ public interface ThrowingBiConsumer<T, U, X extends Throwable> {
     }
 
     default public <Y extends Throwable> ThrowingBiConsumer<T, U, Y> orTry(
-            ThrowingBiConsumer<? super T, ? super U, ? extends Y> f, Consumer<? super Throwable> thrown) {
+            ThrowingBiConsumer<? super T, ? super U, ? extends Y> f,
+            @Nullable Consumer<? super Throwable> thrown) {
         return (t, u) -> {
             ThrowingRunnable<X> s = () -> accept(t, u);
             s.orTry(() -> f.accept(t, u), thrown).run();

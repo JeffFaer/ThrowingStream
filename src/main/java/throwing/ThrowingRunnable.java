@@ -3,6 +3,8 @@ package throwing;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import javax.annotation.Nullable;
+
 import throwing.function.ThrowingSupplier;
 
 @FunctionalInterface
@@ -19,7 +21,7 @@ public interface ThrowingRunnable<X extends Throwable> {
     }
 
     default public <Y extends Throwable> ThrowingRunnable<Y> orTry(ThrowingRunnable<? extends Y> r,
-            Consumer<? super Throwable> thrown) {
+            @Nullable Consumer<? super Throwable> thrown) {
         ThrowingSupplier<Void, X> s1 = () -> {
             run();
             return null;
@@ -30,7 +32,8 @@ public interface ThrowingRunnable<X extends Throwable> {
         }, thrown)::get;
     }
 
-    default public <Y extends Throwable> ThrowingRunnable<Y> rethrow(Class<X> x, Function<? super X, ? extends Y> mapper) {
+    default public <Y extends Throwable> ThrowingRunnable<Y> rethrow(Class<X> x,
+            Function<? super X, ? extends Y> mapper) {
         ThrowingSupplier<Void, X> s1 = () -> {
             run();
             return null;

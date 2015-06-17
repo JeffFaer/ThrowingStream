@@ -5,6 +5,8 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.IntFunction;
 
+import javax.annotation.Nullable;
+
 import throwing.Nothing;
 
 @FunctionalInterface
@@ -16,12 +18,14 @@ public interface ThrowingIntFunction<R, X extends Throwable> {
         return orTry(t)::apply;
     }
 
-    default public <Y extends Throwable> ThrowingIntFunction<R, Y> orTry(ThrowingIntFunction<? extends R, ? extends Y> f) {
+    default public <Y extends Throwable> ThrowingIntFunction<R, Y> orTry(
+            ThrowingIntFunction<? extends R, ? extends Y> f) {
         return orTry(f, null);
     }
 
     default public <Y extends Throwable> ThrowingIntFunction<R, Y> orTry(
-            ThrowingIntFunction<? extends R, ? extends Y> f, Consumer<? super Throwable> thrown) {
+            ThrowingIntFunction<? extends R, ? extends Y> f,
+            @Nullable Consumer<? super Throwable> thrown) {
         return t -> {
             ThrowingSupplier<R, X> s = () -> apply(t);
             return s.orTry(() -> f.apply(t), thrown).get();
@@ -40,7 +44,8 @@ public interface ThrowingIntFunction<R, X extends Throwable> {
         return andThen((ThrowingFunction<? super R, ? extends RR, ? extends X>) after::apply);
     }
 
-    default public <RR> ThrowingIntFunction<RR, X> andThen(ThrowingFunction<? super R, ? extends RR, ? extends X> after) {
+    default public <RR> ThrowingIntFunction<RR, X> andThen(
+            ThrowingFunction<? super R, ? extends RR, ? extends X> after) {
         Objects.requireNonNull(after);
         return i -> after.apply(apply(i));
     }

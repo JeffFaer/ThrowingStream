@@ -4,6 +4,8 @@ import java.util.function.Consumer;
 import java.util.function.DoubleBinaryOperator;
 import java.util.function.Function;
 
+import javax.annotation.Nullable;
+
 import throwing.Nothing;
 
 @FunctionalInterface
@@ -21,7 +23,8 @@ public interface ThrowingDoubleBinaryOperator<X extends Throwable> {
     }
 
     default public <Y extends Throwable> ThrowingDoubleBinaryOperator<Y> orTry(
-            ThrowingDoubleBinaryOperator<? extends Y> f, Consumer<? super Throwable> thrown) {
+            ThrowingDoubleBinaryOperator<? extends Y> f,
+            @Nullable Consumer<? super Throwable> thrown) {
         return (t1, t2) -> {
             ThrowingSupplier<Double, X> s = () -> applyAsDouble(t1, t2);
             return s.orTry(() -> f.applyAsDouble(t1, t2), thrown).get();

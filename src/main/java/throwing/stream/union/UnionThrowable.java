@@ -1,5 +1,7 @@
 package throwing.stream.union;
 
+import javax.annotation.CheckReturnValue;
+
 import throwing.RethrowChain;
 
 public class UnionThrowable extends Throwable {
@@ -16,7 +18,7 @@ public class UnionThrowable extends Throwable {
         return this;
     }
 
-    public Error finish() {
+    public @CheckReturnValue Error finish() {
         return RethrowChain.END_FUNCTION.apply(getCause());
     }
 }

@@ -4,6 +4,8 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.IntConsumer;
 
+import javax.annotation.Nullable;
+
 import throwing.Nothing;
 import throwing.ThrowingRunnable;
 
@@ -16,12 +18,13 @@ public interface ThrowingIntConsumer<X extends Throwable> {
         return orTry(t)::accept;
     }
 
-    default public <Y extends Throwable> ThrowingIntConsumer<Y> orTry(ThrowingIntConsumer<? extends Y> f) {
+    default public <Y extends Throwable> ThrowingIntConsumer<Y> orTry(
+            ThrowingIntConsumer<? extends Y> f) {
         return orTry(f, null);
     }
 
-    default public <Y extends Throwable> ThrowingIntConsumer<Y> orTry(ThrowingIntConsumer<? extends Y> f,
-            Consumer<? super Throwable> thrown) {
+    default public <Y extends Throwable> ThrowingIntConsumer<Y> orTry(
+            ThrowingIntConsumer<? extends Y> f, @Nullable Consumer<? super Throwable> thrown) {
         return t -> {
             ThrowingRunnable<X> s = () -> accept(t);
             s.orTry(() -> f.accept(t), thrown).run();

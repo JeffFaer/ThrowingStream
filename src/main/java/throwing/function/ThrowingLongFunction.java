@@ -5,6 +5,8 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.LongFunction;
 
+import javax.annotation.Nullable;
+
 import throwing.Nothing;
 
 @FunctionalInterface
@@ -22,7 +24,8 @@ public interface ThrowingLongFunction<R, X extends Throwable> {
     }
 
     default public <Y extends Throwable> ThrowingLongFunction<R, Y> orTry(
-            ThrowingLongFunction<? extends R, ? extends Y> f, Consumer<? super Throwable> thrown) {
+            ThrowingLongFunction<? extends R, ? extends Y> f,
+            @Nullable Consumer<? super Throwable> thrown) {
         return t -> {
             ThrowingSupplier<R, X> s = () -> apply(t);
             return s.orTry(() -> f.apply(t), thrown).get();
@@ -41,7 +44,8 @@ public interface ThrowingLongFunction<R, X extends Throwable> {
         return andThen((ThrowingFunction<? super R, ? extends RR, ? extends X>) after::apply);
     }
 
-    default public <RR> ThrowingLongFunction<RR, X> andThen(ThrowingFunction<? super R, ? extends RR, ? extends X> after) {
+    default public <RR> ThrowingLongFunction<RR, X> andThen(
+            ThrowingFunction<? super R, ? extends RR, ? extends X> after) {
         Objects.requireNonNull(after);
         return l -> after.apply(apply(l));
     }

@@ -75,8 +75,11 @@ import throwing.function.ThrowingToDoubleFunction;
 import throwing.function.ThrowingToIntFunction;
 import throwing.function.ThrowingToLongFunction;
 import throwing.stream.ThrowingCollector;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 class FunctionAdapter<X extends Throwable> extends UncheckedAdapter<Void, X> {
+
+    @SuppressFBWarnings(value = "NP_NONNULL_PARAM_VIOLATION", justification = "Delegate not needed")
     FunctionAdapter(Class<X> x) {
         super(null, x);
     }

@@ -4,6 +4,8 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.ToDoubleFunction;
 
+import javax.annotation.Nullable;
+
 import throwing.Nothing;
 
 @FunctionalInterface
@@ -21,7 +23,8 @@ public interface ThrowingToDoubleFunction<T, X extends Throwable> {
     }
 
     default public <Y extends Throwable> ThrowingToDoubleFunction<T, Y> orTry(
-            ThrowingToDoubleFunction<? super T, ? extends Y> f, Consumer<? super Throwable> thrown) {
+            ThrowingToDoubleFunction<? super T, ? extends Y> f,
+            @Nullable Consumer<? super Throwable> thrown) {
         return t -> {
             ThrowingSupplier<Double, X> s = () -> applyAsDouble(t);
             return s.orTry(() -> f.applyAsDouble(t), thrown).get();

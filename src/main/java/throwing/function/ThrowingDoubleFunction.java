@@ -5,6 +5,8 @@ import java.util.function.Consumer;
 import java.util.function.DoubleFunction;
 import java.util.function.Function;
 
+import javax.annotation.Nullable;
+
 import throwing.Nothing;
 
 @FunctionalInterface
@@ -22,7 +24,8 @@ public interface ThrowingDoubleFunction<R, X extends Throwable> {
     }
 
     default public <Y extends Throwable> ThrowingDoubleFunction<R, Y> orTry(
-            ThrowingDoubleFunction<? extends R, ? extends Y> f, Consumer<? super Throwable> thrown) {
+            ThrowingDoubleFunction<? extends R, ? extends Y> f,
+            @Nullable Consumer<? super Throwable> thrown) {
         return t -> {
             ThrowingSupplier<R, X> s = () -> apply(t);
             return s.orTry(() -> f.apply(t), thrown).get();
@@ -37,7 +40,8 @@ public interface ThrowingDoubleFunction<R, X extends Throwable> {
         };
     }
 
-    default public <RR> ThrowingDoubleFunction<RR, X> andThen(Function<? super R, ? extends RR> after) {
+    default public <RR> ThrowingDoubleFunction<RR, X> andThen(
+            Function<? super R, ? extends RR> after) {
         return andThen((ThrowingFunction<? super R, ? extends RR, ? extends X>) after::apply);
     }
 

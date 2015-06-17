@@ -4,6 +4,8 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.LongUnaryOperator;
 
+import javax.annotation.Nullable;
+
 import throwing.Nothing;
 
 @FunctionalInterface
@@ -15,12 +17,13 @@ public interface ThrowingLongUnaryOperator<X extends Throwable> {
         return orTry(t)::applyAsLong;
     }
 
-    default public <Y extends Throwable> ThrowingLongUnaryOperator<Y> orTry(ThrowingLongUnaryOperator<? extends Y> f) {
+    default public <Y extends Throwable> ThrowingLongUnaryOperator<Y> orTry(
+            ThrowingLongUnaryOperator<? extends Y> f) {
         return orTry(f, null);
     }
 
-    default public <Y extends Throwable> ThrowingLongUnaryOperator<Y> orTry(ThrowingLongUnaryOperator<? extends Y> f,
-            Consumer<? super Throwable> thrown) {
+    default public <Y extends Throwable> ThrowingLongUnaryOperator<Y> orTry(
+            ThrowingLongUnaryOperator<? extends Y> f, @Nullable Consumer<? super Throwable> thrown) {
         return t -> {
             ThrowingSupplier<Long, X> s = () -> applyAsLong(t);
             return s.orTry(() -> f.applyAsLong(t), thrown).get();
