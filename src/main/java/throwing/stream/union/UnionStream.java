@@ -1,8 +1,10 @@
 package throwing.stream.union;
 
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.function.IntFunction;
 import java.util.stream.Collector;
+import java.util.stream.Stream;
 
 import throwing.ThrowingComparator;
 import throwing.function.ThrowingBiConsumer;
@@ -21,6 +23,7 @@ import throwing.stream.ThrowingIntStream;
 import throwing.stream.ThrowingLongStream;
 import throwing.stream.ThrowingStream;
 import throwing.stream.adapter.ThrowingBridge;
+import throwing.stream.union.adapter.UnionBridge;
 
 public interface UnionStream<T, X extends UnionThrowable> extends
         UnionBaseStream<T, X, UnionStream<T, X>, ThrowingStream<T, Throwable>>,
@@ -138,4 +141,29 @@ public interface UnionStream<T, X extends UnionThrowable> extends
 
     @Override
     public Optional<T> findAny() throws X;
+
+    public static <T> UnionStream<T, UnionThrowable> of(Stream<T> stream) {
+        return UnionBridge.of(ThrowingStream.of(stream, UnionThrowable.class));
+    }
+
+    /**
+     * This method will try to guess {@code Class<X>} using the constructor.
+     *
+     * @param stream
+     *            the stream to delegate to
+     * @param ctor
+     *            the constructor for {@code X}
+     * @return a new {@code UnionStream}.
+     */
+    public static <T, X extends UnionThrowable> UnionStream<T, X> of(Stream<T> stream,
+            Function<? super Throwable, X> ctor) {
+        @SuppressWarnings("unchecked") Class<X> x = (Class<X>) ctor.apply(new Throwable())
+                .getClass();
+        return of(stream, x, ctor);
+    }
+
+    public static <T, X extends UnionThrowable> UnionStream<T, X> of(Stream<T> stream, Class<X> x,
+            Function<? super Throwable, X> ctor) {
+        return UnionBridge.of(ThrowingStream.of(stream, x), x, ctor);
+    }
 }

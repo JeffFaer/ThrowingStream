@@ -21,9 +21,6 @@ import throwing.function.ThrowingToDoubleFunction;
 import throwing.function.ThrowingToIntFunction;
 import throwing.function.ThrowingToLongFunction;
 import throwing.stream.adapter.ThrowingBridge;
-import throwing.stream.union.UnionStream;
-import throwing.stream.union.UnionThrowable;
-import throwing.stream.union.adapter.UnionBridge;
 
 /**
  * <p>
@@ -149,30 +146,5 @@ public interface ThrowingStream<T, X extends Throwable> extends
 
     public static <X extends Throwable> ThrowingDoubleStream<X> of(DoubleStream stream, Class<X> x) {
         return ThrowingBridge.of(stream, x);
-    }
-
-    public static <T> UnionStream<T, UnionThrowable> unionOf(Stream<T> stream) {
-        return UnionBridge.of(of(stream, UnionThrowable.class));
-    }
-
-    /**
-     * This method will try to guess {@code Class<X>} using the constructor.
-     *
-     * @param stream
-     *            the stream to delegate to
-     * @param ctor
-     *            the constructor for {@code X}
-     * @return a new {@code UnionStream}.
-     */
-    public static <T, X extends UnionThrowable> UnionStream<T, X> unionOf(Stream<T> stream,
-            Function<? super Throwable, X> ctor) {
-        @SuppressWarnings("unchecked") Class<X> x = (Class<X>) ctor.apply(new Throwable())
-                .getClass();
-        return unionOf(stream, x, ctor);
-    }
-
-    public static <T, X extends UnionThrowable> UnionStream<T, X> unionOf(Stream<T> stream,
-            Class<X> x, Function<? super Throwable, X> ctor) {
-        return UnionBridge.of(of(stream, x), x, ctor);
     }
 }
