@@ -26,23 +26,21 @@ import throwing.stream.union.UnionThrowable;
 import throwing.stream.union.adapter.UnionBridge;
 
 /**
- * A standard {@link Stream} does not allow you to throw any checked exceptions.
- * This class is a mirror of {@code Stream} except this class allows for checked
- * exceptions. Each method in the exception-free API has its mirror here using
- * interfaces which support exceptions. There are also helper methods such as
- * {@link #rethrow(Class, Function)}.
+ * <p>
+ * A standard {@link Stream} does not allow you to throw any checked exceptions. This class is a
+ * mirror of {@code Stream} except this class allows for checked exceptions. Each method in the
+ * exception-free API has its mirror here using interfaces which support exceptions. There are also
+ * helper methods such as {@link #rethrow(Class, Function)}.
  *
- * <br>
- * <br>
- *
+ * <p>
  * Each terminal operation may throw an {@code X}
  *
  * @author jeffrey
  *
  * @param <T>
- *            The type of the stream elements
+ *            the type of the stream elements
  * @param <X>
- *            The type of the exception that might be thrown
+ *            the type of the exception that might be thrown
  */
 public interface ThrowingStream<T, X extends Throwable> extends
         ThrowingBaseStream<T, X, ThrowingStream<T, X>> {
@@ -123,8 +121,8 @@ public interface ThrowingStream<T, X extends Throwable> extends
     public Optional<T> findAny() throws X;
 
     /**
-     * Returns a stream which will only throw Y and will rethrow any X as Y as
-     * specified by the mapper.
+     * Returns a stream which will only throw Y and will rethrow any X as Y as specified by the
+     * mapper.
      *
      * This is an intermediate operation.
      *
@@ -168,7 +166,8 @@ public interface ThrowingStream<T, X extends Throwable> extends
      */
     public static <T, X extends UnionThrowable> UnionStream<T, X> unionOf(Stream<T> stream,
             Function<? super Throwable, X> ctor) {
-        @SuppressWarnings("unchecked") Class<X> x = (Class<X>) ctor.apply(new Throwable()).getClass();
+        @SuppressWarnings("unchecked") Class<X> x = (Class<X>) ctor.apply(new Throwable())
+                .getClass();
         return unionOf(stream, x, ctor);
     }
 

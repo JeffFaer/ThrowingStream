@@ -137,7 +137,7 @@ class UnionDoubleStreamAdapter<X extends UnionThrowable>
 
     @Override
     public double reduce(double identity, ThrowingDoubleBinaryOperator<? extends Throwable> op)
-        throws X {
+            throws X {
         return getDelegate().reduce(identity, getAdapter().convert(op));
     }
 

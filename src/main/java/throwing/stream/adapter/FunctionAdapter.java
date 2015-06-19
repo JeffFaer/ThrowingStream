@@ -2,7 +2,6 @@ package throwing.stream.adapter;
 
 import java.util.Comparator;
 import java.util.Objects;
-import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.BinaryOperator;
@@ -235,31 +234,8 @@ class FunctionAdapter<X extends Throwable> extends UncheckedAdapter<Void, X> {
 
     public <T, A, R> Collector<T, A, R> convert(ThrowingCollector<T, A, R, ? extends X> collector) {
         Objects.requireNonNull(collector);
-        return new Collector<T, A, R>() {
-            @Override
-            public Supplier<A> supplier() {
-                return convert(collector.supplier());
-            }
-
-            @Override
-            public BiConsumer<A, T> accumulator() {
-                return convert(collector.accumulator());
-            }
-
-            @Override
-            public BinaryOperator<A> combiner() {
-                return convert(collector.combiner());
-            }
-
-            @Override
-            public Function<A, R> finisher() {
-                return convert(collector.finisher());
-            }
-
-            @Override
-            public Set<Collector.Characteristics> characteristics() {
-                return collector.characteristics();
-            }
-        };
+        return Collector.of(convert(collector.supplier()), convert(collector.accumulator()),
+                convert(collector.combiner()), convert(collector.finisher()),
+                collector.characteristics().stream().toArray(Collector.Characteristics[]::new));
     }
 }

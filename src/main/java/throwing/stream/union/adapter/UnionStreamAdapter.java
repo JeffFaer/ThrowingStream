@@ -198,7 +198,7 @@ class UnionStreamAdapter<T, X extends UnionThrowable>
 
     @Override
     public T reduce(T identity, ThrowingBinaryOperator<T, ? extends Throwable> accumulator)
-        throws X {
+            throws X {
         return getDelegate().reduce(identity, getAdapter().convert(accumulator));
     }
 
@@ -225,7 +225,7 @@ class UnionStreamAdapter<T, X extends UnionThrowable>
 
     @Override
     public <R, A> R collect(ThrowingCollector<? super T, A, R, ? extends Throwable> collector)
-        throws X {
+            throws X {
         return getDelegate().collect(getAdapter().convert(collector));
     }
 

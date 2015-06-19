@@ -91,7 +91,7 @@ public interface UnionStream<T, X extends UnionThrowable> extends
 
     @Override
     public T reduce(T identity, ThrowingBinaryOperator<T, ? extends Throwable> accumulator)
-        throws X;
+            throws X;
 
     @Override
     public Optional<T> reduce(ThrowingBinaryOperator<T, ? extends Throwable> accumulator) throws X;
@@ -108,7 +108,7 @@ public interface UnionStream<T, X extends UnionThrowable> extends
 
     @Override
     public <R, A> R collect(ThrowingCollector<? super T, A, R, ? extends Throwable> collector)
-        throws X;
+            throws X;
 
     @Override
     default public <R, A> R collect(Collector<? super T, A, R> collector) throws X {

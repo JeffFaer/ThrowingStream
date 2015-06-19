@@ -70,7 +70,7 @@ public interface UnionDoubleStream<X extends UnionThrowable> extends
 
     @Override
     public double reduce(double identity, ThrowingDoubleBinaryOperator<? extends Throwable> op)
-        throws X;
+            throws X;
 
     @Override
     public OptionalDouble reduce(ThrowingDoubleBinaryOperator<? extends Throwable> op) throws X;

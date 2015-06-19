@@ -59,8 +59,8 @@ public interface ThrowingDoubleStream<X extends Throwable> extends
     public OptionalDouble reduce(ThrowingDoubleBinaryOperator<? extends X> op) throws X;
 
     public <R> R collect(ThrowingSupplier<R, ? extends X> supplier,
-            ThrowingObjDoubleConsumer<R, ? extends X> accumulator, ThrowingBiConsumer<R, R, ? extends X> combiner)
-        throws X;
+            ThrowingObjDoubleConsumer<R, ? extends X> accumulator,
+            ThrowingBiConsumer<R, R, ? extends X> combiner) throws X;
 
     public double sum() throws X;
 
@@ -87,8 +87,8 @@ public interface ThrowingDoubleStream<X extends Throwable> extends
     public ThrowingStream<Double, X> boxed();
 
     /**
-     * Returns a stream which will only throw Y and will rethrow any X as Y as
-     * specified by the mapper.
+     * Returns a stream which will only throw Y and will rethrow any X as Y as specified by the
+     * mapper.
      * 
      * This is an intermediate operation.
      * 
@@ -98,6 +98,7 @@ public interface ThrowingDoubleStream<X extends Throwable> extends
      *            A way to convert X exceptions to Ys
      * @return the new stream
      */
-    public <Y extends Throwable> ThrowingDoubleStream<Y> rethrow(Class<Y> y, Function<? super X, ? extends Y> mapper);
+    public <Y extends Throwable> ThrowingDoubleStream<Y> rethrow(Class<Y> y,
+            Function<? super X, ? extends Y> mapper);
 
 }

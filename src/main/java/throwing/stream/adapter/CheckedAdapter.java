@@ -14,15 +14,15 @@ abstract class CheckedAdapter<D, X extends Throwable> extends AbstractAdapter<D,
     private static final String PACKAGE = CheckedAdapter.class.getPackage().getName();
     // it might be useful to have a way to turn this off
     public static volatile boolean FILTER_STACK = true;
-    
+
     private final FunctionAdapter<X> functionAdapter;
     private final RethrowChain<AdapterException, X> chain;
     private final Function<AdapterException, X> unmasker;
-    
+
     CheckedAdapter(D delegate, FunctionAdapter<X> functionAdapter) {
         this(delegate, functionAdapter, RethrowChain.start());
     }
-    
+
     CheckedAdapter(D delegate, FunctionAdapter<X> functionAdapter,
             RethrowChain<AdapterException, X> chain) {
         super(delegate, functionAdapter.getExceptionClass());
@@ -35,14 +35,16 @@ abstract class CheckedAdapter<D, X extends Throwable> extends AbstractAdapter<D,
         });
         unmasker = this.chain.finish();
     }
-    
+
     private void filterStackTrace(Throwable cause) {
         List<StackTraceElement> ste = Arrays.asList(cause.getStackTrace());
-        
+
         IntSummaryStatistics stats = IntStream.range(0, ste.size())
-                .filter(i -> ste.get(i).getClassName().startsWith(PACKAGE)).summaryStatistics();
+                .filter(i -> ste.get(i).getClassName().startsWith(PACKAGE))
+                .summaryStatistics();
         if (stats.getCount() > 0) {
-            List<StackTraceElement> filtered = new ArrayList<>(ste.size() - (stats.getMax() - stats.getMin()));
+            List<StackTraceElement> filtered = new ArrayList<>(ste.size()
+                    - (stats.getMax() - stats.getMin()));
             for (int x = 0; x < stats.getMin(); x++) {
                 filtered.add(ste.get(x));
             }
@@ -52,22 +54,22 @@ abstract class CheckedAdapter<D, X extends Throwable> extends AbstractAdapter<D,
             cause.setStackTrace(filtered.toArray(new StackTraceElement[filtered.size()]));
         }
     }
-    
+
     public FunctionAdapter<X> getFunctionAdapter() {
         return functionAdapter;
     }
-    
+
     public RethrowChain<AdapterException, X> getChain() {
         return chain;
     }
-    
+
     protected void unmaskException(Runnable runnable) throws X {
         unmaskException(() -> {
             runnable.run();
             return null;
         });
     }
-    
+
     protected <R> R unmaskException(Supplier<R> supplier) throws X {
         try {
             return supplier.get();

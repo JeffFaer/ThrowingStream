@@ -8,8 +8,8 @@ interface BaseStreamAdapter<S, D> extends Adapter<D> {
             return createNewStream(newDelegate);
         }
     }
-    
+
     public S getSelf();
-    
+
     public S createNewStream(D delegate);
 }

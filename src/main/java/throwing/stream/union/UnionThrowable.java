@@ -12,9 +12,7 @@ public class UnionThrowable extends Throwable {
     }
 
     public <X extends Throwable> UnionThrowable rethrow(Class<X> x) throws X {
-        if (x.isInstance(getCause())) {
-            throw x.cast(getCause());
-        }
+        if (x.isInstance(getCause())) { throw x.cast(getCause()); }
         return this;
     }
 

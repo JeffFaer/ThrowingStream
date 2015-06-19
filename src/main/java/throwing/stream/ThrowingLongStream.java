@@ -18,7 +18,8 @@ import throwing.function.ThrowingLongUnaryOperator;
 import throwing.function.ThrowingObjLongConsumer;
 import throwing.function.ThrowingSupplier;
 
-public interface ThrowingLongStream<X extends Throwable> extends ThrowingBaseStream<Long, X, ThrowingLongStream<X>> {
+public interface ThrowingLongStream<X extends Throwable> extends
+        ThrowingBaseStream<Long, X, ThrowingLongStream<X>> {
     @Override
     public ThrowingIterator.OfLong<X> iterator();
 
@@ -59,8 +60,8 @@ public interface ThrowingLongStream<X extends Throwable> extends ThrowingBaseStr
     public OptionalLong reduce(ThrowingLongBinaryOperator<? extends X> op) throws X;
 
     public <R> R collect(ThrowingSupplier<R, ? extends X> supplier,
-            ThrowingObjLongConsumer<R, ? extends X> accumulator, ThrowingBiConsumer<R, R, ? extends X> combiner)
-        throws X;
+            ThrowingObjLongConsumer<R, ? extends X> accumulator,
+            ThrowingBiConsumer<R, R, ? extends X> combiner) throws X;
 
     public long sum() throws X;
 
@@ -89,8 +90,8 @@ public interface ThrowingLongStream<X extends Throwable> extends ThrowingBaseStr
     public ThrowingStream<Long, X> boxed();
 
     /**
-     * Returns a stream which will only throw Y and will rethrow any X as Y as
-     * specified by the mapper.
+     * Returns a stream which will only throw Y and will rethrow any X as Y as specified by the
+     * mapper.
      * 
      * This is an intermediate operation.
      * 
@@ -100,5 +101,6 @@ public interface ThrowingLongStream<X extends Throwable> extends ThrowingBaseStr
      *            A way to convert X exceptions to Ys
      * @return the new stream
      */
-    public <Y extends Throwable> ThrowingLongStream<Y> rethrow(Class<Y> y, Function<? super X, ? extends Y> mapper);
+    public <Y extends Throwable> ThrowingLongStream<Y> rethrow(Class<Y> y,
+            Function<? super X, ? extends Y> mapper);
 }

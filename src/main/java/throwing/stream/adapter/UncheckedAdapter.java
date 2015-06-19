@@ -12,8 +12,8 @@ class UncheckedAdapter<D, X extends Throwable> extends AbstractAdapter<D, X> {
 
     UncheckedAdapter(D delegate, Class<X> x) {
         super(delegate, x);
-        RethrowChain<Throwable, AdapterException> c = t -> Optional.ofNullable(getExceptionClass().isInstance(t) ? new AdapterException(
-                t) : null);
+        RethrowChain<Throwable, AdapterException> c = t -> Optional.ofNullable(getExceptionClass().isInstance(
+                t) ? new AdapterException(t) : null);
         masker = c.finish();
     }
 

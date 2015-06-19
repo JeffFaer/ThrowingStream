@@ -8,68 +8,71 @@ import java.util.function.LongConsumer;
 
 import throwing.ThrowingIterator;
 
-class UncheckedIterator<T, I extends ThrowingIterator<T, X>, X extends Throwable> extends UncheckedAdapter<I, X>
-        implements Iterator<T> {
-    static class OfInt<X extends Throwable> extends UncheckedIterator<Integer, ThrowingIterator.OfInt<X>, X> implements
+class UncheckedIterator<T, I extends ThrowingIterator<T, X>, X extends Throwable> extends
+        UncheckedAdapter<I, X> implements Iterator<T> {
+    static class OfInt<X extends Throwable> extends
+            UncheckedIterator<Integer, ThrowingIterator.OfInt<X>, X> implements
             PrimitiveIterator.OfInt {
         OfInt(throwing.ThrowingIterator.OfInt<X> delegate, Class<X> x) {
             super(delegate, x);
         }
-        
+
         @Override
         public void forEachRemaining(IntConsumer action) {
             maskException(() -> getDelegate().forEachRemaining(action::accept));
         }
-        
+
         @Override
         public int nextInt() {
             return maskException(getDelegate()::nextInt);
         }
     }
-    
-    static class OfLong<X extends Throwable> extends UncheckedIterator<Long, ThrowingIterator.OfLong<X>, X> implements
+
+    static class OfLong<X extends Throwable> extends
+            UncheckedIterator<Long, ThrowingIterator.OfLong<X>, X> implements
             PrimitiveIterator.OfLong {
         OfLong(throwing.ThrowingIterator.OfLong<X> delegate, Class<X> x) {
             super(delegate, x);
         }
-        
+
         @Override
         public void forEachRemaining(LongConsumer action) {
             maskException(() -> getDelegate().forEachRemaining(action::accept));
         }
-        
+
         @Override
         public long nextLong() {
             return maskException(getDelegate()::nextLong);
         }
     }
-    
-    static class OfDouble<X extends Throwable> extends UncheckedIterator<Double, ThrowingIterator.OfDouble<X>, X>
-            implements PrimitiveIterator.OfDouble {
+
+    static class OfDouble<X extends Throwable> extends
+            UncheckedIterator<Double, ThrowingIterator.OfDouble<X>, X> implements
+            PrimitiveIterator.OfDouble {
         OfDouble(throwing.ThrowingIterator.OfDouble<X> delegate, Class<X> x) {
             super(delegate, x);
         }
-        
+
         @Override
         public void forEachRemaining(DoubleConsumer action) {
             maskException(() -> getDelegate().forEachRemaining(action::accept));
         }
-        
+
         @Override
         public double nextDouble() {
             return maskException(getDelegate()::nextDouble);
         }
     }
-    
+
     UncheckedIterator(I delegate, Class<X> x) {
         super(delegate, x);
     }
-    
+
     @Override
     public boolean hasNext() {
         return maskException(getDelegate()::hasNext);
     }
-    
+
     @Override
     public T next() {
         return maskException(getDelegate()::next);

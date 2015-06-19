@@ -18,7 +18,8 @@ import throwing.function.ThrowingIntUnaryOperator;
 import throwing.function.ThrowingObjIntConsumer;
 import throwing.function.ThrowingSupplier;
 
-public interface ThrowingIntStream<X extends Throwable> extends ThrowingBaseStream<Integer, X, ThrowingIntStream<X>> {
+public interface ThrowingIntStream<X extends Throwable> extends
+        ThrowingBaseStream<Integer, X, ThrowingIntStream<X>> {
     @Override
     public ThrowingIterator.OfInt<X> iterator();
 
@@ -58,7 +59,8 @@ public interface ThrowingIntStream<X extends Throwable> extends ThrowingBaseStre
 
     public OptionalInt reduce(ThrowingIntBinaryOperator<? extends X> op) throws X;
 
-    public <R> R collect(ThrowingSupplier<R, ? extends X> supplier, ThrowingObjIntConsumer<R, ? extends X> accumulator,
+    public <R> R collect(ThrowingSupplier<R, ? extends X> supplier,
+            ThrowingObjIntConsumer<R, ? extends X> accumulator,
             ThrowingBiConsumer<R, R, ? extends X> combiner) throws X;
 
     public int sum() throws X;
@@ -90,8 +92,8 @@ public interface ThrowingIntStream<X extends Throwable> extends ThrowingBaseStre
     public ThrowingStream<Integer, X> boxed();
 
     /**
-     * Returns a stream which will only throw Y and will rethrow any X as Y as
-     * specified by the mapper.
+     * Returns a stream which will only throw Y and will rethrow any X as Y as specified by the
+     * mapper.
      * 
      * This is an intermediate operation.
      * 
@@ -101,5 +103,6 @@ public interface ThrowingIntStream<X extends Throwable> extends ThrowingBaseStre
      *            A way to convert X exceptions to Ys
      * @return the new stream
      */
-    public <Y extends Throwable> ThrowingIntStream<Y> rethrow(Class<Y> y, Function<? super X, ? extends Y> mapper);
+    public <Y extends Throwable> ThrowingIntStream<Y> rethrow(Class<Y> y,
+            Function<? super X, ? extends Y> mapper);
 }

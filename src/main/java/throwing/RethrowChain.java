@@ -16,7 +16,8 @@ public interface RethrowChain<X extends Throwable, Y extends Throwable> extends
             throw new AssertionError(t);
         }
     };
-    public static final Function<Throwable, Error> END_FUNCTION = RethrowChain.<Throwable, Error> start().finish();
+    public static final Function<Throwable, Error> END_FUNCTION = RethrowChain.<Throwable, Error> start()
+            .finish();
 
     @SuppressWarnings("unchecked")
     public static <X extends Throwable, Y extends Throwable> RethrowChain<X, Y> start() {

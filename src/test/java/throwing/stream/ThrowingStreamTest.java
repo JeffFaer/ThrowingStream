@@ -27,7 +27,7 @@ public class ThrowingStreamTest {
     public IntStream numbers = IntStream.range(0, 20);
 
     private <X extends Throwable> void exceptionTest(Class<X> x, Supplier<X> exceptionSupplier)
-        throws X {
+            throws X {
         ThrowingIntStream<X> s = ThrowingBridge.of(numbers, x);
 
         List<Integer> collected = new ArrayList<>();
@@ -128,8 +128,9 @@ public class ThrowingStreamTest {
             assertEquals("correct exception thrown", x, e.getClass());
             assertThat(
                     "stack trace verbose",
-                    Stream.of(e.getStackTrace()).map(StackTraceElement::getClassName).toArray(
-                            String[]::new),
+                    Stream.of(e.getStackTrace())
+                            .map(StackTraceElement::getClassName)
+                            .toArray(String[]::new),
                     not(hasItemInArray(startsWith(ThrowingBridge.class.getPackage().getName()))));
         }
     }
@@ -160,7 +161,6 @@ public class ThrowingStreamTest {
         } catch (IOException x) {
             assertSame(e, x.getCause());
         } catch (Throwable t) {
-            t.printStackTrace();
             fail("threw wrong exception");
         }
     }
