@@ -34,7 +34,7 @@ public final class ThrowingBridge {
 
   // streams
 
-  public static <T> ThrowingStream<T, Nothing> of(Stream<T> stream) {
+  public static <T> ThrowingStream<? extends T, Nothing> of(Stream<? extends T> stream) {
     return of(stream, Nothing.class);
   }
 
