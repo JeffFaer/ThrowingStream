@@ -1,7 +1,9 @@
 package throwing.stream.adapter;
 
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.Optional;
+import java.util.Spliterator;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.BinaryOperator;
@@ -44,6 +46,16 @@ class UncheckedStream<T, X extends Throwable> extends
 
   private <R> Stream<R> newStream(ThrowingStream<R, X> delegate) {
     return new UncheckedStream<>(delegate, getExceptionClass());
+  }
+
+  @Override
+  public Iterator<T> iterator() {
+    return ThrowingBridge.of(getDelegate().iterator(), getExceptionClass());
+  }
+
+  @Override
+  public Spliterator<T> spliterator() {
+    return ThrowingBridge.of(getDelegate().spliterator(), getExceptionClass());
   }
 
   @Override

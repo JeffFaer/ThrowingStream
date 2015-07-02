@@ -8,7 +8,7 @@ import java.util.stream.DoubleStream;
 
 import throwing.RethrowChain;
 import throwing.ThrowingIterator.OfDouble;
-import throwing.ThrowingSpliterator;
+import throwing.ThrowingBaseSpliterator;
 import throwing.function.ThrowingBiConsumer;
 import throwing.function.ThrowingDoubleBinaryOperator;
 import throwing.function.ThrowingDoubleConsumer;
@@ -25,7 +25,7 @@ import throwing.stream.ThrowingLongStream;
 import throwing.stream.ThrowingStream;
 
 class CheckedDoubleStream<X extends Throwable> extends
-    CheckedBaseStream<Double, X, ThrowingDoubleStream<X>, DoubleStream> implements
+    CheckedBaseStream<Double, X, DoubleStream, ThrowingDoubleStream<X>> implements
     ThrowingDoubleStream<X> {
   CheckedDoubleStream(DoubleStream delegate, FunctionAdapter<X> functionAdapter) {
     super(delegate, functionAdapter);
@@ -52,7 +52,7 @@ class CheckedDoubleStream<X extends Throwable> extends
   }
 
   @Override
-  public ThrowingSpliterator.OfDouble<X> spliterator() {
+  public ThrowingBaseSpliterator.OfDouble<X> spliterator() {
     return ThrowingBridge.of(getDelegate().spliterator(), getFunctionAdapter());
   }
 

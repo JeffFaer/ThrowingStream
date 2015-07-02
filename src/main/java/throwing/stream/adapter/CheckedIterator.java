@@ -17,7 +17,7 @@ class CheckedIterator<E, X extends Throwable, D extends Iterator<E>> extends Che
     }
 
     @Override
-    public void forEachRemaining(ThrowingIntConsumer<X> action) throws X {
+    public void forEachRemaining(ThrowingIntConsumer<? extends X> action) throws X {
       unmaskException(() -> getDelegate().forEachRemaining(getFunctionAdapter().convert(action)));
     }
 
@@ -35,7 +35,7 @@ class CheckedIterator<E, X extends Throwable, D extends Iterator<E>> extends Che
     }
 
     @Override
-    public void forEachRemaining(ThrowingLongConsumer<X> action) throws X {
+    public void forEachRemaining(ThrowingLongConsumer<? extends X> action) throws X {
       unmaskException(() -> getDelegate().forEachRemaining(getFunctionAdapter().convert(action)));
     }
 
@@ -53,7 +53,7 @@ class CheckedIterator<E, X extends Throwable, D extends Iterator<E>> extends Che
     }
 
     @Override
-    public void forEachRemaining(ThrowingDoubleConsumer<X> action) throws X {
+    public void forEachRemaining(ThrowingDoubleConsumer<? extends X> action) throws X {
       unmaskException(() -> getDelegate().forEachRemaining(getFunctionAdapter().convert(action)));
     }
 

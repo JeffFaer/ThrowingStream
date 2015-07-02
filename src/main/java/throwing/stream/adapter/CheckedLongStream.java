@@ -9,7 +9,7 @@ import java.util.stream.LongStream;
 
 import throwing.RethrowChain;
 import throwing.ThrowingIterator.OfLong;
-import throwing.ThrowingSpliterator;
+import throwing.ThrowingBaseSpliterator;
 import throwing.function.ThrowingBiConsumer;
 import throwing.function.ThrowingLongBinaryOperator;
 import throwing.function.ThrowingLongConsumer;
@@ -26,7 +26,7 @@ import throwing.stream.ThrowingLongStream;
 import throwing.stream.ThrowingStream;
 
 class CheckedLongStream<X extends Throwable> extends
-    CheckedBaseStream<Long, X, ThrowingLongStream<X>, LongStream> implements ThrowingLongStream<X> {
+    CheckedBaseStream<Long, X, LongStream, ThrowingLongStream<X>> implements ThrowingLongStream<X> {
   CheckedLongStream(LongStream delegate, FunctionAdapter<X> functionAdapter) {
     super(delegate, functionAdapter);
   }
@@ -52,7 +52,7 @@ class CheckedLongStream<X extends Throwable> extends
   }
 
   @Override
-  public ThrowingSpliterator.OfLong<X> spliterator() {
+  public ThrowingBaseSpliterator.OfLong<X> spliterator() {
     return ThrowingBridge.of(getDelegate().spliterator(), getFunctionAdapter());
   }
 

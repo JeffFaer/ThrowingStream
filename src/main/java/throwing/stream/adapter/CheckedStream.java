@@ -11,6 +11,7 @@ import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
 import throwing.RethrowChain;
+import throwing.ThrowingBaseSpliterator;
 import throwing.ThrowingComparator;
 import throwing.function.ThrowingBiConsumer;
 import throwing.function.ThrowingBiFunction;
@@ -29,7 +30,7 @@ import throwing.stream.ThrowingLongStream;
 import throwing.stream.ThrowingStream;
 
 class CheckedStream<T, X extends Throwable> extends
-    CheckedBaseStream<T, X, ThrowingStream<T, X>, Stream<T>> implements ThrowingStream<T, X> {
+    CheckedBaseStream<T, X, Stream<T>, ThrowingStream<T, X>> implements ThrowingStream<T, X> {
   CheckedStream(Stream<T> delegate, FunctionAdapter<X> functionAdapter) {
     super(delegate, functionAdapter);
   }
@@ -51,6 +52,11 @@ class CheckedStream<T, X extends Throwable> extends
 
   private <R> ThrowingStream<R, X> newStream(Stream<R> delegate) {
     return new CheckedStream<>(delegate, getFunctionAdapter(), getChain());
+  }
+
+  @Override
+  public ThrowingBaseSpliterator.ThrowingSpliterator<T, X> spliterator() {
+    return ThrowingBridge.of(getDelegate().spliterator(), getFunctionAdapter());
   }
 
   @Override

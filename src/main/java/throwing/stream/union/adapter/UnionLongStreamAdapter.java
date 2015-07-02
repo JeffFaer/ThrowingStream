@@ -3,29 +3,29 @@ package throwing.stream.union.adapter;
 import java.util.LongSummaryStatistics;
 import java.util.OptionalDouble;
 import java.util.OptionalLong;
-import java.util.function.Function;
 
 import throwing.function.ThrowingBiConsumer;
 import throwing.function.ThrowingLongBinaryOperator;
 import throwing.function.ThrowingLongConsumer;
 import throwing.function.ThrowingLongFunction;
 import throwing.function.ThrowingLongPredicate;
-import throwing.function.ThrowingLongToDoubleFunction;
-import throwing.function.ThrowingLongToIntFunction;
-import throwing.function.ThrowingLongUnaryOperator;
 import throwing.function.ThrowingObjLongConsumer;
 import throwing.function.ThrowingSupplier;
+import throwing.stream.ThrowingDoubleStream;
+import throwing.stream.ThrowingIntStream;
 import throwing.stream.ThrowingLongStream;
+import throwing.stream.intermediate.adapter.ThrowingLongStreamIntermediateAdapter;
+import throwing.stream.union.UnionBaseSpliterator;
 import throwing.stream.union.UnionDoubleStream;
 import throwing.stream.union.UnionIntStream;
 import throwing.stream.union.UnionIterator;
 import throwing.stream.union.UnionLongStream;
-import throwing.stream.union.UnionSpliterator;
 import throwing.stream.union.UnionStream;
 import throwing.stream.union.UnionThrowable;
 
 class UnionLongStreamAdapter<X extends UnionThrowable> extends
-    UnionBaseStreamAdapter<Long, X, ThrowingLongStream<X>, UnionLongStream<X>, ThrowingLongStream<Throwable>> implements
+    UnionBaseStreamAdapter<Long, X, ThrowingLongStream<X>, UnionLongStream<X>> implements
+    ThrowingLongStreamIntermediateAdapter<Throwable, X, ThrowingIntStream<X>, ThrowingLongStream<X>, ThrowingDoubleStream<X>, UnionIntStream<X>, UnionLongStream<X>, UnionDoubleStream<X>>,
     UnionLongStream<X> {
   UnionLongStreamAdapter(ThrowingLongStream<X> delegate, UnionFunctionAdapter<X> adapter) {
     super(delegate, adapter);
@@ -42,9 +42,13 @@ class UnionLongStreamAdapter<X extends UnionThrowable> extends
   }
 
   @Override
-  public <Y extends Throwable> ThrowingLongStream<Y> rethrow(Class<Y> y,
-      Function<? super Throwable, ? extends Y> mapper) {
-    return getDelegate().rethrow(y, mapper.compose(X::getCause));
+  public UnionIntStream<X> newIntStream(ThrowingIntStream<X> delegate) {
+    return new UnionIntStreamAdapter<>(delegate, getFunctionAdapter());
+  }
+
+  @Override
+  public UnionDoubleStream<X> newDoubleStream(ThrowingDoubleStream<X> delegate) {
+    return new UnionDoubleStreamAdapter<>(delegate, getFunctionAdapter());
   }
 
   @Override
@@ -53,18 +57,9 @@ class UnionLongStreamAdapter<X extends UnionThrowable> extends
   }
 
   @Override
-  public UnionSpliterator.OfLong<X> spliterator() {
-    return new UnionSpliteratorAdapter.OfLong<>(getDelegate().spliterator(), getFunctionAdapter());
-  }
-
-  @Override
-  public UnionLongStream<X> filter(ThrowingLongPredicate<? extends Throwable> predicate) {
-    return chain(ThrowingLongStream::filter, getFunctionAdapter().convert(predicate));
-  }
-
-  @Override
-  public UnionLongStream<X> map(ThrowingLongUnaryOperator<? extends Throwable> mapper) {
-    return chain(ThrowingLongStream::map, getFunctionAdapter().convert(mapper));
+  public UnionBaseSpliterator.OfLong<X> spliterator() {
+    return new UnionBaseSpliteratorAdapter.OfLong<>(getDelegate().spliterator(),
+        getFunctionAdapter());
   }
 
   @Override
@@ -72,50 +67,6 @@ class UnionLongStreamAdapter<X extends UnionThrowable> extends
       ThrowingLongFunction<? extends U, ? extends Throwable> mapper) {
     return new UnionStreamAdapter<>(getDelegate().mapToObj(getFunctionAdapter().convert(mapper)),
         getFunctionAdapter());
-  }
-
-  @Override
-  public UnionDoubleStream<X> mapToDouble(ThrowingLongToDoubleFunction<? extends Throwable> mapper) {
-    return new UnionDoubleStreamAdapter<>(getDelegate().mapToDouble(
-        getFunctionAdapter().convert(mapper)), getFunctionAdapter());
-  }
-
-  @Override
-  public UnionIntStream<X> mapToInt(ThrowingLongToIntFunction<? extends Throwable> mapper) {
-    return new UnionIntStreamAdapter<>(
-        getDelegate().mapToInt(getFunctionAdapter().convert(mapper)), getFunctionAdapter());
-  }
-
-  @Override
-  public UnionLongStream<X> flatMap(
-      ThrowingLongFunction<? extends ThrowingLongStream<? extends Throwable>, ? extends Throwable> mapper) {
-    Function<ThrowingLongStream<? extends Throwable>, ThrowingLongStream<X>> f = getFunctionAdapter()::convert;
-    return chain(ThrowingLongStream<X>::flatMap, getFunctionAdapter().convert(mapper).andThen(f));
-  }
-
-  @Override
-  public UnionLongStream<X> distinct() {
-    return chain(ThrowingLongStream::distinct);
-  }
-
-  @Override
-  public UnionLongStream<X> sorted() {
-    return chain(ThrowingLongStream::sorted);
-  }
-
-  @Override
-  public UnionLongStream<X> peek(ThrowingLongConsumer<? extends Throwable> action) {
-    return chain(ThrowingLongStream::peek, getFunctionAdapter().convert(action));
-  }
-
-  @Override
-  public UnionLongStream<X> limit(long maxSize) {
-    return chain(ThrowingLongStream::limit, maxSize);
-  }
-
-  @Override
-  public UnionLongStream<X> skip(long n) {
-    return chain(ThrowingLongStream::skip, n);
   }
 
   @Override
@@ -208,12 +159,11 @@ class UnionLongStreamAdapter<X extends UnionThrowable> extends
 
   @Override
   public UnionDoubleStream<X> asDoubleStream() {
-    return new UnionDoubleStreamAdapter<>(getDelegate().asDoubleStream(), getFunctionAdapter());
+    return newDoubleStream(getDelegate().asDoubleStream());
   }
 
   @Override
   public UnionStream<Long, X> boxed() {
     return new UnionStreamAdapter<>(getDelegate().boxed(), getFunctionAdapter());
   }
-
 }

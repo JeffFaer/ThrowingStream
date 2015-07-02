@@ -1,24 +1,14 @@
 package throwing.stream.union;
 
-import throwing.stream.ThrowingBaseStream;
+import throwing.stream.intermediate.ThrowingBaseStreamIntermediate;
+import throwing.stream.terminal.ThrowingBaseStreamTerminal;
 
-public interface UnionBaseStream<T, X extends UnionThrowable, S extends S2, S2 extends ThrowingBaseStream<T, Throwable, S2>>
-        extends ThrowingBaseStream<T, Throwable, S2> {
-    @Override
-    public UnionIterator<T, X> iterator();
+public interface UnionBaseStream<T, X extends UnionThrowable, S extends UnionBaseStream<T, X, S>> extends
+    ThrowingBaseStreamIntermediate<S>,
+    ThrowingBaseStreamTerminal<T, Throwable, X> {
+  @Override
+  public UnionIterator<T, X> iterator();
 
-    @Override
-    public UnionSpliterator<T, X> spliterator();
-
-    @Override
-    public S onClose(Runnable closeHandler);
-
-    @Override
-    public S parallel();
-
-    @Override
-    public S sequential();
-
-    @Override
-    public S unordered();
+  @Override
+  public UnionBaseSpliterator<T, X, ?> spliterator();
 }

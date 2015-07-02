@@ -5,18 +5,16 @@ import java.util.Objects;
 import java.util.PrimitiveIterator;
 import java.util.Set;
 import java.util.Spliterator;
-import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Collector.Characteristics;
 import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 import throwing.Nothing;
 import throwing.ThrowingIterator;
-import throwing.ThrowingSpliterator;
+import throwing.ThrowingBaseSpliterator;
 import throwing.function.ThrowingBiConsumer;
 import throwing.function.ThrowingBinaryOperator;
 import throwing.function.ThrowingFunction;
@@ -46,18 +44,6 @@ public final class ThrowingBridge {
   static <T, X extends Throwable> ThrowingStream<T, X> of(Stream<T> stream, FunctionAdapter<X> x) {
     Objects.requireNonNull(stream, "stream");
     return new CheckedStream<>(stream, x);
-  }
-
-  public static <T, X extends Throwable> ThrowingStream<T, X> stream(
-      ThrowingSpliterator<T, X> spliterator, boolean parallel, Class<X> x) {
-    return of(StreamSupport.stream(of(spliterator, x), parallel), x);
-  }
-
-  public static <T, X extends Throwable> ThrowingStream<T, X> stream(
-      Supplier<ThrowingSpliterator<T, X>> spliterator, int characteristics, boolean parallel,
-      Class<X> x) {
-    Supplier<Spliterator<T>> supplier = () -> of(spliterator.get(), x);
-    return of(StreamSupport.stream(supplier, characteristics, parallel), x);
   }
 
   // int stream
@@ -182,16 +168,16 @@ public final class ThrowingBridge {
 
   // spliterator
 
-  public static <T> ThrowingSpliterator<T, Nothing> of(Spliterator<T> itr) {
+  public static <T> ThrowingBaseSpliterator.ThrowingSpliterator<T, Nothing> of(Spliterator<T> itr) {
     return of(itr, Nothing.class);
   }
 
-  public static <T, X extends Throwable> ThrowingSpliterator<T, X> of(Spliterator<T> itr, Class<X> x) {
+  public static <T, X extends Throwable> ThrowingBaseSpliterator.ThrowingSpliterator<T, X> of(Spliterator<T> itr, Class<X> x) {
     Objects.requireNonNull(x, "x");
     return of(itr, new FunctionAdapter<>(x));
   }
 
-  static <T, X extends Throwable> ThrowingSpliterator<T, X> of(Spliterator<T> itr,
+  static <T, X extends Throwable> ThrowingBaseSpliterator.ThrowingSpliterator<T, X> of(Spliterator<T> itr,
       FunctionAdapter<X> x) {
     Objects.requireNonNull(itr, "itr");
     return new CheckedSpliterator.Basic<>(itr, x);
@@ -199,17 +185,17 @@ public final class ThrowingBridge {
 
   // int
 
-  public static ThrowingSpliterator.OfInt<Nothing> of(Spliterator.OfInt itr) {
+  public static ThrowingBaseSpliterator.OfInt<Nothing> of(Spliterator.OfInt itr) {
     return of(itr, Nothing.class);
   }
 
-  public static <X extends Throwable> ThrowingSpliterator.OfInt<X> of(Spliterator.OfInt itr,
+  public static <X extends Throwable> ThrowingBaseSpliterator.OfInt<X> of(Spliterator.OfInt itr,
       Class<X> x) {
     Objects.requireNonNull(x, "x");
     return of(itr, new FunctionAdapter<>(x));
   }
 
-  static <X extends Throwable> ThrowingSpliterator.OfInt<X> of(Spliterator.OfInt itr,
+  static <X extends Throwable> ThrowingBaseSpliterator.OfInt<X> of(Spliterator.OfInt itr,
       FunctionAdapter<X> x) {
     Objects.requireNonNull(itr, "itr");
     return new CheckedSpliterator.OfInt<>(itr, x);
@@ -217,17 +203,17 @@ public final class ThrowingBridge {
 
   // long
 
-  public static ThrowingSpliterator.OfLong<Nothing> of(Spliterator.OfLong itr) {
+  public static ThrowingBaseSpliterator.OfLong<Nothing> of(Spliterator.OfLong itr) {
     return of(itr, Nothing.class);
   }
 
-  public static <X extends Throwable> ThrowingSpliterator.OfLong<X> of(Spliterator.OfLong itr,
+  public static <X extends Throwable> ThrowingBaseSpliterator.OfLong<X> of(Spliterator.OfLong itr,
       Class<X> x) {
     Objects.requireNonNull(x, "x");
     return of(itr, new FunctionAdapter<>(x));
   }
 
-  static <X extends Throwable> ThrowingSpliterator.OfLong<X> of(Spliterator.OfLong itr,
+  static <X extends Throwable> ThrowingBaseSpliterator.OfLong<X> of(Spliterator.OfLong itr,
       FunctionAdapter<X> x) {
     Objects.requireNonNull(itr, "itr");
     return new CheckedSpliterator.OfLong<>(itr, x);
@@ -235,17 +221,17 @@ public final class ThrowingBridge {
 
   // double
 
-  public static ThrowingSpliterator.OfDouble<Nothing> of(Spliterator.OfDouble itr) {
+  public static ThrowingBaseSpliterator.OfDouble<Nothing> of(Spliterator.OfDouble itr) {
     return of(itr, Nothing.class);
   }
 
-  public static <X extends Throwable> ThrowingSpliterator.OfDouble<X> of(Spliterator.OfDouble itr,
+  public static <X extends Throwable> ThrowingBaseSpliterator.OfDouble<X> of(Spliterator.OfDouble itr,
       Class<X> x) {
     Objects.requireNonNull(x, "x");
     return of(itr, new FunctionAdapter<>(x));
   }
 
-  static <X extends Throwable> ThrowingSpliterator.OfDouble<X> of(Spliterator.OfDouble itr,
+  static <X extends Throwable> ThrowingBaseSpliterator.OfDouble<X> of(Spliterator.OfDouble itr,
       FunctionAdapter<X> x) {
     Objects.requireNonNull(itr, "itr");
     return new CheckedSpliterator.OfDouble<>(itr, x);
@@ -337,33 +323,33 @@ public final class ThrowingBridge {
 
   // spliterator
 
-  public static <T> Spliterator<T> of(ThrowingSpliterator<T, Nothing> itr) {
+  public static <T> Spliterator<T> of(ThrowingBaseSpliterator.ThrowingSpliterator<T, Nothing> itr) {
     return of(itr, Nothing.class);
   }
 
-  static <T, X extends Throwable> Spliterator<T> of(ThrowingSpliterator<T, X> itr, Class<X> x) {
+  static <T, X extends Throwable> Spliterator<T> of(ThrowingBaseSpliterator.ThrowingSpliterator<T, X> itr, Class<X> x) {
     Objects.requireNonNull(itr, "itr");
     return new UncheckedSpliterator.Basic<>(itr, x);
   }
 
   // int
 
-  public static <T> Spliterator.OfInt of(ThrowingSpliterator.OfInt<Nothing> itr) {
+  public static <T> Spliterator.OfInt of(ThrowingBaseSpliterator.OfInt<Nothing> itr) {
     return of(itr, Nothing.class);
   }
 
-  static <T, X extends Throwable> Spliterator.OfInt of(ThrowingSpliterator.OfInt<X> itr, Class<X> x) {
+  static <T, X extends Throwable> Spliterator.OfInt of(ThrowingBaseSpliterator.OfInt<X> itr, Class<X> x) {
     Objects.requireNonNull(itr, "itr");
     return new UncheckedSpliterator.OfInt<>(itr, x);
   }
 
   // long
 
-  public static <T> Spliterator.OfLong of(ThrowingSpliterator.OfLong<Nothing> itr) {
+  public static <T> Spliterator.OfLong of(ThrowingBaseSpliterator.OfLong<Nothing> itr) {
     return of(itr, Nothing.class);
   }
 
-  static <T, X extends Throwable> Spliterator.OfLong of(ThrowingSpliterator.OfLong<X> itr,
+  static <T, X extends Throwable> Spliterator.OfLong of(ThrowingBaseSpliterator.OfLong<X> itr,
       Class<X> x) {
     Objects.requireNonNull(itr, "itr");
     return new UncheckedSpliterator.OfLong<>(itr, x);
@@ -371,11 +357,11 @@ public final class ThrowingBridge {
 
   // double
 
-  public static <T> Spliterator.OfDouble of(ThrowingSpliterator.OfDouble<Nothing> itr) {
+  public static <T> Spliterator.OfDouble of(ThrowingBaseSpliterator.OfDouble<Nothing> itr) {
     return of(itr, Nothing.class);
   }
 
-  static <T, X extends Throwable> Spliterator.OfDouble of(ThrowingSpliterator.OfDouble<X> itr,
+  static <T, X extends Throwable> Spliterator.OfDouble of(ThrowingBaseSpliterator.OfDouble<X> itr,
       Class<X> x) {
     Objects.requireNonNull(itr, "itr");
     return new UncheckedSpliterator.OfDouble<>(itr, x);

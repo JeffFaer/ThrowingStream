@@ -9,7 +9,7 @@ import java.util.stream.IntStream;
 
 import throwing.RethrowChain;
 import throwing.ThrowingIterator.OfInt;
-import throwing.ThrowingSpliterator;
+import throwing.ThrowingBaseSpliterator;
 import throwing.function.ThrowingBiConsumer;
 import throwing.function.ThrowingIntBinaryOperator;
 import throwing.function.ThrowingIntConsumer;
@@ -26,7 +26,7 @@ import throwing.stream.ThrowingLongStream;
 import throwing.stream.ThrowingStream;
 
 class CheckedIntStream<X extends Throwable> extends
-    CheckedBaseStream<Integer, X, ThrowingIntStream<X>, IntStream> implements ThrowingIntStream<X> {
+    CheckedBaseStream<Integer, X, IntStream, ThrowingIntStream<X>> implements ThrowingIntStream<X> {
   CheckedIntStream(IntStream delegate, FunctionAdapter<X> functionAdapter) {
     super(delegate, functionAdapter);
   }
@@ -52,7 +52,7 @@ class CheckedIntStream<X extends Throwable> extends
   }
 
   @Override
-  public ThrowingSpliterator.OfInt<X> spliterator() {
+  public ThrowingBaseSpliterator.OfInt<X> spliterator() {
     return ThrowingBridge.of(getDelegate().spliterator(), getFunctionAdapter());
   }
 

@@ -1,6 +1,7 @@
 package throwing.stream.union.adapter;
 
 import throwing.ThrowingIterator;
+import throwing.function.ThrowingConsumer;
 import throwing.function.ThrowingDoubleConsumer;
 import throwing.function.ThrowingIntConsumer;
 import throwing.function.ThrowingLongConsumer;
@@ -21,7 +22,7 @@ class UnionIteratorAdapter<T, X extends UnionThrowable, D extends ThrowingIterat
     }
 
     @Override
-    public void forEachRemaining(ThrowingIntConsumer<Throwable> action) throws X {
+    public void forEachRemaining(ThrowingIntConsumer<? extends Throwable> action) throws X {
       getDelegate().forEachRemaining(getFunctionAdapter().convert(action));
     }
   }
@@ -38,7 +39,7 @@ class UnionIteratorAdapter<T, X extends UnionThrowable, D extends ThrowingIterat
     }
 
     @Override
-    public void forEachRemaining(ThrowingLongConsumer<Throwable> action) throws X {
+    public void forEachRemaining(ThrowingLongConsumer<? extends Throwable> action) throws X {
       getDelegate().forEachRemaining(getFunctionAdapter().convert(action));
     }
   }
@@ -56,7 +57,7 @@ class UnionIteratorAdapter<T, X extends UnionThrowable, D extends ThrowingIterat
     }
 
     @Override
-    public void forEachRemaining(ThrowingDoubleConsumer<Throwable> action) throws X {
+    public void forEachRemaining(ThrowingDoubleConsumer<? extends Throwable> action) throws X {
       getDelegate().forEachRemaining(getFunctionAdapter().convert(action));
     }
   }
@@ -73,5 +74,10 @@ class UnionIteratorAdapter<T, X extends UnionThrowable, D extends ThrowingIterat
   @Override
   public T next() throws X {
     return getDelegate().next();
+  }
+
+  @Override
+  public void forEachRemaining(ThrowingConsumer<? super T, ? extends Throwable> action) throws X {
+    getDelegate().forEachRemaining(getFunctionAdapter().convert(action));
   }
 }
