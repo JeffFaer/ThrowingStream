@@ -4,12 +4,12 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
- * @param <S>
- *          the type of this object (or the one you want to use in chainable methods)
  * @param <D>
  *          the type of the delegate object
+ * @param <S>
+ *          the type of this object (or the one you want to use in chainable methods)
  */
-public interface ChainingAdapter<S, D> extends Adapter<D> {
+public interface ChainingAdapter<D, S> extends Adapter<D> {
   default public S chain(D newDelegate) {
     if (newDelegate.equals(getDelegate())) {
       return getSelf();

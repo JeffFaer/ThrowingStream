@@ -9,7 +9,7 @@ import throwing.function.ThrowingIntConsumer;
 import throwing.function.ThrowingLongConsumer;
 
 abstract class CheckedSpliterator<T, X extends Throwable, S extends ThrowingSpliterator<T, X>, D extends Spliterator<T>> extends
-    CheckedAdapter<D, X> implements ThrowingSpliterator<T, X>, ChainingAdapter<S, D> {
+    CheckedAdapter<D, X> implements ThrowingSpliterator<T, X>, ChainingAdapter<D, S> {
   static class Basic<T, X extends Throwable> extends
       CheckedSpliterator<T, X, ThrowingSpliterator<T, X>, Spliterator<T>> {
     Basic(Spliterator<T> delegate, FunctionAdapter<X> functionAdapter) {

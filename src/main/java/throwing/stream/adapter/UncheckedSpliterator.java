@@ -7,91 +7,131 @@ import java.util.function.IntConsumer;
 import java.util.function.LongConsumer;
 
 import throwing.ThrowingSpliterator;
-import throwing.function.ThrowingDoubleConsumer;
-import throwing.function.ThrowingIntConsumer;
-import throwing.function.ThrowingLongConsumer;
 
-class UncheckedSpliterator<T, S extends ThrowingSpliterator<T, X>, X extends Throwable> extends
-        UncheckedAdapter<S, X> implements Spliterator<T> {
-    static class OfInt<X extends Throwable> extends
-            UncheckedSpliterator<Integer, ThrowingSpliterator.OfInt<X>, X> implements
-            Spliterator.OfInt {
-        OfInt(ThrowingSpliterator.OfInt<X> delegate, Class<X> x) {
-            super(delegate, x);
-        }
-
-        @Override
-        public Spliterator.OfInt trySplit() {
-            return new UncheckedSpliterator.OfInt<>(getDelegate().trySplit(), getExceptionClass());
-        }
-
-        @Override
-        public boolean tryAdvance(IntConsumer action) {
-            return maskException(() -> getDelegate().tryAdvance(
-                    (ThrowingIntConsumer<X>) action::accept));
-        }
-    }
-
-    static class OfLong<X extends Throwable> extends
-            UncheckedSpliterator<Long, ThrowingSpliterator.OfLong<X>, X> implements
-            Spliterator.OfLong {
-        OfLong(ThrowingSpliterator.OfLong<X> delegate, Class<X> x) {
-            super(delegate, x);
-        }
-
-        @Override
-        public Spliterator.OfLong trySplit() {
-            return new UncheckedSpliterator.OfLong<>(getDelegate().trySplit(), getExceptionClass());
-        }
-
-        @Override
-        public boolean tryAdvance(LongConsumer action) {
-            return maskException(() -> getDelegate().tryAdvance(
-                    (ThrowingLongConsumer<X>) action::accept));
-        }
-    }
-
-    static class OfDouble<X extends Throwable> extends
-            UncheckedSpliterator<Double, ThrowingSpliterator.OfDouble<X>, X> implements
-            Spliterator.OfDouble {
-        OfDouble(ThrowingSpliterator.OfDouble<X> delegate, Class<X> x) {
-            super(delegate, x);
-        }
-
-        @Override
-        public Spliterator.OfDouble trySplit() {
-            return new UncheckedSpliterator.OfDouble<>(getDelegate().trySplit(),
-                    getExceptionClass());
-        }
-
-        @Override
-        public boolean tryAdvance(DoubleConsumer action) {
-            return maskException(() -> getDelegate().tryAdvance(
-                    (ThrowingDoubleConsumer<X>) action::accept));
-        }
-    }
-
-    UncheckedSpliterator(S delegate, Class<X> x) {
-        super(delegate, x);
-    }
-
-    @Override
-    public boolean tryAdvance(Consumer<? super T> action) {
-        return maskException(() -> getDelegate().tryAdvance(action::accept));
+abstract class UncheckedSpliterator<T, X extends Throwable, D extends ThrowingSpliterator<T, X>, S extends Spliterator<T>> extends
+    UncheckedAdapter<D, X> implements Spliterator<T>, ChainingAdapter<D, S> {
+  static class Basic<T, X extends Throwable> extends
+      UncheckedSpliterator<T, X, ThrowingSpliterator<T, X>, Spliterator<T>> {
+    Basic(ThrowingSpliterator<T, X> delegate, Class<X> x) {
+      super(delegate, x);
     }
 
     @Override
     public Spliterator<T> trySplit() {
-        return new UncheckedSpliterator<>(getDelegate().trySplit(), getExceptionClass());
+      return chain(ThrowingSpliterator::trySplit);
     }
 
     @Override
-    public long estimateSize() {
-        return getDelegate().estimateSize();
+    public Spliterator<T> getSelf() {
+      return this;
     }
 
     @Override
-    public int characteristics() {
-        return getDelegate().characteristics();
+    public Spliterator<T> createNewAdapter(ThrowingSpliterator<T, X> newDelegate) {
+      return new Basic<>(newDelegate, getExceptionClass());
     }
+  }
+
+  static class OfInt<X extends Throwable> extends
+      UncheckedSpliterator<Integer, X, ThrowingSpliterator.OfInt<X>, Spliterator.OfInt> implements
+      Spliterator.OfInt {
+    OfInt(ThrowingSpliterator.OfInt<X> delegate, Class<X> x) {
+      super(delegate, x);
+    }
+
+    @Override
+    public Spliterator.OfInt trySplit() {
+      return chain(ThrowingSpliterator.OfInt::trySplit);
+    }
+
+    @Override
+    public boolean tryAdvance(IntConsumer action) {
+      return maskException(() -> getDelegate().normalTryAdvance(action));
+    }
+
+    @Override
+    public Spliterator.OfInt getSelf() {
+      return this;
+    }
+
+    @Override
+    public Spliterator.OfInt createNewAdapter(ThrowingSpliterator.OfInt<X> newDelegate) {
+      return new UncheckedSpliterator.OfInt<>(newDelegate, getExceptionClass());
+    }
+  }
+
+  static class OfLong<X extends Throwable> extends
+      UncheckedSpliterator<Long, X, ThrowingSpliterator.OfLong<X>, Spliterator.OfLong> implements
+      Spliterator.OfLong {
+    OfLong(ThrowingSpliterator.OfLong<X> delegate, Class<X> x) {
+      super(delegate, x);
+    }
+
+    @Override
+    public Spliterator.OfLong trySplit() {
+      return chain(ThrowingSpliterator.OfLong::trySplit);
+    }
+
+    @Override
+    public boolean tryAdvance(LongConsumer action) {
+      return maskException(() -> getDelegate().normalTryAdvance(action));
+    }
+
+    @Override
+    public Spliterator.OfLong getSelf() {
+      return this;
+    }
+
+    @Override
+    public Spliterator.OfLong createNewAdapter(ThrowingSpliterator.OfLong<X> newDelegate) {
+      return new UncheckedSpliterator.OfLong<>(newDelegate, getExceptionClass());
+    }
+  }
+
+  static class OfDouble<X extends Throwable> extends
+      UncheckedSpliterator<Double, X, ThrowingSpliterator.OfDouble<X>, Spliterator.OfDouble> implements
+      Spliterator.OfDouble {
+    OfDouble(ThrowingSpliterator.OfDouble<X> delegate, Class<X> x) {
+      super(delegate, x);
+    }
+
+    @Override
+    public Spliterator.OfDouble trySplit() {
+      return chain(ThrowingSpliterator.OfDouble::trySplit);
+    }
+
+    @Override
+    public boolean tryAdvance(DoubleConsumer action) {
+      return maskException(() -> getDelegate().normalTryAdvance(action));
+    }
+
+    @Override
+    public Spliterator.OfDouble getSelf() {
+      return this;
+    }
+
+    @Override
+    public Spliterator.OfDouble createNewAdapter(ThrowingSpliterator.OfDouble<X> newDelegate) {
+      return new UncheckedSpliterator.OfDouble<>(newDelegate, getExceptionClass());
+    }
+  }
+
+  UncheckedSpliterator(D delegate, Class<X> x) {
+    super(delegate, x);
+  }
+
+  @Override
+  public boolean tryAdvance(Consumer<? super T> action) {
+    return maskException(() -> getDelegate().tryAdvance(action::accept));
+  }
+
+  @Override
+  public long estimateSize() {
+    return getDelegate().estimateSize();
+  }
+
+  @Override
+  public int characteristics() {
+    return getDelegate().characteristics();
+  }
 }

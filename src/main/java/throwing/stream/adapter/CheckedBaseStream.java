@@ -8,7 +8,7 @@ import throwing.ThrowingSpliterator;
 import throwing.stream.ThrowingBaseStream;
 
 abstract class CheckedBaseStream<T, X extends Throwable, S extends ThrowingBaseStream<T, X, S>, D extends BaseStream<T, D>> extends
-    CheckedAdapter<D, X> implements ThrowingBaseStream<T, X, S>, ChainingAdapter<S, D> {
+    CheckedAdapter<D, X> implements ThrowingBaseStream<T, X, S>, ChainingAdapter<D, S> {
   CheckedBaseStream(D delegate, FunctionAdapter<X> functionAdapter) {
     super(delegate, functionAdapter);
   }
