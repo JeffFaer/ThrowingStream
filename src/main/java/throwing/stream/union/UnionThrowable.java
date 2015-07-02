@@ -1,6 +1,7 @@
 package throwing.stream.union;
 
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 import javax.annotation.CheckReturnValue;
 
@@ -37,8 +38,16 @@ public class UnionThrowable extends Throwable {
 
   @CreatesObligation
   public <X extends Throwable> UnionThrowable rethrow(Class<X> x) throws X {
+    rethrow(x, Function.identity());
+
+    return this;
+  }
+
+  @CreatesObligation
+  public <X extends Throwable, Y extends Throwable> UnionThrowable rethrow(Class<X> x,
+      Function<? super X, Y> mapper) throws Y {
     if (x.isInstance(getCause())) {
-      throw x.cast(getCause());
+      throw mapper.apply(x.cast(getCause()));
     }
 
     return this;
