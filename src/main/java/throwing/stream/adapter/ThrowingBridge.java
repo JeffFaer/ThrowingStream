@@ -343,7 +343,7 @@ public final class ThrowingBridge {
 
   static <T, X extends Throwable> Spliterator<T> of(ThrowingSpliterator<T, X> itr, Class<X> x) {
     Objects.requireNonNull(itr, "itr");
-    return new UncheckedSpliterator<>(itr, x);
+    return new UncheckedSpliterator.Basic<>(itr, x);
   }
 
   // int
