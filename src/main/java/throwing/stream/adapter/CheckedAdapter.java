@@ -29,7 +29,7 @@ abstract class CheckedAdapter<D, X extends Throwable> extends ThrowingAbstractAd
         this.functionAdapter = functionAdapter;
 
         RethrowChain<Throwable, X> link = RethrowChain.rethrowAs(getExceptionClass());
-        this.chain = chain.chain(t -> {
+        this.chain = chain.connect(t -> {
             Throwable cause = t.getCause();
             return link.apply(cause);
         });
