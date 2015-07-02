@@ -14,6 +14,7 @@ import throwing.function.ThrowingSupplier;
 import throwing.stream.ThrowingDoubleStream;
 import throwing.stream.ThrowingIntStream;
 import throwing.stream.ThrowingLongStream;
+import throwing.stream.intermediate.adapter.ThrowingFunctionAdapter;
 import throwing.stream.intermediate.adapter.ThrowingLongStreamIntermediateAdapter;
 import throwing.stream.union.UnionBaseSpliterator;
 import throwing.stream.union.UnionDoubleStream;
@@ -27,7 +28,8 @@ class UnionLongStreamAdapter<X extends UnionThrowable> extends
     UnionBaseStreamAdapter<Long, X, ThrowingLongStream<X>, UnionLongStream<X>> implements
     ThrowingLongStreamIntermediateAdapter<Throwable, X, ThrowingIntStream<X>, ThrowingLongStream<X>, ThrowingDoubleStream<X>, UnionIntStream<X>, UnionLongStream<X>, UnionDoubleStream<X>>,
     UnionLongStream<X> {
-  UnionLongStreamAdapter(ThrowingLongStream<X> delegate, UnionFunctionAdapter<X> adapter) {
+  UnionLongStreamAdapter(ThrowingLongStream<X> delegate,
+      ThrowingFunctionAdapter<X, Throwable> adapter) {
     super(delegate, adapter);
   }
 

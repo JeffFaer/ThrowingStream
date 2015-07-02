@@ -18,7 +18,7 @@ import throwing.stream.intermediate.ThrowingIntStreamIntermediate;
 import throwing.stream.intermediate.ThrowingLongStreamIntermediate;
 import throwing.stream.intermediate.ThrowingStreamIntermediate;
 
-public interface ThrowingStreamIntermediateAdapter<T, X extends Throwable, XD extends Throwable, D extends ThrowingStreamIntermediate<T, XD, D, ID, LD, DD>, ID extends ThrowingIntStreamIntermediate<XD, ID, LD, DD>, LD extends ThrowingLongStreamIntermediate<XD, ID, LD, DD>, DD extends ThrowingDoubleStreamIntermediate<XD, ID, LD, DD>, S extends ThrowingStreamIntermediate<T, X, S, IS, LS, DS>, IS extends ThrowingIntStreamIntermediate<X, IS, LS, DS>, LS extends ThrowingLongStreamIntermediate<X, IS, LS, DS>, DS extends ThrowingDoubleStreamIntermediate<X, IS, LS, DS>> extends
+public interface ThrowingStreamIntermediateAdapter<T, X extends Throwable, XD extends Throwable, D extends ThrowingStreamIntermediate<T, ? super XD, D, ID, LD, DD>, ID extends ThrowingIntStreamIntermediate<? super XD, ID, LD, DD>, LD extends ThrowingLongStreamIntermediate<? super XD, ID, LD, DD>, DD extends ThrowingDoubleStreamIntermediate<? super XD, ID, LD, DD>, S extends ThrowingStreamIntermediate<T, X, S, IS, LS, DS>, IS extends ThrowingIntStreamIntermediate<X, IS, LS, DS>, LS extends ThrowingLongStreamIntermediate<X, IS, LS, DS>, DS extends ThrowingDoubleStreamIntermediate<X, IS, LS, DS>> extends
     ThrowingBaseStreamIntermediateAdapter<D, S>,
     ThrowingStreamIntermediate<T, X, S, IS, LS, DS> {
   public ThrowingFunctionAdapter<XD, X> getFunctionAdapter();

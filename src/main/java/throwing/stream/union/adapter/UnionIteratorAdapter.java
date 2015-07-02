@@ -5,6 +5,7 @@ import throwing.function.ThrowingConsumer;
 import throwing.function.ThrowingDoubleConsumer;
 import throwing.function.ThrowingIntConsumer;
 import throwing.function.ThrowingLongConsumer;
+import throwing.stream.intermediate.adapter.ThrowingFunctionAdapter;
 import throwing.stream.union.UnionIterator;
 import throwing.stream.union.UnionThrowable;
 
@@ -12,7 +13,7 @@ class UnionIteratorAdapter<T, X extends UnionThrowable, D extends ThrowingIterat
     UnionAdapter<D, X> implements UnionIterator<T, X> {
   static class OfInt<X extends UnionThrowable> extends
       UnionIteratorAdapter<Integer, X, ThrowingIterator.OfInt<X>> implements UnionIterator.OfInt<X> {
-    OfInt(ThrowingIterator.OfInt<X> delegate, UnionFunctionAdapter<X> adapter) {
+    OfInt(ThrowingIterator.OfInt<X> delegate, ThrowingFunctionAdapter<X, Throwable> adapter) {
       super(delegate, adapter);
     }
 
@@ -29,7 +30,7 @@ class UnionIteratorAdapter<T, X extends UnionThrowable, D extends ThrowingIterat
 
   static class OfLong<X extends UnionThrowable> extends
       UnionIteratorAdapter<Long, X, ThrowingIterator.OfLong<X>> implements UnionIterator.OfLong<X> {
-    OfLong(ThrowingIterator.OfLong<X> delegate, UnionFunctionAdapter<X> adapter) {
+    OfLong(ThrowingIterator.OfLong<X> delegate, ThrowingFunctionAdapter<X, Throwable> adapter) {
       super(delegate, adapter);
     }
 
@@ -47,7 +48,7 @@ class UnionIteratorAdapter<T, X extends UnionThrowable, D extends ThrowingIterat
   static class OfDouble<X extends UnionThrowable> extends
       UnionIteratorAdapter<Double, X, ThrowingIterator.OfDouble<X>> implements
       UnionIterator.OfDouble<X> {
-    OfDouble(ThrowingIterator.OfDouble<X> delegate, UnionFunctionAdapter<X> adapter) {
+    OfDouble(ThrowingIterator.OfDouble<X> delegate, ThrowingFunctionAdapter<X, Throwable> adapter) {
       super(delegate, adapter);
     }
 
@@ -62,7 +63,7 @@ class UnionIteratorAdapter<T, X extends UnionThrowable, D extends ThrowingIterat
     }
   }
 
-  UnionIteratorAdapter(D delegate, UnionFunctionAdapter<X> adapter) {
+  UnionIteratorAdapter(D delegate, ThrowingFunctionAdapter<X, Throwable> adapter) {
     super(delegate, adapter);
   }
 

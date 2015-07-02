@@ -1,6 +1,7 @@
 package throwing.stream.intermediate.adapter;
 
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collector.Characteristics;
 
 import throwing.ThrowingComparator;
@@ -46,6 +47,11 @@ import throwing.stream.ThrowingLongStream;
 import throwing.stream.ThrowingStream;
 
 public interface ThrowingFunctionAdapter<X extends Throwable, Y extends Throwable> {
+  public static <X extends Throwable, Y extends Throwable> ThrowingFunctionAdapter<X, Y> rethrow(
+      Class<X> x, Class<Y> y, Function<? super Y, X> ctor) {
+    return new RethrowingFunctionAdapter<>(x, y, ctor);
+  }
+
   public ThrowingRunnable<X> convert(ThrowingRunnable<? extends Y> runnable);
 
   public <T> ThrowingConsumer<T, X> convert(ThrowingConsumer<? super T, ? extends Y> consumer);

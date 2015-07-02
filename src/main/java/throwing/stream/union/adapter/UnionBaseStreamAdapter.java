@@ -2,6 +2,7 @@ package throwing.stream.union.adapter;
 
 import throwing.stream.ThrowingBaseStream;
 import throwing.stream.intermediate.adapter.ThrowingBaseStreamIntermediateAdapter;
+import throwing.stream.intermediate.adapter.ThrowingFunctionAdapter;
 import throwing.stream.union.UnionBaseStream;
 import throwing.stream.union.UnionThrowable;
 
@@ -9,7 +10,7 @@ abstract class UnionBaseStreamAdapter<T, X extends UnionThrowable, D extends Thr
     UnionAdapter<D, X> implements
     ThrowingBaseStreamIntermediateAdapter<D, S>,
     UnionBaseStream<T, X, S> {
-  protected UnionBaseStreamAdapter(D delegate, UnionFunctionAdapter<X> adapter) {
+  protected UnionBaseStreamAdapter(D delegate, ThrowingFunctionAdapter<X, Throwable> adapter) {
     super(delegate, adapter);
   }
 

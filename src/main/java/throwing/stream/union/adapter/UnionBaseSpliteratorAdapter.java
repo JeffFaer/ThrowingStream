@@ -7,6 +7,7 @@ import throwing.function.ThrowingDoubleConsumer;
 import throwing.function.ThrowingIntConsumer;
 import throwing.function.ThrowingLongConsumer;
 import throwing.stream.adapter.ChainingAdapter;
+import throwing.stream.intermediate.adapter.ThrowingFunctionAdapter;
 import throwing.stream.union.UnionBaseSpliterator;
 import throwing.stream.union.UnionThrowable;
 
@@ -15,7 +16,7 @@ abstract class UnionBaseSpliteratorAdapter<T, X extends UnionThrowable, D extend
   static class UnionSpliteratorAdapter<T, X extends UnionThrowable> extends
       UnionBaseSpliteratorAdapter<T, X, ThrowingSpliterator<T, X>, UnionSpliterator<T, X>> implements
       UnionSpliterator<T, X> {
-    UnionSpliteratorAdapter(ThrowingSpliterator<T, X> delegate, UnionFunctionAdapter<X> adapter) {
+    UnionSpliteratorAdapter(ThrowingSpliterator<T, X> delegate, ThrowingFunctionAdapter<X, Throwable> adapter) {
       super(delegate, adapter);
     }
 
@@ -38,7 +39,7 @@ abstract class UnionBaseSpliteratorAdapter<T, X extends UnionThrowable, D extend
   static class OfInt<X extends UnionThrowable> extends
       UnionBaseSpliteratorAdapter<Integer, X, ThrowingBaseSpliterator.OfInt<X>, UnionBaseSpliterator.OfInt<X>> implements
       UnionBaseSpliterator.OfInt<X> {
-    OfInt(ThrowingBaseSpliterator.OfInt<X> delegate, UnionFunctionAdapter<X> adapter) {
+    OfInt(ThrowingBaseSpliterator.OfInt<X> delegate, ThrowingFunctionAdapter<X, Throwable> adapter) {
       super(delegate, adapter);
     }
 
@@ -67,7 +68,7 @@ abstract class UnionBaseSpliteratorAdapter<T, X extends UnionThrowable, D extend
   static class OfLong<X extends UnionThrowable> extends
       UnionBaseSpliteratorAdapter<Long, X, ThrowingBaseSpliterator.OfLong<X>, UnionBaseSpliterator.OfLong<X>> implements
       UnionBaseSpliterator.OfLong<X> {
-    OfLong(ThrowingBaseSpliterator.OfLong<X> delegate, UnionFunctionAdapter<X> adapter) {
+    OfLong(ThrowingBaseSpliterator.OfLong<X> delegate, ThrowingFunctionAdapter<X, Throwable> adapter) {
       super(delegate, adapter);
     }
 
@@ -96,7 +97,7 @@ abstract class UnionBaseSpliteratorAdapter<T, X extends UnionThrowable, D extend
   static class OfDouble<X extends UnionThrowable> extends
       UnionBaseSpliteratorAdapter<Double, X, ThrowingBaseSpliterator.OfDouble<X>, UnionBaseSpliterator.OfDouble<X>> implements
       UnionBaseSpliterator.OfDouble<X> {
-    OfDouble(ThrowingBaseSpliterator.OfDouble<X> delegate, UnionFunctionAdapter<X> adapter) {
+    OfDouble(ThrowingBaseSpliterator.OfDouble<X> delegate, ThrowingFunctionAdapter<X, Throwable> adapter) {
       super(delegate, adapter);
     }
 
@@ -122,7 +123,7 @@ abstract class UnionBaseSpliteratorAdapter<T, X extends UnionThrowable, D extend
     }
   }
 
-  UnionBaseSpliteratorAdapter(D delegate, UnionFunctionAdapter<X> adapter) {
+  UnionBaseSpliteratorAdapter(D delegate, ThrowingFunctionAdapter<X, Throwable> adapter) {
     super(delegate, adapter);
   }
 

@@ -3,6 +3,7 @@ package throwing.stream.union.adapter;
 import java.util.function.Function;
 
 import throwing.stream.ThrowingStream;
+import throwing.stream.intermediate.adapter.ThrowingFunctionAdapter;
 import throwing.stream.union.UnionStream;
 import throwing.stream.union.UnionThrowable;
 
@@ -15,6 +16,7 @@ public final class UnionBridge {
 
   public static <T, X extends UnionThrowable> UnionStream<T, X> of(ThrowingStream<T, X> stream,
       Class<X> x, Function<? super Throwable, X> ctor) {
-    return new UnionStreamAdapter<>(stream, new UnionFunctionAdapter<>(x, ctor));
+    return new UnionStreamAdapter<>(stream, ThrowingFunctionAdapter.rethrow(x, Throwable.class,
+        ctor));
   }
 }
