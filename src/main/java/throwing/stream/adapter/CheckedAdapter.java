@@ -10,7 +10,7 @@ import java.util.stream.IntStream;
 
 import throwing.RethrowChain;
 
-abstract class CheckedAdapter<D, X extends Throwable> extends AbstractAdapter<D, X> {
+abstract class CheckedAdapter<D, X extends Throwable> extends ThrowingAbstractAdapter<D, X> {
     private static final String PACKAGE = CheckedAdapter.class.getPackage().getName();
     // it might be useful to have a way to turn this off
     public static volatile boolean FILTER_STACK = true;

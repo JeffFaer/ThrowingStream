@@ -7,7 +7,7 @@ import throwing.RethrowChain;
 import throwing.ThrowingRunnable;
 import throwing.function.ThrowingSupplier;
 
-class UncheckedAdapter<D, X extends Throwable> extends AbstractAdapter<D, X> {
+class UncheckedAdapter<D, X extends Throwable> extends ThrowingAbstractAdapter<D, X> {
     private final Function<Throwable, AdapterException> masker;
 
     UncheckedAdapter(D delegate, Class<X> x) {
