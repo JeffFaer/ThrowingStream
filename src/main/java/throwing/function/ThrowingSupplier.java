@@ -41,7 +41,6 @@ public interface ThrowingSupplier<R, X extends Throwable> {
 
                     return ret;
                 } catch (Throwable x2) {
-                    x.getSuppressed();
                     x2.addSuppressed(x);
                     throw x2;
                 }
