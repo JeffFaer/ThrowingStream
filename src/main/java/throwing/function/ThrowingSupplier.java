@@ -40,9 +40,9 @@ public interface ThrowingSupplier<R, X extends Throwable> {
                     }
 
                     return ret;
-                } catch (Throwable x2) {
-                    x2.addSuppressed(x);
-                    throw x2;
+                } catch (Throwable y) {
+                    y.addSuppressed(x);
+                    throw y;
                 }
             }
         };
