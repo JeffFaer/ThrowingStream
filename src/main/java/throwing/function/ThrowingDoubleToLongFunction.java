@@ -10,32 +10,36 @@ import throwing.Nothing;
 
 @FunctionalInterface
 public interface ThrowingDoubleToLongFunction<X extends Throwable> {
-    public long applyAsLong(double value) throws X;
+  public long applyAsLong(double value) throws X;
 
-    default public DoubleToLongFunction fallbackTo(DoubleToLongFunction fallback) {
-        ThrowingDoubleToLongFunction<Nothing> t = fallback::applyAsLong;
-        return orTry(t)::applyAsLong;
-    }
+  default public DoubleToLongFunction fallbackTo(DoubleToLongFunction fallback) {
+    return fallbackTo(fallback, null);
+  }
 
-    default public <Y extends Throwable> ThrowingDoubleToLongFunction<Y> orTry(
-            ThrowingDoubleToLongFunction<? extends Y> f) {
-        return orTry(f, null);
-    }
+  default public DoubleToLongFunction fallbackTo(DoubleToLongFunction fallback,
+      @Nullable Consumer<? super Throwable> thrown) {
+    ThrowingDoubleToLongFunction<Nothing> t = fallback::applyAsLong;
+    return orTry(t, thrown)::applyAsLong;
+  }
 
-    default public <Y extends Throwable> ThrowingDoubleToLongFunction<Y> orTry(
-            ThrowingDoubleToLongFunction<? extends Y> f,
-            @Nullable Consumer<? super Throwable> thrown) {
-        return t -> {
-            ThrowingSupplier<Long, X> s = () -> applyAsLong(t);
-            return s.orTry(() -> f.applyAsLong(t), thrown).get();
-        };
-    }
+  default public <Y extends Throwable> ThrowingDoubleToLongFunction<Y> orTry(
+      ThrowingDoubleToLongFunction<? extends Y> f) {
+    return orTry(f, null);
+  }
 
-    default public <Y extends Throwable> ThrowingDoubleToLongFunction<Y> rethrow(Class<X> x,
-            Function<? super X, ? extends Y> mapper) {
-        return t -> {
-            ThrowingSupplier<Long, X> s = () -> applyAsLong(t);
-            return s.rethrow(x, mapper).get();
-        };
-    }
+  default public <Y extends Throwable> ThrowingDoubleToLongFunction<Y> orTry(
+      ThrowingDoubleToLongFunction<? extends Y> f, @Nullable Consumer<? super Throwable> thrown) {
+    return t -> {
+      ThrowingSupplier<Long, X> s = () -> applyAsLong(t);
+      return s.orTry(() -> f.applyAsLong(t), thrown).get();
+    };
+  }
+
+  default public <Y extends Throwable> ThrowingDoubleToLongFunction<Y> rethrow(Class<X> x,
+      Function<? super X, ? extends Y> mapper) {
+    return t -> {
+      ThrowingSupplier<Long, X> s = () -> applyAsLong(t);
+      return s.rethrow(x, mapper).get();
+    };
+  }
 }

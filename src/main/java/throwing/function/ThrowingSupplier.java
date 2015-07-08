@@ -12,53 +12,54 @@ import throwing.RethrowChain;
 
 @FunctionalInterface
 public interface ThrowingSupplier<R, X extends Throwable> {
-    public R get() throws X;
+  public R get() throws X;
 
-    default public Supplier<R> fallbackTo(Supplier<? extends R> supplier) {
-        ThrowingSupplier<R, Nothing> t = supplier::get;
-        return orTry(t)::get;
-    }
+  default public Supplier<R> fallbackTo(Supplier<? extends R> fallback) {
+    return fallbackTo(fallback, null);
+  }
 
-    default public <Y extends Throwable> ThrowingSupplier<R, Y> orTry(
-            ThrowingSupplier<? extends R, ? extends Y> supplier) {
-        return orTry(supplier, null);
-    }
+  default public Supplier<R> fallbackTo(Supplier<? extends R> fallback,
+      @Nullable Consumer<? super Throwable> thrown) {
+    ThrowingSupplier<R, Nothing> t = fallback::get;
+    return orTry(t, thrown)::get;
+  }
 
-    default public <Y extends Throwable> ThrowingSupplier<R, Y> orTry(
-            ThrowingSupplier<? extends R, ? extends Y> supplier,
-            @Nullable Consumer<? super Throwable> thrown) {
-        Objects.requireNonNull(supplier, "supplier");
-        return () -> {
-            try {
-                return get();
-            } catch (Throwable x) {
-                try {
-                    R ret = supplier.get();
+  default public <Y extends Throwable> ThrowingSupplier<R, Y> orTry(
+      ThrowingSupplier<? extends R, ? extends Y> supplier) {
+    return orTry(supplier, null);
+  }
 
-                    if (thrown != null) {
-                        thrown.accept(x);
-                    }
+  default public <Y extends Throwable> ThrowingSupplier<R, Y> orTry(
+      ThrowingSupplier<? extends R, ? extends Y> supplier,
+      @Nullable Consumer<? super Throwable> thrown) {
+    Objects.requireNonNull(supplier, "supplier");
+    return () -> {
+      try {
+        return get();
+      } catch (Throwable x) {
+        if (thrown != null) {
+          thrown.accept(x);
+        }
 
-                    return ret;
-                } catch (Throwable y) {
-                    y.addSuppressed(x);
-                    throw y;
-                }
-            }
-        };
-    }
+        try {
+          return supplier.get();
+        } catch (Throwable y) {
+          y.addSuppressed(x);
+          throw y;
+        }
+      }
+    };
+  }
 
-    default public <Y extends Throwable> ThrowingSupplier<R, Y> rethrow(Class<X> x,
-            Function<? super X, ? extends Y> mapper) {
-        Function<Throwable, ? extends Y> rethrower = RethrowChain.rethrowAs(x)
-                .rethrow(mapper)
-                .finish();
-        return () -> {
-            try {
-                return get();
-            } catch (Throwable t) {
-                throw rethrower.apply(t);
-            }
-        };
-    }
+  default public <Y extends Throwable> ThrowingSupplier<R, Y> rethrow(Class<X> x,
+      Function<? super X, ? extends Y> mapper) {
+    Function<Throwable, ? extends Y> rethrower = RethrowChain.rethrowAs(x).rethrow(mapper).finish();
+    return () -> {
+      try {
+        return get();
+      } catch (Throwable t) {
+        throw rethrower.apply(t);
+      }
+    };
+  }
 }
