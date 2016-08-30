@@ -9,7 +9,7 @@ Example usage:
 ````
 Stream<String> names = Stream.of("java.lang.Object", "java.util.stream.Stream");
 ThrowingStream<String, ClassNotFoundException> s = ThrowingStream.of(names, 
-        ClassNotFoundException.class);
+    ClassNotFoundException.class);
 s.map(ClassLoader.getSystemClassLoader()::loadClass).forEach(System.out::println);
 ````
 
@@ -31,7 +31,7 @@ mvn package
  - [Maven central][mvn-link]:
 ````
 <dependency>
-    <groupId>com.github.jeffreyfalgout</groupId>
+    <groupId>name.falgout.jeffrey</groupId>
     <artifactId>throwing-streams</artifactId>
     <version>X.Y.Z</version>
 </dependency>
