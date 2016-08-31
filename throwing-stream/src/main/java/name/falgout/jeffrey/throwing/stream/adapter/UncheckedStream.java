@@ -144,90 +144,95 @@ class UncheckedStream<T, X extends Throwable>
 
   @Override
   public void forEach(Consumer<? super T> action) {
-    maskException(() -> getDelegate().normalForEach(action));
+    getExceptionMasker().maskException(() -> getDelegate().normalForEach(action));
   }
 
   @Override
   public void forEachOrdered(Consumer<? super T> action) {
-    maskException(() -> getDelegate().normalForEachOrdered(action));
+    getExceptionMasker().maskException(() -> getDelegate().normalForEachOrdered(action));
   }
 
   @Override
   public Object[] toArray() {
-    return maskException((ThrowingSupplier<Object[], X>) getDelegate()::toArray);
+    return getExceptionMasker()
+        .maskException((ThrowingSupplier<Object[], X>) getDelegate()::toArray);
   }
 
   @Override
   public <A> A[] toArray(IntFunction<A[]> generator) {
-    return maskException(() -> getDelegate().toArray(generator));
+    return getExceptionMasker().maskException(() -> getDelegate().toArray(generator));
   }
 
   @Override
   public T reduce(T identity, BinaryOperator<T> accumulator) {
-    return maskException(() -> getDelegate().normalReduce(identity, accumulator));
+    return getExceptionMasker()
+        .maskException(() -> getDelegate().normalReduce(identity, accumulator));
   }
 
   @Override
   public Optional<T> reduce(BinaryOperator<T> accumulator) {
-    return maskException(() -> getDelegate().normalReduce(accumulator));
+    return getExceptionMasker().maskException(() -> getDelegate().normalReduce(accumulator));
   }
 
   @Override
   public <U> U reduce(U identity,
       BiFunction<U, ? super T, U> accumulator,
       BinaryOperator<U> combiner) {
-    return maskException(() -> getDelegate().normalReduce(identity, accumulator, combiner));
+    return getExceptionMasker()
+        .maskException(() -> getDelegate().normalReduce(identity, accumulator, combiner));
   }
 
   @Override
   public <R> R collect(Supplier<R> supplier,
       BiConsumer<R, ? super T> accumulator,
       BiConsumer<R, R> combiner) {
-    return maskException(() -> getDelegate().normalCollect(supplier, accumulator, combiner));
+    return getExceptionMasker()
+        .maskException(() -> getDelegate().normalCollect(supplier, accumulator, combiner));
   }
 
   @Override
   public <R, A> R collect(Collector<? super T, A, R> collector) {
-    return maskException(() -> getDelegate().collect(ThrowingBridge.of(collector)));
+    return getExceptionMasker()
+        .maskException(() -> getDelegate().collect(ThrowingBridge.of(collector)));
   }
 
   @Override
   public Optional<T> min(Comparator<? super T> comparator) {
-    return maskException(() -> getDelegate().normalMin(comparator));
+    return getExceptionMasker().maskException(() -> getDelegate().normalMin(comparator));
   }
 
   @Override
   public Optional<T> max(Comparator<? super T> comparator) {
-    return maskException(() -> getDelegate().normalMax(comparator));
+    return getExceptionMasker().maskException(() -> getDelegate().normalMax(comparator));
   }
 
   @Override
   public long count() {
-    return maskException(getDelegate()::count);
+    return getExceptionMasker().maskException(getDelegate()::count);
   }
 
   @Override
   public boolean anyMatch(Predicate<? super T> predicate) {
-    return maskException(() -> getDelegate().normalAnyMatch(predicate));
+    return getExceptionMasker().maskException(() -> getDelegate().normalAnyMatch(predicate));
   }
 
   @Override
   public boolean allMatch(Predicate<? super T> predicate) {
-    return maskException(() -> getDelegate().normalAllMatch(predicate));
+    return getExceptionMasker().maskException(() -> getDelegate().normalAllMatch(predicate));
   }
 
   @Override
   public boolean noneMatch(Predicate<? super T> predicate) {
-    return maskException(() -> getDelegate().normalNoneMatch(predicate));
+    return getExceptionMasker().maskException(() -> getDelegate().normalNoneMatch(predicate));
   }
 
   @Override
   public Optional<T> findFirst() {
-    return maskException(getDelegate()::findFirst);
+    return getExceptionMasker().maskException(getDelegate()::findFirst);
   }
 
   @Override
   public Optional<T> findAny() {
-    return maskException(getDelegate()::findAny);
+    return getExceptionMasker().maskException(getDelegate()::findAny);
   }
 }

@@ -107,88 +107,89 @@ class UncheckedIntStream<X extends Throwable> extends
 
   @Override
   public void forEach(IntConsumer action) {
-    maskException(() -> getDelegate().normalForEach(action));
+    getExceptionMasker().maskException(() -> getDelegate().normalForEach(action));
   }
 
   @Override
   public void forEachOrdered(IntConsumer action) {
-    maskException(() -> getDelegate().normalForEachOrdered(action));
+    getExceptionMasker().maskException(() -> getDelegate().normalForEachOrdered(action));
   }
 
   @Override
   public int[] toArray() {
-    return maskException(getDelegate()::toArray);
+    return getExceptionMasker().maskException(getDelegate()::toArray);
   }
 
   @Override
   public int reduce(int identity, IntBinaryOperator op) {
-    return maskException(() -> getDelegate().normalReduce(identity, op));
+    return getExceptionMasker().maskException(() -> getDelegate().normalReduce(identity, op));
   }
 
   @Override
   public OptionalInt reduce(IntBinaryOperator op) {
-    return maskException(() -> getDelegate().normalReduce(op));
+    return getExceptionMasker().maskException(() -> getDelegate().normalReduce(op));
   }
 
   @Override
   public <R> R collect(Supplier<R> supplier, ObjIntConsumer<R> accumulator,
       BiConsumer<R, R> combiner) {
-    return maskException(() -> getDelegate().normalCollect(supplier, accumulator, combiner));
+    return getExceptionMasker()
+        .maskException(() -> getDelegate().normalCollect(supplier, accumulator, combiner));
   }
 
   @Override
   public int sum() {
-    return maskException(getDelegate()::sum);
+    return getExceptionMasker().maskException(getDelegate()::sum);
   }
 
   @Override
   public OptionalInt min() {
-    return maskException(getDelegate()::min);
+    return getExceptionMasker().maskException(getDelegate()::min);
   }
 
   @Override
   public OptionalInt max() {
-    return maskException(getDelegate()::max);
+    return getExceptionMasker().maskException(getDelegate()::max);
   }
 
   @Override
   public long count() {
-    return maskException(getDelegate()::count);
+    return getExceptionMasker().maskException(getDelegate()::count);
   }
 
   @Override
   public OptionalDouble average() {
-    return maskException(getDelegate()::average);
+    return getExceptionMasker().maskException(getDelegate()::average);
   }
 
   @Override
   public IntSummaryStatistics summaryStatistics() {
-    return maskException(getDelegate()::summaryStatistics);
+    return getExceptionMasker().maskException(getDelegate()::summaryStatistics);
   }
 
   @Override
   public boolean anyMatch(IntPredicate predicate) {
-    return maskException(() -> getDelegate().normalAnyMatch(predicate));
+    return getExceptionMasker().maskException(() -> getDelegate().normalAnyMatch(predicate));
   }
 
   @Override
   public boolean allMatch(IntPredicate predicate) {
-    return maskException(() -> getDelegate().normalAllMatch(predicate));
+    return getExceptionMasker().maskException(() -> getDelegate().normalAllMatch(predicate));
   }
 
   @Override
   public boolean noneMatch(IntPredicate predicate) {
-    return maskException(() -> getDelegate().normalNoneMatch(predicate));
+    return getExceptionMasker().maskException(() -> getDelegate().normalNoneMatch(predicate));
   }
 
   @Override
   public OptionalInt findFirst() {
-    return maskException(getDelegate()::findFirst);
+    return getExceptionMasker().maskException(getDelegate()::findFirst);
   }
 
   @Override
   public OptionalInt findAny() {
-    return maskException(getDelegate()::findAny);
+    return getExceptionMasker().maskException(getDelegate()::findAny);
   }
 
   @Override

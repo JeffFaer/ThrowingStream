@@ -5,6 +5,7 @@ import name.falgout.jeffrey.throwing.ThrowingConsumer;
 import name.falgout.jeffrey.throwing.ThrowingDoubleConsumer;
 import name.falgout.jeffrey.throwing.ThrowingIntConsumer;
 import name.falgout.jeffrey.throwing.ThrowingLongConsumer;
+import name.falgout.jeffrey.throwing.adapter.ExceptionMasker;
 
 abstract class CheckedSpliterator<T, X extends Throwable, D extends java.util.Spliterator<T>, S extends ThrowingBaseSpliterator<T, X, S>>
     extends CheckedAdapter<D, X>
@@ -12,8 +13,8 @@ abstract class CheckedSpliterator<T, X extends Throwable, D extends java.util.Sp
   static class Basic<T, X extends Throwable> extends
       CheckedSpliterator<T, X, java.util.Spliterator<T>, ThrowingBaseSpliterator.ThrowingSpliterator<T, X>>
       implements ThrowingBaseSpliterator.ThrowingSpliterator<T, X> {
-    Basic(java.util.Spliterator<T> delegate, FunctionAdapter<X> functionAdapter) {
-      super(delegate, functionAdapter);
+    Basic(java.util.Spliterator<T> delegate, ExceptionMasker<X> ExceptionMasker) {
+      super(delegate, ExceptionMasker);
     }
 
     @Override
@@ -29,15 +30,15 @@ abstract class CheckedSpliterator<T, X extends Throwable, D extends java.util.Sp
     @Override
     public ThrowingBaseSpliterator.ThrowingSpliterator<T, X>
         createNewAdapter(java.util.Spliterator<T> newDelegate) {
-      return new CheckedSpliterator.Basic<>(newDelegate, getFunctionAdapter());
+      return new CheckedSpliterator.Basic<>(newDelegate, getExceptionMasker());
     }
   }
 
   static class OfInt<X extends Throwable> extends
       CheckedSpliterator<Integer, X, java.util.Spliterator.OfInt, ThrowingBaseSpliterator.OfInt<X>>
       implements ThrowingBaseSpliterator.OfInt<X> {
-    OfInt(java.util.Spliterator.OfInt delegate, FunctionAdapter<X> functionAdapter) {
-      super(delegate, functionAdapter);
+    OfInt(java.util.Spliterator.OfInt delegate, ExceptionMasker<X> ExceptionMasker) {
+      super(delegate, ExceptionMasker);
     }
 
     @Override
@@ -47,7 +48,7 @@ abstract class CheckedSpliterator<T, X extends Throwable, D extends java.util.Sp
 
     @Override
     public boolean tryAdvance(ThrowingIntConsumer<? extends X> action) throws X {
-      return unmaskException(() -> getDelegate().tryAdvance(getFunctionAdapter().convert(action)));
+      return unmaskException(() -> getDelegate().tryAdvance(getExceptionMasker().mask(action)));
     }
 
     @Override
@@ -58,15 +59,15 @@ abstract class CheckedSpliterator<T, X extends Throwable, D extends java.util.Sp
     @Override
     public ThrowingBaseSpliterator.OfInt<X>
         createNewAdapter(java.util.Spliterator.OfInt newDelegate) {
-      return new CheckedSpliterator.OfInt<>(newDelegate, getFunctionAdapter());
+      return new CheckedSpliterator.OfInt<>(newDelegate, getExceptionMasker());
     }
   }
 
   static class OfLong<X extends Throwable> extends
       CheckedSpliterator<Long, X, java.util.Spliterator.OfLong, ThrowingBaseSpliterator.OfLong<X>>
       implements ThrowingBaseSpliterator.OfLong<X> {
-    OfLong(java.util.Spliterator.OfLong delegate, FunctionAdapter<X> functionAdapter) {
-      super(delegate, functionAdapter);
+    OfLong(java.util.Spliterator.OfLong delegate, ExceptionMasker<X> ExceptionMasker) {
+      super(delegate, ExceptionMasker);
     }
 
     @Override
@@ -76,7 +77,7 @@ abstract class CheckedSpliterator<T, X extends Throwable, D extends java.util.Sp
 
     @Override
     public boolean tryAdvance(ThrowingLongConsumer<? extends X> action) throws X {
-      return unmaskException(() -> getDelegate().tryAdvance(getFunctionAdapter().convert(action)));
+      return unmaskException(() -> getDelegate().tryAdvance(getExceptionMasker().mask(action)));
     }
 
     @Override
@@ -87,15 +88,15 @@ abstract class CheckedSpliterator<T, X extends Throwable, D extends java.util.Sp
     @Override
     public ThrowingBaseSpliterator.OfLong<X>
         createNewAdapter(java.util.Spliterator.OfLong newDelegate) {
-      return new CheckedSpliterator.OfLong<>(newDelegate, getFunctionAdapter());
+      return new CheckedSpliterator.OfLong<>(newDelegate, getExceptionMasker());
     }
   }
 
   static class OfDouble<X extends Throwable> extends
       CheckedSpliterator<Double, X, java.util.Spliterator.OfDouble, ThrowingBaseSpliterator.OfDouble<X>>
       implements ThrowingBaseSpliterator.OfDouble<X> {
-    OfDouble(java.util.Spliterator.OfDouble delegate, FunctionAdapter<X> functionAdapter) {
-      super(delegate, functionAdapter);
+    OfDouble(java.util.Spliterator.OfDouble delegate, ExceptionMasker<X> ExceptionMasker) {
+      super(delegate, ExceptionMasker);
     }
 
     @Override
@@ -105,7 +106,7 @@ abstract class CheckedSpliterator<T, X extends Throwable, D extends java.util.Sp
 
     @Override
     public boolean tryAdvance(ThrowingDoubleConsumer<? extends X> action) throws X {
-      return unmaskException(() -> getDelegate().tryAdvance(getFunctionAdapter().convert(action)));
+      return unmaskException(() -> getDelegate().tryAdvance(getExceptionMasker().mask(action)));
     }
 
     @Override
@@ -116,17 +117,17 @@ abstract class CheckedSpliterator<T, X extends Throwable, D extends java.util.Sp
     @Override
     public ThrowingBaseSpliterator.OfDouble<X>
         createNewAdapter(java.util.Spliterator.OfDouble newDelegate) {
-      return new CheckedSpliterator.OfDouble<>(newDelegate, getFunctionAdapter());
+      return new CheckedSpliterator.OfDouble<>(newDelegate, getExceptionMasker());
     }
   }
 
-  CheckedSpliterator(D delegate, FunctionAdapter<X> functionAdapter) {
-    super(delegate, functionAdapter);
+  CheckedSpliterator(D delegate, ExceptionMasker<X> ExceptionMasker) {
+    super(delegate, ExceptionMasker);
   }
 
   @Override
   public boolean tryAdvance(ThrowingConsumer<? super T, ? extends X> action) throws X {
-    return unmaskException(() -> getDelegate().tryAdvance(getFunctionAdapter().convert(action)));
+    return unmaskException(() -> getDelegate().tryAdvance(getExceptionMasker().mask(action)));
   }
 
   @Override

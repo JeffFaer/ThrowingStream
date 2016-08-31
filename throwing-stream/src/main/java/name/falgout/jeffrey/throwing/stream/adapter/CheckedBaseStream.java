@@ -4,22 +4,23 @@ import java.util.stream.BaseStream;
 
 import name.falgout.jeffrey.throwing.RethrowChain;
 import name.falgout.jeffrey.throwing.ThrowingIterator;
+import name.falgout.jeffrey.throwing.adapter.ExceptionMasker;
 import name.falgout.jeffrey.throwing.stream.ThrowingBaseStream;
 
-abstract class CheckedBaseStream<T, X extends Throwable, D extends BaseStream<T, D>, S extends ThrowingBaseStream<T, X, S>> extends
-    CheckedAdapter<D, X> implements ThrowingBaseStream<T, X, S>, ChainingAdapter<D, S> {
-  CheckedBaseStream(D delegate, FunctionAdapter<X> functionAdapter) {
-    super(delegate, functionAdapter);
+abstract class CheckedBaseStream<T, X extends Throwable, D extends BaseStream<T, D>, S extends ThrowingBaseStream<T, X, S>>
+    extends CheckedAdapter<D, X> implements ThrowingBaseStream<T, X, S>, ChainingAdapter<D, S> {
+  CheckedBaseStream(D delegate, ExceptionMasker<X> ExceptionMasker) {
+    super(delegate, ExceptionMasker);
   }
 
-  CheckedBaseStream(D delegate, FunctionAdapter<X> functionAdapter,
-      RethrowChain<AdapterException, X> chain) {
-    super(delegate, functionAdapter, chain);
+  CheckedBaseStream(D delegate, ExceptionMasker<X> ExceptionMasker,
+      RethrowChain<Throwable, X> chain) {
+    super(delegate, ExceptionMasker, chain);
   }
 
   @Override
   public ThrowingIterator<T, X> iterator() {
-    return ThrowingBridge.of(getDelegate().iterator(), getFunctionAdapter());
+    return ThrowingBridge.of(getDelegate().iterator(), getExceptionMasker());
   }
 
   @Override

@@ -21,6 +21,7 @@ import name.falgout.jeffrey.throwing.ThrowingBinaryOperator;
 import name.falgout.jeffrey.throwing.ThrowingFunction;
 import name.falgout.jeffrey.throwing.ThrowingIterator;
 import name.falgout.jeffrey.throwing.ThrowingSupplier;
+import name.falgout.jeffrey.throwing.adapter.ExceptionMasker;
 import name.falgout.jeffrey.throwing.stream.ThrowingCollector;
 import name.falgout.jeffrey.throwing.stream.ThrowingDoubleStream;
 import name.falgout.jeffrey.throwing.stream.ThrowingIntStream;
@@ -40,7 +41,7 @@ public final class ThrowingBridge {
 
   public static <T, X extends Throwable> ThrowingStream<T, X> of(Stream<T> stream, Class<X> x) {
     Objects.requireNonNull(x, "x");
-    return of(stream, new FunctionAdapter<>(x));
+    return of(stream, new ExceptionMasker<>(x));
   }
 
   public static <T, X extends Throwable> ThrowingStream<T, X>
@@ -48,7 +49,7 @@ public final class ThrowingBridge {
     return of(StreamSupport.stream(of(spliterator, x), false), x);
   }
 
-  static <T, X extends Throwable> ThrowingStream<T, X> of(Stream<T> stream, FunctionAdapter<X> x) {
+  static <T, X extends Throwable> ThrowingStream<T, X> of(Stream<T> stream, ExceptionMasker<X> x) {
     Objects.requireNonNull(stream, "stream");
     return new CheckedStream<>(stream, x);
   }
@@ -61,10 +62,10 @@ public final class ThrowingBridge {
 
   public static <X extends Throwable> ThrowingIntStream<X> of(IntStream stream, Class<X> x) {
     Objects.requireNonNull(x, "x");
-    return of(stream, new FunctionAdapter<>(x));
+    return of(stream, new ExceptionMasker<>(x));
   }
 
-  static <X extends Throwable> ThrowingIntStream<X> of(IntStream stream, FunctionAdapter<X> x) {
+  static <X extends Throwable> ThrowingIntStream<X> of(IntStream stream, ExceptionMasker<X> x) {
     Objects.requireNonNull(stream, "stream");
     return new CheckedIntStream<>(stream, x);
   }
@@ -77,10 +78,10 @@ public final class ThrowingBridge {
 
   public static <X extends Throwable> ThrowingLongStream<X> of(LongStream stream, Class<X> x) {
     Objects.requireNonNull(x, "x");
-    return of(stream, new FunctionAdapter<>(x));
+    return of(stream, new ExceptionMasker<>(x));
   }
 
-  static <X extends Throwable> ThrowingLongStream<X> of(LongStream stream, FunctionAdapter<X> x) {
+  static <X extends Throwable> ThrowingLongStream<X> of(LongStream stream, ExceptionMasker<X> x) {
     Objects.requireNonNull(stream, "stream");
     return new CheckedLongStream<>(stream, x);
   }
@@ -93,11 +94,11 @@ public final class ThrowingBridge {
 
   public static <X extends Throwable> ThrowingDoubleStream<X> of(DoubleStream stream, Class<X> x) {
     Objects.requireNonNull(x, "x");
-    return of(stream, new FunctionAdapter<>(x));
+    return of(stream, new ExceptionMasker<>(x));
   }
 
   static <X extends Throwable> ThrowingDoubleStream<X> of(DoubleStream stream,
-      FunctionAdapter<X> x) {
+      ExceptionMasker<X> x) {
     Objects.requireNonNull(stream, "stream");
     return new CheckedDoubleStream<>(stream, x);
   }
@@ -112,10 +113,10 @@ public final class ThrowingBridge {
 
   public static <T, X extends Throwable> ThrowingIterator<T, X> of(Iterator<T> itr, Class<X> x) {
     Objects.requireNonNull(x, "x");
-    return of(itr, new FunctionAdapter<>(x));
+    return of(itr, new ExceptionMasker<>(x));
   }
 
-  static <T, X extends Throwable> ThrowingIterator<T, X> of(Iterator<T> itr, FunctionAdapter<X> x) {
+  static <T, X extends Throwable> ThrowingIterator<T, X> of(Iterator<T> itr, ExceptionMasker<X> x) {
     Objects.requireNonNull(itr, "itr");
     return new CheckedIterator<>(itr, x);
   }
@@ -129,11 +130,11 @@ public final class ThrowingBridge {
   public static <X extends Throwable> ThrowingIterator.OfInt<X> of(PrimitiveIterator.OfInt itr,
       Class<X> x) {
     Objects.requireNonNull(x, "x");
-    return of(itr, new FunctionAdapter<>(x));
+    return of(itr, new ExceptionMasker<>(x));
   }
 
   static <X extends Throwable> ThrowingIterator.OfInt<X> of(PrimitiveIterator.OfInt itr,
-      FunctionAdapter<X> x) {
+      ExceptionMasker<X> x) {
     Objects.requireNonNull(itr, "itr");
     return new CheckedIterator.OfInt<>(itr, x);
   }
@@ -147,11 +148,11 @@ public final class ThrowingBridge {
   public static <X extends Throwable> ThrowingIterator.OfLong<X> of(PrimitiveIterator.OfLong itr,
       Class<X> x) {
     Objects.requireNonNull(x, "x");
-    return of(itr, new FunctionAdapter<>(x));
+    return of(itr, new ExceptionMasker<>(x));
   }
 
   static <X extends Throwable> ThrowingIterator.OfLong<X> of(PrimitiveIterator.OfLong itr,
-      FunctionAdapter<X> x) {
+      ExceptionMasker<X> x) {
     Objects.requireNonNull(itr, "itr");
     return new CheckedIterator.OfLong<>(itr, x);
   }
@@ -165,11 +166,11 @@ public final class ThrowingBridge {
   public static <X extends Throwable> ThrowingIterator.OfDouble<X>
       of(PrimitiveIterator.OfDouble itr, Class<X> x) {
     Objects.requireNonNull(x, "x");
-    return of(itr, new FunctionAdapter<>(x));
+    return of(itr, new ExceptionMasker<>(x));
   }
 
   static <X extends Throwable> ThrowingIterator.OfDouble<X> of(PrimitiveIterator.OfDouble itr,
-      FunctionAdapter<X> x) {
+      ExceptionMasker<X> x) {
     Objects.requireNonNull(itr, "itr");
     return new CheckedIterator.OfDouble<>(itr, x);
   }
@@ -183,11 +184,11 @@ public final class ThrowingBridge {
   public static <T, X extends Throwable> ThrowingSpliterator<T, X> of(Spliterator<T> itr,
       Class<X> x) {
     Objects.requireNonNull(x, "x");
-    return of(itr, new FunctionAdapter<>(x));
+    return of(itr, new ExceptionMasker<>(x));
   }
 
   static <T, X extends Throwable> ThrowingSpliterator<T, X> of(Spliterator<T> itr,
-      FunctionAdapter<X> x) {
+      ExceptionMasker<X> x) {
     Objects.requireNonNull(itr, "itr");
     return new CheckedSpliterator.Basic<>(itr, x);
   }
@@ -201,11 +202,11 @@ public final class ThrowingBridge {
   public static <X extends Throwable> ThrowingBaseSpliterator.OfInt<X> of(Spliterator.OfInt itr,
       Class<X> x) {
     Objects.requireNonNull(x, "x");
-    return of(itr, new FunctionAdapter<>(x));
+    return of(itr, new ExceptionMasker<>(x));
   }
 
   static <X extends Throwable> ThrowingBaseSpliterator.OfInt<X> of(Spliterator.OfInt itr,
-      FunctionAdapter<X> x) {
+      ExceptionMasker<X> x) {
     Objects.requireNonNull(itr, "itr");
     return new CheckedSpliterator.OfInt<>(itr, x);
   }
@@ -219,11 +220,11 @@ public final class ThrowingBridge {
   public static <X extends Throwable> ThrowingBaseSpliterator.OfLong<X> of(Spliterator.OfLong itr,
       Class<X> x) {
     Objects.requireNonNull(x, "x");
-    return of(itr, new FunctionAdapter<>(x));
+    return of(itr, new ExceptionMasker<>(x));
   }
 
   static <X extends Throwable> ThrowingBaseSpliterator.OfLong<X> of(Spliterator.OfLong itr,
-      FunctionAdapter<X> x) {
+      ExceptionMasker<X> x) {
     Objects.requireNonNull(itr, "itr");
     return new CheckedSpliterator.OfLong<>(itr, x);
   }
@@ -237,11 +238,11 @@ public final class ThrowingBridge {
   public static <X extends Throwable> ThrowingBaseSpliterator.OfDouble<X>
       of(Spliterator.OfDouble itr, Class<X> x) {
     Objects.requireNonNull(x, "x");
-    return of(itr, new FunctionAdapter<>(x));
+    return of(itr, new ExceptionMasker<>(x));
   }
 
   static <X extends Throwable> ThrowingBaseSpliterator.OfDouble<X> of(Spliterator.OfDouble itr,
-      FunctionAdapter<X> x) {
+      ExceptionMasker<X> x) {
     Objects.requireNonNull(itr, "itr");
     return new CheckedSpliterator.OfDouble<>(itr, x);
   }

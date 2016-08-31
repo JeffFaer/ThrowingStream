@@ -8,8 +8,8 @@ import java.util.function.LongConsumer;
 
 import name.falgout.jeffrey.throwing.ThrowingBaseSpliterator;
 
-abstract class UncheckedSpliterator<T, X extends Throwable, D extends ThrowingBaseSpliterator<T, X, D>, S extends Spliterator<T>> extends
-    UncheckedAdapter<D, X> implements Spliterator<T>, ChainingAdapter<D, S> {
+abstract class UncheckedSpliterator<T, X extends Throwable, D extends ThrowingBaseSpliterator<T, X, D>, S extends Spliterator<T>>
+    extends UncheckedAdapter<D, X> implements Spliterator<T>, ChainingAdapter<D, S> {
   static class Basic<T, X extends Throwable> extends
       UncheckedSpliterator<T, X, ThrowingBaseSpliterator.ThrowingSpliterator<T, X>, Spliterator<T>> {
     Basic(ThrowingBaseSpliterator.ThrowingSpliterator<T, X> delegate, Class<X> x) {
@@ -27,14 +27,15 @@ abstract class UncheckedSpliterator<T, X extends Throwable, D extends ThrowingBa
     }
 
     @Override
-    public Spliterator<T> createNewAdapter(ThrowingBaseSpliterator.ThrowingSpliterator<T, X> newDelegate) {
+    public Spliterator<T> createNewAdapter(
+        ThrowingBaseSpliterator.ThrowingSpliterator<T, X> newDelegate) {
       return new Basic<>(newDelegate, getExceptionClass());
     }
   }
 
-  static class OfInt<X extends Throwable> extends
-      UncheckedSpliterator<Integer, X, ThrowingBaseSpliterator.OfInt<X>, Spliterator.OfInt> implements
-      Spliterator.OfInt {
+  static class OfInt<X extends Throwable>
+      extends UncheckedSpliterator<Integer, X, ThrowingBaseSpliterator.OfInt<X>, Spliterator.OfInt>
+      implements Spliterator.OfInt {
     OfInt(ThrowingBaseSpliterator.OfInt<X> delegate, Class<X> x) {
       super(delegate, x);
     }
@@ -46,7 +47,7 @@ abstract class UncheckedSpliterator<T, X extends Throwable, D extends ThrowingBa
 
     @Override
     public boolean tryAdvance(IntConsumer action) {
-      return maskException(() -> getDelegate().normalTryAdvance(action));
+      return getExceptionMasker().maskException(() -> getDelegate().normalTryAdvance(action));
     }
 
     @Override
@@ -60,9 +61,9 @@ abstract class UncheckedSpliterator<T, X extends Throwable, D extends ThrowingBa
     }
   }
 
-  static class OfLong<X extends Throwable> extends
-      UncheckedSpliterator<Long, X, ThrowingBaseSpliterator.OfLong<X>, Spliterator.OfLong> implements
-      Spliterator.OfLong {
+  static class OfLong<X extends Throwable>
+      extends UncheckedSpliterator<Long, X, ThrowingBaseSpliterator.OfLong<X>, Spliterator.OfLong>
+      implements Spliterator.OfLong {
     OfLong(ThrowingBaseSpliterator.OfLong<X> delegate, Class<X> x) {
       super(delegate, x);
     }
@@ -74,7 +75,7 @@ abstract class UncheckedSpliterator<T, X extends Throwable, D extends ThrowingBa
 
     @Override
     public boolean tryAdvance(LongConsumer action) {
-      return maskException(() -> getDelegate().normalTryAdvance(action));
+      return getExceptionMasker().maskException(() -> getDelegate().normalTryAdvance(action));
     }
 
     @Override
@@ -89,8 +90,8 @@ abstract class UncheckedSpliterator<T, X extends Throwable, D extends ThrowingBa
   }
 
   static class OfDouble<X extends Throwable> extends
-      UncheckedSpliterator<Double, X, ThrowingBaseSpliterator.OfDouble<X>, Spliterator.OfDouble> implements
-      Spliterator.OfDouble {
+      UncheckedSpliterator<Double, X, ThrowingBaseSpliterator.OfDouble<X>, Spliterator.OfDouble>
+      implements Spliterator.OfDouble {
     OfDouble(ThrowingBaseSpliterator.OfDouble<X> delegate, Class<X> x) {
       super(delegate, x);
     }
@@ -102,7 +103,7 @@ abstract class UncheckedSpliterator<T, X extends Throwable, D extends ThrowingBa
 
     @Override
     public boolean tryAdvance(DoubleConsumer action) {
-      return maskException(() -> getDelegate().normalTryAdvance(action));
+      return getExceptionMasker().maskException(() -> getDelegate().normalTryAdvance(action));
     }
 
     @Override
@@ -122,7 +123,7 @@ abstract class UncheckedSpliterator<T, X extends Throwable, D extends ThrowingBa
 
   @Override
   public boolean tryAdvance(Consumer<? super T> action) {
-    return maskException(() -> getDelegate().tryAdvance(action::accept));
+    return getExceptionMasker().maskException(() -> getDelegate().tryAdvance(action::accept));
   }
 
   @Override

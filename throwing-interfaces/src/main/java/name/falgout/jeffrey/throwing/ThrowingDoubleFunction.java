@@ -44,11 +44,6 @@ public interface ThrowingDoubleFunction<R, X extends Throwable> {
   }
 
   default public <RR> ThrowingDoubleFunction<RR, X>
-      andThen(Function<? super R, ? extends RR> after) {
-    return andThen((ThrowingFunction<? super R, ? extends RR, ? extends X>) after::apply);
-  }
-
-  default public <RR> ThrowingDoubleFunction<RR, X>
       andThen(ThrowingFunction<? super R, ? extends RR, ? extends X> after) {
     Objects.requireNonNull(after);
     return d -> after.apply(apply(d));

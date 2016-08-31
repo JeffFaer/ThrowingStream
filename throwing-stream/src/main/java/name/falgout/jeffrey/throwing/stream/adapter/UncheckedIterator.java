@@ -11,8 +11,8 @@ import name.falgout.jeffrey.throwing.ThrowingIntConsumer;
 import name.falgout.jeffrey.throwing.ThrowingIterator;
 import name.falgout.jeffrey.throwing.ThrowingLongConsumer;
 
-class UncheckedIterator<T, I extends ThrowingIterator<T, X>, X extends Throwable> extends
-    UncheckedAdapter<I, X> implements Iterator<T> {
+class UncheckedIterator<T, I extends ThrowingIterator<T, X>, X extends Throwable>
+    extends UncheckedAdapter<I, X> implements Iterator<T> {
   static class OfInt<X extends Throwable> extends
       UncheckedIterator<Integer, ThrowingIterator.OfInt<X>, X> implements PrimitiveIterator.OfInt {
     OfInt(name.falgout.jeffrey.throwing.ThrowingIterator.OfInt<X> delegate, Class<X> x) {
@@ -21,13 +21,13 @@ class UncheckedIterator<T, I extends ThrowingIterator<T, X>, X extends Throwable
 
     @Override
     public void forEachRemaining(IntConsumer action) {
-      maskException(() -> getDelegate().forEachRemaining(
-          (ThrowingIntConsumer<? extends X>) action::accept));
+      getExceptionMasker().maskException(
+          () -> getDelegate().forEachRemaining((ThrowingIntConsumer<? extends X>) action::accept));
     }
 
     @Override
     public int nextInt() {
-      return maskException(getDelegate()::nextInt);
+      return getExceptionMasker().maskException(getDelegate()::nextInt);
     }
   }
 
@@ -39,32 +39,32 @@ class UncheckedIterator<T, I extends ThrowingIterator<T, X>, X extends Throwable
 
     @Override
     public void forEachRemaining(LongConsumer action) {
-      maskException(() -> getDelegate().forEachRemaining(
-          (ThrowingLongConsumer<? extends X>) action::accept));
+      getExceptionMasker().maskException(
+          () -> getDelegate().forEachRemaining((ThrowingLongConsumer<? extends X>) action::accept));
     }
 
     @Override
     public long nextLong() {
-      return maskException(getDelegate()::nextLong);
+      return getExceptionMasker().maskException(getDelegate()::nextLong);
     }
   }
 
-  static class OfDouble<X extends Throwable> extends
-      UncheckedIterator<Double, ThrowingIterator.OfDouble<X>, X> implements
-      PrimitiveIterator.OfDouble {
+  static class OfDouble<X extends Throwable>
+      extends UncheckedIterator<Double, ThrowingIterator.OfDouble<X>, X>
+      implements PrimitiveIterator.OfDouble {
     OfDouble(name.falgout.jeffrey.throwing.ThrowingIterator.OfDouble<X> delegate, Class<X> x) {
       super(delegate, x);
     }
 
     @Override
     public void forEachRemaining(DoubleConsumer action) {
-      maskException(() -> getDelegate().forEachRemaining(
-          (ThrowingDoubleConsumer<? extends X>) action::accept));
+      getExceptionMasker().maskException(() -> getDelegate()
+          .forEachRemaining((ThrowingDoubleConsumer<? extends X>) action::accept));
     }
 
     @Override
     public double nextDouble() {
-      return maskException(getDelegate()::nextDouble);
+      return getExceptionMasker().maskException(getDelegate()::nextDouble);
     }
   }
 
@@ -74,11 +74,11 @@ class UncheckedIterator<T, I extends ThrowingIterator<T, X>, X extends Throwable
 
   @Override
   public boolean hasNext() {
-    return maskException(getDelegate()::hasNext);
+    return getExceptionMasker().maskException(getDelegate()::hasNext);
   }
 
   @Override
   public T next() {
-    return maskException(getDelegate()::next);
+    return getExceptionMasker().maskException(getDelegate()::next);
   }
 }

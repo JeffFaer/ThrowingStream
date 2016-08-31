@@ -22,8 +22,8 @@ import java.util.stream.Stream;
 
 import name.falgout.jeffrey.throwing.stream.ThrowingLongStream;
 
-class UncheckedLongStream<X extends Throwable> extends
-    UncheckedBaseStream<Long, X, LongStream, ThrowingLongStream<X>> implements LongStream {
+class UncheckedLongStream<X extends Throwable>
+    extends UncheckedBaseStream<Long, X, LongStream, ThrowingLongStream<X>> implements LongStream {
   UncheckedLongStream(ThrowingLongStream<X> delegate, Class<X> x) {
     super(delegate, x);
   }
@@ -75,8 +75,8 @@ class UncheckedLongStream<X extends Throwable> extends
 
   @Override
   public LongStream flatMap(LongFunction<? extends LongStream> mapper) {
-    LongFunction<? extends ThrowingLongStream<? extends X>> f = i -> ThrowingBridge.of(
-        mapper.apply(i), getExceptionClass());
+    LongFunction<? extends ThrowingLongStream<? extends X>> f =
+        i -> ThrowingBridge.of(mapper.apply(i), getExceptionClass());
     return chain(ThrowingLongStream::normalFlatMap, f);
   }
 
@@ -107,88 +107,90 @@ class UncheckedLongStream<X extends Throwable> extends
 
   @Override
   public void forEach(LongConsumer action) {
-    maskException(() -> getDelegate().normalForEach(action));
+    getExceptionMasker().maskException(() -> getDelegate().normalForEach(action));
   }
 
   @Override
   public void forEachOrdered(LongConsumer action) {
-    maskException(() -> getDelegate().normalForEachOrdered(action));
+    getExceptionMasker().maskException(() -> getDelegate().normalForEachOrdered(action));
   }
 
   @Override
   public long[] toArray() {
-    return maskException(getDelegate()::toArray);
+    return getExceptionMasker().maskException(getDelegate()::toArray);
   }
 
   @Override
   public long reduce(long identity, LongBinaryOperator op) {
-    return maskException(() -> getDelegate().normalReduce(identity, op));
+    return getExceptionMasker().maskException(() -> getDelegate().normalReduce(identity, op));
   }
 
   @Override
   public OptionalLong reduce(LongBinaryOperator op) {
-    return maskException(() -> getDelegate().normalReduce(op));
+    return getExceptionMasker().maskException(() -> getDelegate().normalReduce(op));
   }
 
   @Override
-  public <R> R collect(Supplier<R> supplier, ObjLongConsumer<R> accumulator,
+  public <R> R collect(Supplier<R> supplier,
+      ObjLongConsumer<R> accumulator,
       BiConsumer<R, R> combiner) {
-    return maskException(() -> getDelegate().normalCollect(supplier, accumulator, combiner));
+    return getExceptionMasker()
+        .maskException(() -> getDelegate().normalCollect(supplier, accumulator, combiner));
   }
 
   @Override
   public long sum() {
-    return maskException(getDelegate()::sum);
+    return getExceptionMasker().maskException(getDelegate()::sum);
   }
 
   @Override
   public OptionalLong min() {
-    return maskException(getDelegate()::min);
+    return getExceptionMasker().maskException(getDelegate()::min);
   }
 
   @Override
   public OptionalLong max() {
-    return maskException(getDelegate()::max);
+    return getExceptionMasker().maskException(getDelegate()::max);
   }
 
   @Override
   public long count() {
-    return maskException(getDelegate()::count);
+    return getExceptionMasker().maskException(getDelegate()::count);
   }
 
   @Override
   public OptionalDouble average() {
-    return maskException(getDelegate()::average);
+    return getExceptionMasker().maskException(getDelegate()::average);
   }
 
   @Override
   public LongSummaryStatistics summaryStatistics() {
-    return maskException(getDelegate()::summaryStatistics);
+    return getExceptionMasker().maskException(getDelegate()::summaryStatistics);
   }
 
   @Override
   public boolean anyMatch(LongPredicate predicate) {
-    return maskException(() -> getDelegate().normalAnyMatch(predicate));
+    return getExceptionMasker().maskException(() -> getDelegate().normalAnyMatch(predicate));
   }
 
   @Override
   public boolean allMatch(LongPredicate predicate) {
-    return maskException(() -> getDelegate().normalAllMatch(predicate));
+    return getExceptionMasker().maskException(() -> getDelegate().normalAllMatch(predicate));
   }
 
   @Override
   public boolean noneMatch(LongPredicate predicate) {
-    return maskException(() -> getDelegate().normalNoneMatch(predicate));
+    return getExceptionMasker().maskException(() -> getDelegate().normalNoneMatch(predicate));
   }
 
   @Override
   public OptionalLong findFirst() {
-    return maskException(getDelegate()::findFirst);
+    return getExceptionMasker().maskException(getDelegate()::findFirst);
   }
 
   @Override
   public OptionalLong findAny() {
-    return maskException(getDelegate()::findAny);
+    return getExceptionMasker().maskException(getDelegate()::findAny);
   }
 
   @Override

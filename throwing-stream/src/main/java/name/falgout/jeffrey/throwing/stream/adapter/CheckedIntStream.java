@@ -17,9 +17,10 @@ import name.falgout.jeffrey.throwing.ThrowingIntPredicate;
 import name.falgout.jeffrey.throwing.ThrowingIntToDoubleFunction;
 import name.falgout.jeffrey.throwing.ThrowingIntToLongFunction;
 import name.falgout.jeffrey.throwing.ThrowingIntUnaryOperator;
+import name.falgout.jeffrey.throwing.ThrowingIterator.OfInt;
 import name.falgout.jeffrey.throwing.ThrowingObjIntConsumer;
 import name.falgout.jeffrey.throwing.ThrowingSupplier;
-import name.falgout.jeffrey.throwing.ThrowingIterator.OfInt;
+import name.falgout.jeffrey.throwing.adapter.ExceptionMasker;
 import name.falgout.jeffrey.throwing.stream.ThrowingDoubleStream;
 import name.falgout.jeffrey.throwing.stream.ThrowingIntStream;
 import name.falgout.jeffrey.throwing.stream.ThrowingLongStream;
@@ -27,13 +28,13 @@ import name.falgout.jeffrey.throwing.stream.ThrowingStream;
 
 class CheckedIntStream<X extends Throwable> extends
     CheckedBaseStream<Integer, X, IntStream, ThrowingIntStream<X>> implements ThrowingIntStream<X> {
-  CheckedIntStream(IntStream delegate, FunctionAdapter<X> functionAdapter) {
-    super(delegate, functionAdapter);
+  CheckedIntStream(IntStream delegate, ExceptionMasker<X> ExceptionMasker) {
+    super(delegate, ExceptionMasker);
   }
 
-  CheckedIntStream(IntStream delegate, FunctionAdapter<X> functionAdapter,
-      RethrowChain<AdapterException, X> chain) {
-    super(delegate, functionAdapter, chain);
+  CheckedIntStream(IntStream delegate, ExceptionMasker<X> ExceptionMasker,
+      RethrowChain<Throwable, X> chain) {
+    super(delegate, ExceptionMasker, chain);
   }
 
   @Override
@@ -43,45 +44,45 @@ class CheckedIntStream<X extends Throwable> extends
 
   @Override
   public ThrowingIntStream<X> createNewAdapter(IntStream delegate) {
-    return new CheckedIntStream<>(delegate, getFunctionAdapter(), getChain());
+    return new CheckedIntStream<>(delegate, getExceptionMasker(), getChain());
   }
 
   @Override
   public OfInt<X> iterator() {
-    return ThrowingBridge.of(getDelegate().iterator(), getFunctionAdapter());
+    return ThrowingBridge.of(getDelegate().iterator(), getExceptionMasker());
   }
 
   @Override
   public ThrowingBaseSpliterator.OfInt<X> spliterator() {
-    return ThrowingBridge.of(getDelegate().spliterator(), getFunctionAdapter());
+    return ThrowingBridge.of(getDelegate().spliterator(), getExceptionMasker());
   }
 
   @Override
   public ThrowingIntStream<X> filter(ThrowingIntPredicate<? extends X> predicate) {
-    return chain(IntStream::filter, getFunctionAdapter().convert(predicate));
+    return chain(IntStream::filter, getExceptionMasker().mask(predicate));
   }
 
   @Override
   public ThrowingIntStream<X> map(ThrowingIntUnaryOperator<? extends X> mapper) {
-    return chain(IntStream::map, getFunctionAdapter().convert(mapper));
+    return chain(IntStream::map, getExceptionMasker().mask(mapper));
   }
 
   @Override
   public <U> ThrowingStream<U, X> mapToObj(ThrowingIntFunction<? extends U, ? extends X> mapper) {
-    IntFunction<? extends U> f = getFunctionAdapter().convert(mapper);
-    return ThrowingBridge.of(getDelegate().mapToObj(f), getFunctionAdapter());
+    IntFunction<? extends U> f = getExceptionMasker().mask(mapper);
+    return ThrowingBridge.of(getDelegate().mapToObj(f), getExceptionMasker());
   }
 
   @Override
   public ThrowingLongStream<X> mapToLong(ThrowingIntToLongFunction<? extends X> mapper) {
-    return ThrowingBridge.of(getDelegate().mapToLong(getFunctionAdapter().convert(mapper)),
-        getFunctionAdapter());
+    return ThrowingBridge.of(getDelegate().mapToLong(getExceptionMasker().mask(mapper)),
+        getExceptionMasker());
   }
 
   @Override
   public ThrowingDoubleStream<X> mapToDouble(ThrowingIntToDoubleFunction<? extends X> mapper) {
-    return ThrowingBridge.of(getDelegate().mapToDouble(getFunctionAdapter().convert(mapper)),
-        getFunctionAdapter());
+    return ThrowingBridge.of(getDelegate().mapToDouble(getExceptionMasker().mask(mapper)),
+        getExceptionMasker());
   }
 
   @Override
@@ -89,7 +90,7 @@ class CheckedIntStream<X extends Throwable> extends
       ThrowingIntFunction<? extends ThrowingIntStream<? extends X>, ? extends X> mapper) {
     @SuppressWarnings("unchecked") Function<? super ThrowingIntStream<? extends X>, ? extends IntStream> c = s -> ThrowingBridge.of(
         (ThrowingIntStream<X>) s, getExceptionClass());
-    return chain(IntStream::flatMap, getFunctionAdapter().convert(mapper.andThen(c)));
+    return chain(IntStream::flatMap, getExceptionMasker().mask(mapper.andThen(c::apply)));
   }
 
   @Override
@@ -104,7 +105,7 @@ class CheckedIntStream<X extends Throwable> extends
 
   @Override
   public ThrowingIntStream<X> peek(ThrowingIntConsumer<? extends X> action) {
-    return chain(IntStream::peek, getFunctionAdapter().convert(action));
+    return chain(IntStream::peek, getExceptionMasker().mask(action));
   }
 
   @Override
@@ -119,12 +120,12 @@ class CheckedIntStream<X extends Throwable> extends
 
   @Override
   public void forEach(ThrowingIntConsumer<? extends X> action) throws X {
-    unmaskException(() -> getDelegate().forEach(getFunctionAdapter().convert(action)));
+    unmaskException(() -> getDelegate().forEach(getExceptionMasker().mask(action)));
   }
 
   @Override
   public void forEachOrdered(ThrowingIntConsumer<? extends X> action) throws X {
-    unmaskException(() -> getDelegate().forEachOrdered(getFunctionAdapter().convert(action)));
+    unmaskException(() -> getDelegate().forEachOrdered(getExceptionMasker().mask(action)));
   }
 
   @Override
@@ -134,20 +135,20 @@ class CheckedIntStream<X extends Throwable> extends
 
   @Override
   public int reduce(int identity, ThrowingIntBinaryOperator<? extends X> op) throws X {
-    return unmaskException(() -> getDelegate().reduce(identity, getFunctionAdapter().convert(op)));
+    return unmaskException(() -> getDelegate().reduce(identity, getExceptionMasker().mask(op)));
   }
 
   @Override
   public OptionalInt reduce(ThrowingIntBinaryOperator<? extends X> op) throws X {
-    return unmaskException(() -> getDelegate().reduce(getFunctionAdapter().convert(op)));
+    return unmaskException(() -> getDelegate().reduce(getExceptionMasker().mask(op)));
   }
 
   @Override
   public <R> R collect(ThrowingSupplier<R, ? extends X> supplier,
       ThrowingObjIntConsumer<R, ? extends X> accumulator,
       ThrowingBiConsumer<R, R, ? extends X> combiner) throws X {
-    return unmaskException(() -> getDelegate().collect(getFunctionAdapter().convert(supplier),
-        getFunctionAdapter().convert(accumulator), getFunctionAdapter().convert(combiner)));
+    return unmaskException(() -> getDelegate().collect(getExceptionMasker().mask(supplier),
+        getExceptionMasker().mask(accumulator), getExceptionMasker().mask(combiner)));
   }
 
   @Override
@@ -182,17 +183,17 @@ class CheckedIntStream<X extends Throwable> extends
 
   @Override
   public boolean anyMatch(ThrowingIntPredicate<? extends X> predicate) throws X {
-    return unmaskException(() -> getDelegate().anyMatch(getFunctionAdapter().convert(predicate)));
+    return unmaskException(() -> getDelegate().anyMatch(getExceptionMasker().mask(predicate)));
   }
 
   @Override
   public boolean allMatch(ThrowingIntPredicate<? extends X> predicate) throws X {
-    return unmaskException(() -> getDelegate().allMatch(getFunctionAdapter().convert(predicate)));
+    return unmaskException(() -> getDelegate().allMatch(getExceptionMasker().mask(predicate)));
   }
 
   @Override
   public boolean noneMatch(ThrowingIntPredicate<? extends X> predicate) throws X {
-    return unmaskException(() -> getDelegate().noneMatch(getFunctionAdapter().convert(predicate)));
+    return unmaskException(() -> getDelegate().noneMatch(getExceptionMasker().mask(predicate)));
   }
 
   @Override
@@ -207,23 +208,23 @@ class CheckedIntStream<X extends Throwable> extends
 
   @Override
   public ThrowingLongStream<X> asLongStream() {
-    return ThrowingBridge.of(getDelegate().asLongStream(), getFunctionAdapter());
+    return ThrowingBridge.of(getDelegate().asLongStream(), getExceptionMasker());
   }
 
   @Override
   public ThrowingDoubleStream<X> asDoubleStream() {
-    return ThrowingBridge.of(getDelegate().asDoubleStream(), getFunctionAdapter());
+    return ThrowingBridge.of(getDelegate().asDoubleStream(), getExceptionMasker());
   }
 
   @Override
   public ThrowingStream<Integer, X> boxed() {
-    return ThrowingBridge.of(getDelegate().boxed(), getFunctionAdapter());
+    return ThrowingBridge.of(getDelegate().boxed(), getExceptionMasker());
   }
 
   @Override
   public <Y extends Throwable> ThrowingIntStream<Y> rethrow(Class<Y> e,
       Function<? super X, ? extends Y> mapper) {
-    RethrowChain<AdapterException, Y> c = getChain().rethrow(mapper);
-    return new CheckedIntStream<>(getDelegate(), new FunctionAdapter<>(e), c);
+    RethrowChain<Throwable, Y> c = getChain().rethrow(mapper);
+    return new CheckedIntStream<>(getDelegate(), new ExceptionMasker<>(e), c);
   }
 }

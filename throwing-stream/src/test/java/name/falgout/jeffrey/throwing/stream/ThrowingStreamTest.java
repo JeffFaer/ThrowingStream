@@ -1,21 +1,15 @@
 package name.falgout.jeffrey.throwing.stream;
 
-import static org.hamcrest.Matchers.hasItemInArray;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.startsWith;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.BiFunction;
 import java.util.function.Supplier;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 import org.junit.Test;
 
@@ -111,38 +105,6 @@ public class ThrowingStreamTest {
     assertEquals(10, collected.size());
   }
 
-  private <X extends Throwable> void verboseTest(Class<X> x, Supplier<X> exceptionSupplier) {
-    verboseTest(x, exceptionSupplier, ThrowingBridge::of);
-  }
-
-  private <X extends Throwable> void verboseTest(Class<X> x,
-      Supplier<X> exceptionSupplier,
-      BiFunction<IntStream, Class<X>, ThrowingIntStream<X>> streamSupplier) {
-    ThrowingIntStream<X> s = streamSupplier.apply(numbers, x);
-    s = s.peek(i -> {
-      throw exceptionSupplier.get();
-    });
-    try {
-      s.count();
-      fail("did not throw exception");
-    } catch (Throwable e) {
-      assertEquals("correct exception thrown", x, e.getClass());
-      assertThat("stack trace verbose",
-          Stream.of(e.getStackTrace()).map(StackTraceElement::getClassName).toArray(String[]::new),
-          not(hasItemInArray(startsWith(ThrowingBridge.class.getPackage().getName()))));
-    }
-  }
-
-  @Test
-  public void exceptionsAreNotVerbose() {
-    verboseTest(Exception.class, Exception::new);
-  }
-
-  @Test
-  public void runtimeExceptionsAreNotVerbose() {
-    verboseTest(RuntimeException.class, RuntimeException::new);
-  }
-
   @Test
   public void canRethrowExceptions() {
     ThrowingIntStream<IllegalArgumentException> s =
@@ -161,14 +123,5 @@ public class ThrowingStreamTest {
     } catch (Throwable t) {
       fail("threw wrong exception");
     }
-  }
-
-  @Test
-  public void rethrownExceptionsAreNotVerbose() {
-    verboseTest(IOException.class, IOException::new, (s, x) -> {
-      return ThrowingStream.of(s, IllegalArgumentException.class).peek(i -> {
-        throw new IllegalArgumentException("foo");
-      }).rethrow(x, IOException::new);
-    });
   }
 }
