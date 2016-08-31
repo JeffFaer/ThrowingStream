@@ -40,5 +40,5 @@ mvn package
 ###How does it work?
 Check out the [wiki](https://github.com/JeffreyFalgout/ThrowingStream/wiki/How-it-works).
 
-[mvn-img]: https://maven-badges.herokuapp.com/maven-central/com.github.jeffreyfalgout/throwing-streams/badge.svg
-[mvn-link]: https://maven-badges.herokuapp.com/maven-central/com.github.jeffreyfalgout/throwing-streams
+[mvn-img]: https://maven-badges.herokuapp.com/maven-central/name.falgout.jeffrey/throwing-streams/badge.svg
+[mvn-link]: https://maven-badges.herokuapp.com/maven-central/name.falgout.jeffrey/throwing-streams
