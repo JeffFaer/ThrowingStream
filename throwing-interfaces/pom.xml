@@ -3,10 +3,10 @@
   <parent>
     <groupId>name.falgout.jeffrey</groupId>
     <artifactId>throwing-stream-parent</artifactId>
-    <version>3.0.0</version>
+    <version>3.0.1-SNAPSHOT</version>
   </parent>
   <artifactId>throwing-interfaces</artifactId>
-  <version>1.0.0</version>
+  <version>1.0.1-SNAPSHOT</version>
   <dependencies>
     <dependency>
       <groupId>com.google.code.findbugs</groupId>
