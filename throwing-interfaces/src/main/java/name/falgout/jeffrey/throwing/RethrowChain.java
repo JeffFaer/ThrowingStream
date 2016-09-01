@@ -7,7 +7,7 @@ import java.util.function.Function;
 @FunctionalInterface
 public interface RethrowChain<X extends Throwable, Y extends Throwable>
     extends Function<X, Optional<Y>> {
-  public static <Y extends Throwable> RethrowChain<Throwable, Y> castTo(Class<Y> clazz) {
+  public static <Y extends Throwable> RethrowChain<Throwable, Y> castTo(Class<? extends Y> clazz) {
     return e -> Optional.ofNullable(clazz.isInstance(e) ? clazz.cast(e) : null);
   }
 
