@@ -3,14 +3,14 @@
   <parent>
     <groupId>name.falgout.jeffrey</groupId>
     <artifactId>throwing-stream-parent</artifactId>
-    <version>3.1.0</version>
+    <version>3.1.1-SNAPSHOT</version>
   </parent>
   <artifactId>throwing-streams</artifactId>
   <dependencies>
     <dependency>
       <groupId>name.falgout.jeffrey</groupId>
       <artifactId>throwing-interfaces</artifactId>
-      <version>1.1.0</version>
+      <version>1.1.1-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
