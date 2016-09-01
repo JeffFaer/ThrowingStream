@@ -98,11 +98,10 @@ public final class ExceptionMasker<X extends Throwable> {
 
   public ExceptionMasker(Class<X> exceptionClass) {
     this.exceptionClass = exceptionClass;
-    RethrowChain<Throwable, X> caster = RethrowChain.start(exceptionClass);
+    RethrowChain<Throwable, X> caster = RethrowChain.castTo(exceptionClass);
     masker = caster.rethrow(MaskedException::new).finish();
-    unmasker = RethrowChain.<MaskedException, X>start().connect(masked -> {
-      return caster.apply(masked.getCause());
-    }).finish();
+    RethrowChain<MaskedException, X> unmasker = masked -> caster.apply(masked.getCause());
+    this.unmasker = unmasker.finish();
   }
 
   public Class<X> getExceptionClass() {

@@ -50,7 +50,7 @@ public interface ThrowingSupplier<R, X extends Throwable> {
 
   default public <Y extends Throwable> ThrowingSupplier<R, Y> rethrow(Class<X> x,
       Function<? super X, ? extends Y> mapper) {
-    Function<Throwable, ? extends Y> rethrower = RethrowChain.start(x).rethrow(mapper).finish();
+    Function<Throwable, ? extends Y> rethrower = RethrowChain.castTo(x).rethrow(mapper).finish();
     return () -> {
       try {
         return get();

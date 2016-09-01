@@ -15,15 +15,21 @@ abstract class CheckedAdapter<D, X extends Throwable> extends ThrowingAbstractAd
   private final Function<Throwable, X> unmasker;
 
   CheckedAdapter(D delegate, ExceptionMasker<X> exceptionMasker) {
-    this(delegate, exceptionMasker, RethrowChain.start());
+    this(delegate, exceptionMasker, RethrowChain.castTo(exceptionMasker.getExceptionClass()), null);
   }
 
   CheckedAdapter(D delegate, ExceptionMasker<X> exceptionMasker, RethrowChain<Throwable, X> chain) {
-    super(delegate, exceptionMasker.getExceptionClass());
-    this.exceptionMasker = exceptionMasker;
+    this(delegate, exceptionMasker,
+        chain.connect(RethrowChain.castTo(exceptionMasker.getExceptionClass())), null);
+  }
 
-    this.chain = chain.connect(RethrowChain.start(getExceptionClass()));
-    unmasker = this.chain.finish();
+  private CheckedAdapter(D delegate, ExceptionMasker<X> exceptionMasker,
+      RethrowChain<Throwable, X> chain, Void chainIsDone) {
+    super(delegate, exceptionMasker.getExceptionClass());
+
+    this.exceptionMasker = exceptionMasker;
+    this.chain = chain;
+    unmasker = chain.finish();
   }
 
   public ExceptionMasker<X> getExceptionMasker() {
