@@ -3,16 +3,16 @@
   <parent>
     <groupId>name.falgout.jeffrey</groupId>
     <artifactId>throwing-stream-parent</artifactId>
-    <version>3.1.1-SNAPSHOT</version>
+    <version>3.1.1</version>
   </parent>
   <artifactId>throwing-interfaces</artifactId>
-  <version>1.1.2-SNAPSHOT</version>
+  <version>1.1.2</version>
   <url>${github.url}</url>
   <scm>
     <connection>scm:git:${github.url}.git</connection>
     <developerConnection>scm:git:git@github.com:JeffreyFalgout/ThrowingStream.git</developerConnection>
     <url>${github.url}</url>
-    <tag>HEAD</tag>
+    <tag>v3.1.1</tag>
   </scm>
   <dependencies>
     <dependency>
