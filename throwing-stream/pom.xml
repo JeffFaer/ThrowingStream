@@ -6,6 +6,7 @@
     <version>3.1.2-SNAPSHOT</version>
   </parent>
   <artifactId>throwing-streams</artifactId>
+  <packaging>bundle</packaging>
   <dependencies>
     <dependency>
       <groupId>name.falgout.jeffrey</groupId>
@@ -25,4 +26,14 @@
       <artifactId>mockito-all</artifactId>
     </dependency>
   </dependencies>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <version>3.5.1</version>
+        <extensions>true</extensions>
+      </plugin>
+    </plugins>
+  </build>
 </project>
