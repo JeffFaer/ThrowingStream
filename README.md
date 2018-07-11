@@ -37,7 +37,7 @@ mvn package
 </dependency>
 ````
 
-###How does it work?
+### How does it work?
 Check out the [wiki](https://github.com/JeffreyFalgout/ThrowingStream/wiki/How-it-works).
 
 [mvn-img]: https://maven-badges.herokuapp.com/maven-central/name.falgout.jeffrey/throwing-streams/badge.svg
