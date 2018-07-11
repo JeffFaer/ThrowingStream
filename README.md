@@ -20,7 +20,7 @@ class java.lang.Object
 interface java.util.stream.Stream
 ````
 
-###How can I use this library in my project?
+### How can I use this library in my project?
  - [Clone the repository](http://git-scm.com/book/en/Git-Basics-Getting-a-Git-Repository#Cloning-an-Existing-Repository) and use maven to generate a .jar file:
 ````
 git clone https://github.com/JeffreyFalgout/ThrowingStream
